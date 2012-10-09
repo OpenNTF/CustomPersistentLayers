@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xe="http://www.ibm.com/xsp/coreex">
+	<xp:this.data>
+		<xe:objectData var="theme1"
+			createObject="#{javascript:return AllThemesController.createNewTheme();}"
+			scope="request">
+		</xe:objectData>
+	</xp:this.data>
+	<xp:label value="#{javascript:return @UserName()}" id="label2">
+	</xp:label>
+	<br />
+
+	<xp:label value="#{theme1}" id="label4"></xp:label>
+
+	<xp:table>
+		<xp:tr>
+			<xp:td>
+				ThemeName
+			</xp:td>
+			<xp:td>
+				<xp:inputText id="inputText1" value="#{theme1.themeName}"></xp:inputText>
+			</xp:td>
+		</xp:tr>
+		<xp:tr>
+			<xp:td>
+				ThemeType
+			</xp:td>
+			<xp:td>
+				<xp:inputText id="inputText2" value="#{theme1.themeType}"></xp:inputText>
+			</xp:td>
+		</xp:tr>
+	</xp:table>
+	<xp:button value="Add the new theme to List" id="button1">
+		<xp:eventHandler event="onclick" submit="true"
+			refreshMode="complete">
+			<xp:this.action><![CDATA[#{javascript:AllThemesController.addTheme(theme1);}]]></xp:this.action>
+		</xp:eventHandler>
+	</xp:button>
+
+	<xp:table>
+		<xp:tr>
+			<xp:td>themeName</xp:td>
+			<xp:td>themeType</xp:td>
+
+		</xp:tr>
+
+		<xp:repeat id="repeat1" rows="30"
+			value="#{javascript:return AllThemesController.getMyList()}" var="row"
+			disableOutputTag="true">
+			<xp:table>
+				<xp:tr>
+					<xp:td>
+						<xp:label value="#{javascript:return row.getThemeName();}"
+							id="label1">
+						</xp:label>
+					</xp:td>
+
+					<xp:td>
+						<xp:label value="#{javascript:return row.getThemeType();}"
+							id="label3">
+						</xp:label>
+					</xp:td>
+				</xp:tr>
+			</xp:table>
+		</xp:repeat>
+	</xp:table>
+	<xp:button value="Save themes in memory to database" id="button3">
+		<xp:eventHandler event="onclick" submit="true"
+			refreshMode="complete">
+			<xp:this.action><![CDATA[#{javascript:AllThemesController.saveThemes();}]]></xp:this.action>
+		</xp:eventHandler>
+	</xp:button>
+	<xp:messages id="messages1"></xp:messages>
+
+
+	<xp:button value="Label" id="button2">
+		<xp:eventHandler event="onclick" submit="true"
+			refreshMode="complete">
+		</xp:eventHandler>
+	</xp:button>
+
+
+
+</xp:view>
