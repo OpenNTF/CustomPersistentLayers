@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="4.0" replicaid="C1257A92007401C7" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="2c2" sequence="16" unid="FEE316C8E5D5B78FC1257A7F0052E41C">
+<created><datetime dst="true">20120920T170523,48+02</datetime></created>
+<modified><datetime dst="true">20121009T230709,30+02</datetime></modified>
+<revised><datetime dst="true">20120930T203036,48+02</datetime></revised>
+<lastaccessed><datetime dst="true">20121009T230709,30+02</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20121009T230709,30+02</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>persistence/annotation/support/DocRefHandler.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>persistence/annotation/support/DocRefHandler.java</text></item>
+
+
+</note>
