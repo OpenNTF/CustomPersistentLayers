@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core">
+	<iframe src="http://www.youtube.com/embed/BxxKsRK1xVs" width="320" style="float:left"
+		height="190"></iframe>
+	<xp:button value="Label" id="button1">
+		<xp:eventHandler event="onclick" submit="true"
+			refreshMode="complete">
+			<xp:this.action><![CDATA[#{javascript:JSFUtil.test();}]]></xp:this.action>
+		</xp:eventHandler>
+	</xp:button>
+	&#160;&#160;&#160;
+	<xp:button value="Label" id="button2">
+		<xp:eventHandler event="onclick" submit="true"
+			refreshMode="complete">
+			<xp:this.action><![CDATA[#{javascript:JSFUtil.test1()}]]></xp:this.action>
+		</xp:eventHandler>
+	</xp:button>
+</xp:view>

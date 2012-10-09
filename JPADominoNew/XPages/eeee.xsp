@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xe="http://www.ibm.com/xsp/coreex">
+	<xe:restService id="restService1">
+
+		<xe:this.service>
+			<xe:customRestService contentType="application/json"
+				requestContentType="application/json">
+				<xe:this.doGet><![CDATA[#{javascript:var data1="{'employees': [{ 'firstName':'John' , 'lastName':'Doe' },{'firstName':'Peter' , 'lastName':'Jones' }]}";
+
+return data1;}]]></xe:this.doGet>
+			</xe:customRestService>
+		</xe:this.service>
+	</xe:restService>
+
+	<xe:djxDataGrid id="djxDataGrid1" storeComponentId="restService1">
+		<xe:djxDataGridColumn id="djxDataGridColumn1"
+			field="firstName">
+		</xe:djxDataGridColumn>
+		<xe:djxDataGridColumn id="djxDataGridColumn2"
+			field="lastName">
+		</xe:djxDataGridColumn>
+	</xe:djxDataGrid>
+
+</xp:view>

@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE note SYSTEM 'xmlschemas/domino_8_5_3.dtd'>
+<note class='view' xmlns='http://www.lotus.com/dxl' version='8.5' maintenanceversion='3.0'
+ replicaid='C1257A91005D3475'>
+<noteinfo noteid='152' unid='8A9B8807F6253BBCC1257A7F0052DDEF' sequence='10'>
+<created><datetime dst='true'>20120920T170507,67+02</datetime></created>
+<modified><datetime dst='true'>20121008T185803,52+02</datetime></modified>
+<revised><datetime dst='true'>20120930T203015,31+02</datetime></revised>
+<lastaccessed><datetime dst='true'>20121008T192643,76+02</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20121008T185803,52+02</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
+<item name='$FormulaClass' sign='true'><text>1</text></item>
+<item name='$Index' sign='true'><text/></item>
+<item name='$Formula' summary='true' sign='true'><formula compiled='true'>
+XgAFADQALwAEAA0ACQAJAAQAVGhlbWVVbmlxdWVJZFRoZW1lTmFtZSRDb25mbGljdCRSRUYABAAE
+AAAAGgAFAAQAZm9ybQEABQBUaGVtZQAKAgMABwAKAAQACUwxUw==
+</formula></item>
+<item name='$Collation' summary='true'>
+<rawitemdata type='2'>
+KgACAABEAGYAAAANAIBmAA0ACQBUaGVtZVVuaXF1ZUlkVGhlbWVOYW1l
+</rawitemdata></item>
+<item name='$ViewFormat' summary='true' sign='true'>
+<rawitemdata type='5'>
+AQACAAIACAAAAFZDAQANAA0AAAAAANEAAQAACgAAAAAAAAAAAAICAAAAVkMBAAkACQAAAAAAqwAB
+AAAKAAAAAAAAAAAAAgIAAABUaGVtZVVuaXF1ZUlkVGhlbWVVbmlxdWVJZFRoZW1lTmFtZVRoZW1l
+TmFtZSYAAQAAAAEBAAkBAAAKAQEOCgAAAQCtKwEAAQABAAAAAAAAAAAAV0MBAQAJAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAA//8AAAAAAAAAAAAAAAAAAFdDAQEACQAAAAAAAAAAAAAAAAAAAAAAAAQA
+AAAAAP//AAAAAAAAAAAAAAAAAABCAAAAAAABAP///wAFAP///wABAAAAAAAAAAAAAAAAAAEA////
+AAEA////AAAAAQAAAAAAAQAAAAAAAQAAAAAAAAAIAAAAAAABAA==
+</rawitemdata></item>
+<item name='$Comment' sign='true'><text/></item>
+<item name='$Flags'><text>PY</text></item>
+<item name='$TITLE' sign='true'><text>Theme</text></item>
+<item name='$DesignerVersion' sign='true'><text>8.5.3</text></item></note>
+

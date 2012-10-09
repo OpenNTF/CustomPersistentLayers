@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE note SYSTEM 'xmlschemas/domino_8_5_3.dtd'>
+<note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='8.5'
+ maintenanceversion='3.0' replicaid='C1257A91005D3475'>
+<noteinfo noteid='11e' unid='C1191E733FDB1F5EC12579AF0051259F' sequence='49'>
+<created><datetime>20120225T154620,47+01</datetime></created>
+<modified><datetime dst='true'>20121008T185806,54+02</datetime></modified>
+<revised><datetime dst='true'>20121008T185806,53+02</datetime></revised>
+<lastaccessed><datetime dst='true'>20121008T185806,54+02</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20121008T185803,26+02</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<item name='$DefaultWebLaunchPage'><text>MenuFooter</text></item>
+<item name='IconBitmap' summary='true'>
+<rawitemdata type='6'>
+AiAgAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAARERERERERERERERERERERERERERERERERERERERERERERERER
+ERERERERERERERERERERERERERERERERERERERERH///8REREREREREREREREf////8RERERERER
+ERERER/yIiIi8RERERERERERERH+IiIiIi8RERERERERERER8iLv/iIvERH/8RERERERHyIvERHy
+7xH////xERERER8i4RERH///IiIiL/ERERH/IvEREREfIiIiIiIvERER/iLxERER8iIi7uIiIvER
+Ef8i8REREfIi/xEf8iL/EREfIi8REf8iLxERER8iLxERHyIu///iIv8REREf4i4RERHyIi7yIi8R
+EREREfIi8RER/yIiIiLxERERERHyIvERER/yIiIv8RERERER/iLxERER/////x8REREREfIi8RER
+EREREREf8RERER/yLhERERERERER8i8REREfIi8REREREREREfIi8RER8iLvERERERERERH+Ii7/
+/iIi8RERERERERERHyIiIiIiLxERERERERERERH+IiIiLvEREREREREREREREf8iL/ERERERERER
+EREREREf//8RERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERER
+EREREREREREREREREREREREREQ==
+</rawitemdata></item>
+<item name='$DefaultFrameset'><text>FujitsuUI.Start</text></item>
+<item name='$DefaultXPage'><text>Main.xsp</text></item>
+<item name='$Flags'><text>J7F!</text></item>
+<item name='$FlagsNoRefresh'><text>rv</text></item>
+<item name='$Daos'><text>0</text></item>
+<item name='$TITLE'><text>JPADomino</text></item></note>
+
