@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="4.0" replicaid="C1257A3E004C887C" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="1fa" sequence="16" unid="81D2DBDE989ABD7DC1257A390076BD8E">
+<created><datetime dst="true">20120712T233657,74+02</datetime></created>
+<modified><datetime dst="true">20120717T155558,24+02</datetime></modified>
+<revised><datetime dst="true">20120717T140737,95+02</datetime></revised>
+<lastaccessed><datetime dst="true">20120717T155558,24+02</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20120717T155558,24+02</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>persistence/annotation/support/JavaBeanProxyFactory.java</text></item>
+
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>persistence/annotation/support/JavaBeanProxyFactory.java</text></item>
+
+
+
+</note>
