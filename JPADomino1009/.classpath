@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="src" path="Local"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/cglib-nodep-2.2.jar"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/cloneutils-1.0.1.jar"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/commons-lang3-3.1.jar"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/ehcache-core-2.5.2.jar"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/javax.persistence_2.0.0.jar"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/lucene-core-3.6.1.jar"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/slf4j-api-1.6.1.jar"/>
+  <classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
+</classpath>

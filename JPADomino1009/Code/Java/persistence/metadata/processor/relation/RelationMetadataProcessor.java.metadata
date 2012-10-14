@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="4.0" replicaid="C1257A92007401C7" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="35a" sequence="16" unid="9651F88A8CD0F12FC1257A820045DC40">
+<created><datetime dst="true">20120923T144303,68+02</datetime></created>
+<modified><datetime dst="true">20121009T230710,06+02</datetime></modified>
+<revised><datetime dst="true">20120930T203034,72+02</datetime></revised>
+<lastaccessed><datetime dst="true">20121009T230710,06+02</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20121009T230710,06+02</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>persistence/metadata/processor/relation/RelationMetadataProcessor.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>persistence/metadata/processor/relation/RelationMetadataProcessor.java</text></item>
+
+
+</note>
