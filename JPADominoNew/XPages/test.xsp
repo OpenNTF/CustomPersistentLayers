@@ -15,4 +15,6 @@
 			<xp:this.action><![CDATA[#{javascript:JSFUtil.test1()}]]></xp:this.action>
 		</xp:eventHandler>
 	</xp:button>
+	
+	<xp:label value="#{$954A9B5E0C30C8C5C1257A7300813F4C}" id="label1"></xp:label>
 </xp:view>

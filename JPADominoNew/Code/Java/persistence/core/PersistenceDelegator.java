@@ -132,20 +132,16 @@ public class PersistenceDelegator {
 			return null;
 
 		if (!isCached) {
-			// populate children objects and put them in the graph
-			System.out.println("POPULATE GRAPH STARTS");
 			ObjectGraph graph = new ObjectGraphBuilder().getObjectGraph(
 					nodeData, new ManagedState(), getPersistenceCache());
-			JSFUtil.pushData(graph, node.getNodeId());
-			System.out.println("MMMMMMMMMPOPULATE GRAPH ENDS graph instance is: "+graph);
-			
+			// JSFUtil.pushData(graph, node.getNodeId());
+
 			// cache the graph
-			System.out.println("");
-			System.out.println("ADD GRAPH TO CACHE STARTS");
+			System.out.println("------------------------ADD GRAPH TO CACHE STARTS-----------------------");
 			getPersistenceCache().getMainCache().addGraphToCache(graph,
 					getPersistenceCache());
-			System.out.println("ADD GRAPH TO CACHE ENDS");
-			
+			System.out.println("------------------------ADD GRAPH TO CACHE ENDS-----------------------");
+
 		}
 		return (E) nodeData;
 	}

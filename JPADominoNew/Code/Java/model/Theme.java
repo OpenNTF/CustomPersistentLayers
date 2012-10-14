@@ -27,7 +27,7 @@ public class Theme extends ModelBase {
 	@DocumentReferences(fetch = FetchType.EAGER, foreignKey = "unid", viewName = "CSS", cascade = { CascadeType.SAVE_UPDATE })
 	private ArrayList<CSS> CSSList2;
 	// lazy, collection interface, without cascade
-	@DocumentReferences(fetch = FetchType.LAZY, foreignKey = "unid", viewName = "CSS")
+	@DocumentReferences(fetch = FetchType.EAGER, foreignKey = "unid", viewName = "CSS")
 	private Set<CSS> CSSList1;
 	
 

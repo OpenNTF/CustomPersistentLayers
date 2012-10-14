@@ -73,7 +73,6 @@ public class CacheBase {
 
 	public void addGraphToCache(ObjectGraph graph,
 			PersistenceCache persistenceCache) {
-		System.out.println("graph size: "+graph.getNodeMapping().size());
 		for (String key : graph.getNodeMapping().keySet()) {
 			Node thisNode = (Node) graph.getNodeMapping().get(key);
 			addNodeToCache(thisNode);
@@ -84,10 +83,10 @@ public class CacheBase {
 			}
 		}
 		addHeadNode(graph.getHeadNode());
-		System.out.println("CURRENT CACHE INSTANCE "+persistenceCache.getMainCache());
-		System.out.println("CURRENT CACHE HEADNODE "+graph.getHeadNode());
-		System.out.println("CURRENT CACHE SIZE "+persistenceCache.getMainCache().size());
-		
+		System.out.println("CURRENT CACHE INSTANCE "
+				+ persistenceCache.getMainCache() + " /CURRENT CACHE HEADNODE "
+				+ graph.getHeadNode() + " /CURRENT CACHE SIZE "
+				+ persistenceCache.getMainCache().size());
 	}
 
 	private void logCacheEvent(String eventType, String nodeId) {

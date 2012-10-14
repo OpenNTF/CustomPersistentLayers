@@ -34,33 +34,36 @@ import model.notes.ModelBaseAnnotation;
 public class ObjectGraphBuilder {
 	PersistenceCache persistenceCache;
 
+	// builds the graph by populating new nodes or fetching them from cache
 	public ObjectGraph getObjectGraph(Object entity,
 			NodeState initialNodeState, PersistenceCache persistenceCache) {
 		ObjectGraph objectGraph = new ObjectGraph();
 		this.persistenceCache = persistenceCache;
-		// getNode method also builds the graph at the same time,if there is
-		// duplicated
+		System.out.println("----------------------SUB GRAPH BUILD FOR ENTITY " + entity + " STARTS----------------------");
 		Node headNode = getNode(entity, objectGraph, initialNodeState, null);
-		System.out
-				.println("!!!!!!!HEAD NODE IS SUPPOSED TO BE CACHED NODE if its found in cache"
-						+ headNode.getData());
 		if (headNode != null) {
 			objectGraph.setHeadNode(headNode);
 		}
+
+		// PRINT TO CHECK
 		Map<String, Node> nodeMap = objectGraph.getNodeMapping();
-		System.out.println("CHECKING THE RESULT GRAPH SIZE" + nodeMap.size());
 		Set<Entry<String, Node>> nodeSet = nodeMap.entrySet();
 		Iterator<Entry<String, Node>> iter = nodeSet.iterator();
 		while (iter.hasNext()) {
 			Entry<String, Node> nodeEntry = iter.next();
 			Node n = nodeEntry.getValue();
-			System.out.println("CHECKING THE RESULT INDIVIDUAL NODE "
-					+ n.getData());
+			System.out.print("subgraph node: " + n.getData() + "/");
 		}
-		JSFUtil.pushData(objectGraph, "graph");
+		// PUSH THIS HEAD NODE TO XPAGES REQUESTMAP, TO VIASUALIZE THE GRAPH
+		JSFUtil.pushData(objectGraph, headNode.getNodeId());
+		// PRINT TO CHECK END
+		System.out.println("----------------------SUB GRAPH BUILD FINISHS " + objectGraph
+				+ " IN SIZE OF " + nodeMap.size() + "----------------------");
 		return objectGraph;
 	}
 
+	// 1. returns a cache node as headNode if it's found in cache
+	// 2. assign cached data back to the pojo Fields
 	private Node getNode(Object entity, ObjectGraph graph,
 			NodeState initialNodeState, ArrayList replaceCollection) {
 		// entitymetadata is stored for origainl classes, not enhanced
@@ -172,12 +175,11 @@ public class ObjectGraphBuilder {
 			System.out.println("REPLACE LIST: " + replaceList);
 			System.out.println("entity: " + entity + "/assigned field: "
 					+ relationTargetField + "/assigned value: " + replaceList);
-			if (replaceList instanceof Collection) {
+			if (replaceList instanceof Collection&&replaceList.size()>0) {
 				ReflectionUtils.setFieldObject(entity, relationTargetField,
 						replaceList);
 				Collection tmp1 = (Collection) ReflectionUtils.getFieldObject(
 						entity, relationTargetField);
-				System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
 
 				System.out.println("EEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!"
 						+ tmp1);

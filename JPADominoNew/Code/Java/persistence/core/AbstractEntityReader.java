@@ -116,7 +116,7 @@ public class AbstractEntityReader {
 
 					FetchType fetchType = relation.getFetchType();
 					if (fetchType == FetchType.EAGER) {
-						System.out.println("EAGER COLLECTION INIT");
+						System.out.println("EAGER COLLECTION FETCH INIT");
 						List childs = null;
 						String foreignKey = relation.getDominoForeignKey();
 						Method foreignKeyGetter = ReflectionUtils
@@ -137,7 +137,7 @@ public class AbstractEntityReader {
 							childs = childClient.findAll(childClass, key);
 
 							System.out
-									.println("WEEEEEEEEEEEEEEEEEE: children collection "
+									.println("RETURN CHILDREN COLLECTION FROM DATABASE "
 											+ childs);
 
 							if ((childs != null) && (!(childs.isEmpty()))) {
@@ -171,6 +171,7 @@ public class AbstractEntityReader {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						System.out.println("EAGER COLLECTION FETCH ENDS");
 					} else {
 						// CGLIB lazyloader
 						System.out.println("LAZY COLLECTION INIT");
@@ -189,32 +190,38 @@ public class AbstractEntityReader {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						System.out.println("LAZY COLLECTION INIT finished, no collection is initied, only set it up");
+						System.out
+								.println("LAZY COLLECTION INIT finished, no collection is initied, only set it up");
 					}
-				}else
+				} else
 					System.out
-					.println("---------RELATIONVALUEMAP ALREDAY EXIST IN THE RELATIONMAP, JUST COPY OVER THE VALUE if its not lazy"+relationSignature);
-			
-				//even the lazy collection field will be assigned value if they have the same relation, skip the initialize step
+							.println("---------RELATIONVALUEMAP ALREDAY EXIST IN THE RELATIONMAP, JUST COPY OVER THE VALUE if its not lazy"
+									+ relationSignature);
+
+				// even the lazy collection field will be assigned value if they
+				// have the same relation, skip the initialize step
 				ReflectionUtils.setFieldObject(parentObj, collectionField,
 						relationValuesMap.get(relationSignature
 								+ childClass.getName()));
 
-				//Object o1 = enhanceEntity.getEntity();
-//				System.out
-//						.println("PERFORM CHECK SEE IF BOTH CSSLIST ARE POPULATED"
-//								+ o1);
-//				if (o1 instanceof Theme) {
-//					System.out.println(((Theme) o1).getCSSList1());
-//					System.out.println(((Theme) o1).getCSSList2());
-//				}
-//				System.out
-//						.println("END PERFORM CHECK SEE IF BOTH CSSLIST ARE POPULATED"
-//								+ o1);
+				// Object o1 = enhanceEntity.getEntity();
+				// System.out
+				// .println("PERFORM CHECK SEE IF BOTH CSSLIST ARE POPULATED"
+				// + o1);
+				// if (o1 instanceof Theme) {
+				// System.out.println(((Theme) o1).getCSSList1());
+				// System.out.println(((Theme) o1).getCSSList2());
+				// }
+				// System.out
+				// .println("END PERFORM CHECK SEE IF BOTH CSSLIST ARE POPULATED"
+				// + o1);
 			}
-			
-			//if the identical lazy collection is examed previous the eager one, the duplicated collection will not be assigned to the lazy collection 
-			//therefore need to go through relationvaluesmap and all the lazy collection for a double check
+
+			// if the identical lazy collection is examed previous the eager
+			// one, the duplicated collection will not be assigned to the lazy
+			// collection
+			// therefore need to go through relationvaluesmap and all the lazy
+			// collection for a double check
 		}
 		return enhanceEntity.getEntity();
 
