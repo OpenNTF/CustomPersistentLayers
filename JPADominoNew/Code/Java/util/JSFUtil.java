@@ -16,9 +16,11 @@ import net.sf.cglib.proxy.Enhancer;
 import org.apache.commons.lang3.StringUtils;
 
 import com.ibm.commons.util.NotImplementedException;
+import com.ibm.xsp.domino.context.DominoFacesContext;
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
+import com.ibm.xsp.util.DataPublisher;
 
 import lotus.domino.Database;
 import lotus.domino.NotesException;
@@ -31,6 +33,7 @@ import persistence.configure.Configurator;
 import persistence.core.EntityManagerFactoryImpl;
 import persistence.core.EntityManagerImpl;
 import persistence.core.KunderaPersistence;
+import persistence.graph.Node;
 import persistence.metadata.KunderaMetadataManager;
 import persistence.metadata.model.KunderaMetadata;
 
@@ -105,8 +108,8 @@ public class JSFUtil {
 			Theme theme = entityManager.find(Theme.class,
 					"954A9B5E0C30C8C5C1257A7300813F4C");
 			System.out.println("FINAL RESULT GENERATE AT JSFUTIL:  " + theme);
-			System.out.println("list1"+theme.getCSSList1());
-			System.out.println("list2"+theme.getCSSList2());			
+			System.out.println("list1" + theme.getCSSList1());
+			System.out.println("list2" + theme.getCSSList2());
 			Theme theme1 = entityManager.find(Theme.class,
 					"954A9B5E0C30C8C5C1257A7300813F4C");
 
@@ -122,11 +125,11 @@ public class JSFUtil {
 		// theme.setThemeName("newthemeHAHAHAH");
 		// theme.setThemeType(4);
 
-//		entityManager.flush();
-//		entityManager.rollback();
-//		entityManager.commit();
-//		entityManager.clear();
-//		entityManager.close();
+		// entityManager.flush();
+		// entityManager.rollback();
+		// entityManager.commit();
+		// entityManager.clear();
+		// entityManager.close();
 
 	}
 
@@ -183,6 +186,13 @@ public class JSFUtil {
 			e.printStackTrace();
 		}
 		return currentPath;
+	}
+
+	//push data to requestscope map, used in our project to show cache objects and graph
+	public static void pushData(Object obj, String name) {
+		DataPublisher dataPublisher = ((DominoFacesContext) FacesContext
+				.getCurrentInstance()).getDataPublisher();
+		dataPublisher.pushObject(dataPublisher.createShadowedList(), name, obj);
 	}
 
 }

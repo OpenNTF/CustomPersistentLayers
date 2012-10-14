@@ -25,6 +25,7 @@ import persistence.context.PersistenceCacheManager;
 import persistence.context.jointable.JoinTableData;
 import persistence.context.jointable.JoinTableData.OPERATION;
 import persistence.event.EntityEventDispatcher;
+import util.JSFUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -135,11 +136,16 @@ public class PersistenceDelegator {
 			System.out.println("POPULATE GRAPH STARTS");
 			ObjectGraph graph = new ObjectGraphBuilder().getObjectGraph(
 					nodeData, new ManagedState(), getPersistenceCache());
-			System.out.println("POPULATE GRAPH ENDS");
+			JSFUtil.pushData(graph, node.getNodeId());
+			System.out.println("MMMMMMMMMPOPULATE GRAPH ENDS graph instance is: "+graph);
+			
 			// cache the graph
+			System.out.println("");
+			System.out.println("ADD GRAPH TO CACHE STARTS");
 			getPersistenceCache().getMainCache().addGraphToCache(graph,
 					getPersistenceCache());
-
+			System.out.println("ADD GRAPH TO CACHE ENDS");
+			
 		}
 		return (E) nodeData;
 	}

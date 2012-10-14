@@ -17,7 +17,7 @@ public class Theme extends ModelBase {
 	/**
 	 * @author weihang chen
 	 */
-	private static final long serialVersionUID = 2471594683085308275L;
+	private static final long serialVersionUID = 2471594683085308276L;
 	@DominoProperty(itemName = "ThemeName")
 	private String themeName;
 
@@ -27,7 +27,7 @@ public class Theme extends ModelBase {
 	@DocumentReferences(fetch = FetchType.EAGER, foreignKey = "unid", viewName = "CSS", cascade = { CascadeType.SAVE_UPDATE })
 	private ArrayList<CSS> CSSList2;
 	// lazy, collection interface, without cascade
-	@DocumentReferences(fetch = FetchType.EAGER, foreignKey = "unid", viewName = "CSS")
+	@DocumentReferences(fetch = FetchType.LAZY, foreignKey = "unid", viewName = "CSS")
 	private Set<CSS> CSSList1;
 	
 

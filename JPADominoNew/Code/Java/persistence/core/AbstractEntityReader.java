@@ -189,9 +189,13 @@ public class AbstractEntityReader {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						System.out.println("LAZY COLLECTION INIT finished, no collection is initied, only set it up");
 					}
-				}
-				
+				}else
+					System.out
+					.println("---------RELATIONVALUEMAP ALREDAY EXIST IN THE RELATIONMAP, JUST COPY OVER THE VALUE if its not lazy"+relationSignature);
+			
+				//even the lazy collection field will be assigned value if they have the same relation, skip the initialize step
 				ReflectionUtils.setFieldObject(parentObj, collectionField,
 						relationValuesMap.get(relationSignature
 								+ childClass.getName()));
@@ -208,6 +212,9 @@ public class AbstractEntityReader {
 //						.println("END PERFORM CHECK SEE IF BOTH CSSLIST ARE POPULATED"
 //								+ o1);
 			}
+			
+			//if the identical lazy collection is examed previous the eager one, the duplicated collection will not be assigned to the lazy collection 
+			//therefore need to go through relationvaluesmap and all the lazy collection for a double check
 		}
 		return enhanceEntity.getEntity();
 

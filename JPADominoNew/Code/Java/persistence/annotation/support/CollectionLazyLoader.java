@@ -31,11 +31,11 @@ import util.JSFUtil;
 import util.ReflectionUtils;
 
 public class CollectionLazyLoader implements LazyLoader {
-	final ModelBase ownerObj;
-	final Relation relation;
-	final ConstructibleAnnotatedCollection constructibleAnnotatedCollection;
-	final PersistenceDelegator persistenceDelegator;
-	final EntityMetadata entityMetadata;
+	protected ModelBase ownerObj;
+	protected Relation relation;
+	protected ConstructibleAnnotatedCollection constructibleAnnotatedCollection;
+	protected PersistenceDelegator persistenceDelegator;
+	protected EntityMetadata entityMetadata;
 
 	public CollectionLazyLoader(ModelBase ownerObj, Relation relation,
 			ConstructibleAnnotatedCollection constructibleField,
@@ -90,7 +90,10 @@ public class CollectionLazyLoader implements LazyLoader {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("before======>");
 
+		for (Object o : collection)
+			System.out.println(o);
 		ArrayList replaceCollection = new ArrayList();
 		for (Object nodeData : collection) {
 			ObjectGraph graph = new ObjectGraphBuilder().getObjectGraph(
@@ -106,10 +109,7 @@ public class CollectionLazyLoader implements LazyLoader {
 		}
 		System.out
 				.println("!!!!!!!!!!!!!!!!!!!!!!!!LAZY LOADING ENDS!!!!!!!!!!!!!!!!!!!!!!compare the collection before and after");
-		System.out.println("before======>");
-
-		for (Object o : collection)
-			System.out.println(o);
+		
 		System.out.println("after======>");
 
 		for (Object o : replaceCollection)

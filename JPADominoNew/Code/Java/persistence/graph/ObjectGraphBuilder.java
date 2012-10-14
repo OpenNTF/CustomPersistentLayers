@@ -4,6 +4,7 @@ import persistence.lifecycle.states.NodeState;
 import persistence.metadata.KunderaMetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.annotation.DocumentReferences;
+import persistence.annotation.resource.FetchType;
 import persistence.context.CacheBase;
 import persistence.context.PersistenceCache;
 import persistence.utils.DeepEquals;
@@ -37,13 +38,15 @@ public class ObjectGraphBuilder {
 			NodeState initialNodeState, PersistenceCache persistenceCache) {
 		ObjectGraph objectGraph = new ObjectGraph();
 		this.persistenceCache = persistenceCache;
-		// getNode method also builds the graph at the same time,if there is duplicated 
+		// getNode method also builds the graph at the same time,if there is
+		// duplicated
 		Node headNode = getNode(entity, objectGraph, initialNodeState, null);
-		System.out.println("!!!!!!!HEAD NODE IS SUPPOSED TO BE CACHED NODE if its found in cache"+headNode.getData());
+		System.out
+				.println("!!!!!!!HEAD NODE IS SUPPOSED TO BE CACHED NODE if its found in cache"
+						+ headNode.getData());
 		if (headNode != null) {
 			objectGraph.setHeadNode(headNode);
 		}
-
 		Map<String, Node> nodeMap = objectGraph.getNodeMapping();
 		System.out.println("CHECKING THE RESULT GRAPH SIZE" + nodeMap.size());
 		Set<Entry<String, Node>> nodeSet = nodeMap.entrySet();
@@ -54,6 +57,7 @@ public class ObjectGraphBuilder {
 			System.out.println("CHECKING THE RESULT INDIVIDUAL NODE "
 					+ n.getData());
 		}
+		JSFUtil.pushData(objectGraph, "graph");
 		return objectGraph;
 	}
 
@@ -64,6 +68,7 @@ public class ObjectGraphBuilder {
 		Class realClass = JSFUtil.getRealClass(entity.getClass());
 		EntityMetadata entityMetadata = persistence.metadata.KunderaMetadataManager
 				.getEntityMetadata(realClass);
+
 		if (entityMetadata == null) {
 			return null;
 		}
@@ -73,10 +78,7 @@ public class ObjectGraphBuilder {
 		// graph is local graph with one head node, if there are duplicated
 		// nodes, they still share the same relations, therefore no need to
 		// build again for duplicated nodes
-		if (graph.getNode(nodeId) == null) {
-			if (replaceCollection instanceof Collection)
-				replaceCollection.add(entity);
-		}
+
 		if (graph.getNode(nodeId) != null) {
 			// IMPORTANT 1007 assign existing node data in graph to the compared
 			// entity
@@ -85,8 +87,7 @@ public class ObjectGraphBuilder {
 			System.out.println("what is entity: " + entity);
 			System.out.println("what is existing node data: "
 					+ graph.getNode(nodeId).getData());
-			if (replaceCollection instanceof Collection)
-				replaceCollection.add(graph.getNode(nodeId).getData());
+
 			return null;
 		}
 		// if a node is found in peristenceCache but not in the graph, since its
@@ -95,6 +96,19 @@ public class ObjectGraphBuilder {
 		Node node = null;
 		Node nodeInPersistenceCache = this.persistenceCache.getMainCache()
 				.getNodeFromCache(nodeId);
+
+		// current problem being identitied is that lazy fetch is processed in
+		// relation
+		// the other problem is that the replacelist is wrong, even though the
+		// cache data is correct
+
+		// if a node is not found in neither local graph or global cache, put
+		// the original object into the replacecollection
+		if (graph.getNode(nodeId) == null && nodeInPersistenceCache == null) {
+			if (replaceCollection instanceof Collection)
+				replaceCollection.add(entity);
+		}
+
 		if (nodeInPersistenceCache == null) {
 			node = new Node(nodeId, entity, initialNodeState,
 					this.persistenceCache);
@@ -108,19 +122,25 @@ public class ObjectGraphBuilder {
 			System.out.println("Cached node data: "
 					+ nodeInPersistenceCache.getData());
 			entity = nodeInPersistenceCache.getData();
+			if (replaceCollection instanceof Collection)
+				replaceCollection.add(entity);
 		}
+
 		graph.addNode(nodeId, node);
+
 		// recursive place objects into the graph
 		for (Relation relation : entityMetadata.getRelations()) {
-
-			Field targetField = relation.getProperty();
-
-			// if its lazy fetch, do not initialize or put into graph
-			boolean isEager = AnnotationUtil.isEager(targetField);
-			 if (!isEager)
-				continue;
+			// do not invoke any getter if the relation is lazy
 			Field relationTargetField = relation.getProperty();
-			System.out.println("SHOULD BE DIFFERENT: " + relationTargetField);
+			if (FetchType.LAZY == relation.getFetchType())
+				continue;
+
+			Object oo = ReflectionUtils.invokeGetterMethod(entity,
+					ReflectionUtils.getFieldGetterMethod(relationTargetField));
+			System.out
+					.println("--------------start working on a new relation: "
+							+ relationTargetField + "getter ruturn: " + oo);
+
 			Object childObject = ReflectionUtils.getFieldObject(entity,
 					relationTargetField);
 
@@ -159,7 +179,8 @@ public class ObjectGraphBuilder {
 						entity, relationTargetField);
 				System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
 
-				System.out.println("EEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!"+tmp1);
+				System.out.println("EEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!"
+						+ tmp1);
 			}
 
 			System.out.println("PROCESS RELATION " + relation + " ENDS");
