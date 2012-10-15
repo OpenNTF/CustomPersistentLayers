@@ -1,10 +1,5 @@
 package model.notes;
 
-/**
- * @author weihang chen
- */
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.util.*;
 
 import persistence.annotation.support.DominoEntityHelper;
@@ -24,23 +19,15 @@ import util.ResourceUtil;
 import lotus.domino.*;
 import lotus.domino.local.EmbeddedObject;
 
+/**
+ * @author weihang chen
+ */
 public class ModelBase extends ModelBaseAnnotation {
-	/**
-	 * Assert.notNull(db, "CouchDbConnector may not be null");
-	 * Assert.notNull(type); Assert.isTrue(Documents.isNew(entity),
-	 * "entity must be new");
-	 */
-	private static final long serialVersionUID = -126355568954326939L;
-	/**
-	 * 
-	 */
+	private static final long serialVersionUID = -126355568954326940L;
 	protected static final String ITEM_FORM_NAME = "Form";
 	private String unid;
 	public DominoDocument doc;
 
-	private boolean changed = false;
-
-	// this contructor is used for mock test
 	protected ModelBase() {
 		this(null);
 	}
@@ -49,10 +36,6 @@ public class ModelBase extends ModelBaseAnnotation {
 	// wrapping an existing dominoDocument into java object
 	protected ModelBase(Object doc) {
 		this.doc = initDoc(doc);
-
-		// if its new document, no need to load children objects in initFields
-//		if (doc != null)
-//			initFields();
 	}
 
 	// if doc is null, create a new dominoDocument + set form
@@ -69,8 +52,8 @@ public class ModelBase extends ModelBaseAnnotation {
 				if (StringUtil.isEmpty(dbName)) {
 					targetDB = DominoUtils.getCurrentDatabase();
 				} else {
-					targetDB=JSFUtil.doOpenDatabase(dbName);
-					//targetDB = DominoUtils.openDatabaseByName(dbName);
+					targetDB = JSFUtil.doOpenDatabase(dbName);
+					// targetDB = DominoUtils.openDatabaseByName(dbName);
 				}
 				String relativeDBPath = targetDB.getFilePath();
 				dominoDoc = DominoDocument.wrap(relativeDBPath, targetDB, "",
@@ -80,7 +63,7 @@ public class ModelBase extends ModelBaseAnnotation {
 				dominoDoc = (DominoDocument) docObj;
 
 			this.unid = dominoDoc.getDocument().getUniversalID();
-			System.out.println("id: " + unid);
+			System.out.println("create object instance with id: " + unid);
 
 		} catch (Exception ne) {
 			handleException(ne);
@@ -111,6 +94,7 @@ public class ModelBase extends ModelBaseAnnotation {
 	}
 
 	// CRUD - R
+	@SuppressWarnings("unchecked")
 	protected Vector<?> readValues(String itemName) {
 		Vector<?> retval = new Vector();
 		try {
@@ -166,7 +150,6 @@ public class ModelBase extends ModelBaseAnnotation {
 		} catch (Exception ne) {
 			handleException(ne);
 		}
-		changed = true;
 	}
 
 	public void deleteAttachments(String richTextItemName) {
@@ -217,24 +200,6 @@ public class ModelBase extends ModelBaseAnnotation {
 					attachmentName);
 		} catch (Exception e) {
 			handleException(e);
-		}
-	}
-
-	// CRUD - C/U
-	public void close() {
-		if (doc == null)
-			return;
-		try {
-			if (changed == true) {
-				// restore wrapped document
-				// doc.restoreWrappedDocument();
-				doc.getDocument().computeWithForm(true, true);
-				doc.save();
-			}
-			doc.recycle();
-			doc = null;
-		} catch (NotesException ne) {
-			handleException(ne);
 		}
 	}
 
@@ -290,10 +255,6 @@ public class ModelBase extends ModelBaseAnnotation {
 		if (doc.getDocument() == null || doc.getDocument().isDeleted())
 			throw new InvalidStateException("Business Object with id ["
 					+ this.getUnid() + "] is in an invalid state");
-	}
-
-	public String getDocumentUnidSignature() {
-		return "unid";
 	}
 
 }

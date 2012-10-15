@@ -39,8 +39,10 @@ public class ObjectGraphBuilder {
 			NodeState initialNodeState, PersistenceCache persistenceCache) {
 		ObjectGraph objectGraph = new ObjectGraph();
 		this.persistenceCache = persistenceCache;
-		System.out.println("----------------------SUB GRAPH BUILD FOR ENTITY " + entity + " STARTS----------------------");
+		System.out.println("----------------------SUB GRAPH BUILD FOR ENTITY "
+				+ entity + " STARTS----------------------");
 		Node headNode = getNode(entity, objectGraph, initialNodeState, null);
+
 		if (headNode != null) {
 			objectGraph.setHeadNode(headNode);
 		}
@@ -57,8 +59,9 @@ public class ObjectGraphBuilder {
 		// PUSH THIS HEAD NODE TO XPAGES REQUESTMAP, TO VIASUALIZE THE GRAPH
 		JSFUtil.pushData(objectGraph, headNode.getNodeId());
 		// PRINT TO CHECK END
-		System.out.println("----------------------SUB GRAPH BUILD FINISHS " + objectGraph
-				+ " IN SIZE OF " + nodeMap.size() + "----------------------");
+		System.out.println("----------------------SUB GRAPH BUILD FINISHS "
+				+ objectGraph + " IN SIZE OF " + nodeMap.size()
+				+ "----------------------");
 		return objectGraph;
 	}
 
@@ -81,35 +84,29 @@ public class ObjectGraphBuilder {
 		// graph is local graph with one head node, if there are duplicated
 		// nodes, they still share the same relations, therefore no need to
 		// build again for duplicated nodes
-
-		if (graph.getNode(nodeId) != null) {
-			// IMPORTANT 1007 assign existing node data in graph to the compared
-			// entity
-			System.out
-					.println("IMPORTANT ASSIGN EXISTING NODE FROM GRAPH TO CURRENT VISTING NODE");
-			System.out.println("what is entity: " + entity);
-			System.out.println("what is existing node data: "
-					+ graph.getNode(nodeId).getData());
-
-			return null;
-		}
 		// if a node is found in peristenceCache but not in the graph, since its
 		// related nodes might not
 		// exist in persistence cache, therefore need to build the graph
 		Node node = null;
 		Node nodeInPersistenceCache = this.persistenceCache.getMainCache()
 				.getNodeFromCache(nodeId);
-
-		// current problem being identitied is that lazy fetch is processed in
-		// relation
-		// the other problem is that the replacelist is wrong, even though the
-		// cache data is correct
-
+		Node nodeInGraph = graph.getNode(nodeId);
 		// if a node is not found in neither local graph or global cache, put
 		// the original object into the replacecollection
-		if (graph.getNode(nodeId) == null && nodeInPersistenceCache == null) {
-			if (replaceCollection instanceof Collection)
+		if (nodeInGraph == null && nodeInPersistenceCache == null) {
+			if (replaceCollection instanceof Collection) {
 				replaceCollection.add(entity);
+			}
+		}
+		if (nodeInGraph != null && nodeInPersistenceCache == null) {
+			System.out
+					.println("IMPORTANT ASSIGN EXISTING NODE FROM GRAPH TO CURRENT VISTING NODE");
+			System.out.println("what is entity: " + entity);
+			System.out.println("what is existing node data: "
+					+ graph.getNode(nodeId).getData());
+			if (replaceCollection instanceof Collection)
+				replaceCollection.add(nodeInGraph.getData());
+			return null;
 		}
 
 		if (nodeInPersistenceCache == null) {
@@ -132,18 +129,13 @@ public class ObjectGraphBuilder {
 		graph.addNode(nodeId, node);
 
 		// recursive place objects into the graph
+		System.out.println("relation amounts for entity: "
+				+ entityMetadata.getRelations().size());
 		for (Relation relation : entityMetadata.getRelations()) {
 			// do not invoke any getter if the relation is lazy
 			Field relationTargetField = relation.getProperty();
 			if (FetchType.LAZY == relation.getFetchType())
 				continue;
-
-			Object oo = ReflectionUtils.invokeGetterMethod(entity,
-					ReflectionUtils.getFieldGetterMethod(relationTargetField));
-			System.out
-					.println("--------------start working on a new relation: "
-							+ relationTargetField + "getter ruturn: " + oo);
-
 			Object childObject = ReflectionUtils.getFieldObject(entity,
 					relationTargetField);
 
@@ -175,13 +167,14 @@ public class ObjectGraphBuilder {
 			System.out.println("REPLACE LIST: " + replaceList);
 			System.out.println("entity: " + entity + "/assigned field: "
 					+ relationTargetField + "/assigned value: " + replaceList);
-			if (replaceList instanceof Collection&&replaceList.size()>0) {
+
+			if (replaceList instanceof Collection) {
 				ReflectionUtils.setFieldObject(entity, relationTargetField,
 						replaceList);
 				Collection tmp1 = (Collection) ReflectionUtils.getFieldObject(
 						entity, relationTargetField);
 
-				System.out.println("EEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!"
+				System.out.println("new collection replaceing the old one: "
 						+ tmp1);
 			}
 

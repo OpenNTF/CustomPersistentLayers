@@ -9,12 +9,14 @@ import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import java.util.Vector;
 
 import dao.DaoBase;
 
 import persistence.annotation.DocumentReferences;
+import persistence.client.Client;
 import persistence.core.PersistenceDelegator;
 import persistence.graph.ObjectGraph;
 import persistence.graph.ObjectGraphBuilder;
@@ -62,7 +64,7 @@ public class CollectionLazyLoader implements LazyLoader {
 				|| persistenceDelegator == null)
 			return null;
 
-		persistenceDelegator.getClient(entityMetadata);
+		Client dbClient = persistenceDelegator.getClient(entityMetadata);
 		String foreignKey = relation.getDominoForeignKey();
 		String viewName = relation.getDominoView();
 		Method foreignKeyGetter = ReflectionUtils.findMethod(ownerObj
@@ -77,18 +79,10 @@ public class CollectionLazyLoader implements LazyLoader {
 			return null;
 		Key key = new Key();
 		key.appendEntry(foreignKeyFieldValue.toString());
-		// childs = childClient.findAll(childClass, key);
-
-		DaoBase daoBase = JSFUtil.getDaoBase();
-
-		try {
-			Vector list = daoBase.findAllByKey(key, null, viewName,
-					constructibleAnnotatedCollection.getReturnType());
-			for (Object o : list) {
-				collection.add(o);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		List childs = dbClient.findAll(constructibleAnnotatedCollection
+				.getReturnType(), key);
+		for (Object o : childs) {
+			collection.add(o);
 		}
 		System.out.println("before======>");
 
@@ -109,7 +103,7 @@ public class CollectionLazyLoader implements LazyLoader {
 		}
 		System.out
 				.println("!!!!!!!!!!!!!!!!!!!!!!!!LAZY LOADING ENDS!!!!!!!!!!!!!!!!!!!!!!compare the collection before and after");
-		
+
 		System.out.println("after======>");
 
 		for (Object o : replaceCollection)

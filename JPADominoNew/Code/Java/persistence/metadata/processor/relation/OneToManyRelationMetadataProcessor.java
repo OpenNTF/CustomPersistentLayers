@@ -47,7 +47,7 @@ public class OneToManyRelationMetadataProcessor extends
 				Relation.ForeignKey.ONE_TO_MANY);
 		relation.setDominoForeignKey(ann.foreignKey());
 		relation.setDominoView(ann.viewName());
-		relation.setDominoRelationSignature(ann.foreignKey() + ann.viewName());
+		relation.setDominoRelationSignature(ann.foreignKey() + ann.viewName()+ann.fetch().name().toString());
 
 		metadata.addRelation(relationField.getName(), relation);
 		System.out.println("METHOD SIGNATURE: "

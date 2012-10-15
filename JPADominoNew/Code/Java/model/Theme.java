@@ -24,7 +24,7 @@ public class Theme extends ModelBase {
 	@DominoProperty(itemName = "ThemeType")
 	private int themeType;
 	// eager, collection concrete class, with cascade
-	@DocumentReferences(fetch = FetchType.EAGER, foreignKey = "unid", viewName = "CSS", cascade = { CascadeType.SAVE_UPDATE })
+	@DocumentReferences(fetch = FetchType.LAZY, foreignKey = "unid", viewName = "CSS", cascade = { CascadeType.SAVE_UPDATE })
 	private ArrayList<CSS> CSSList2;
 	// lazy, collection interface, without cascade
 	@DocumentReferences(fetch = FetchType.EAGER, foreignKey = "unid", viewName = "CSS")
