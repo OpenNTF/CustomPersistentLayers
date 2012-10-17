@@ -14,6 +14,7 @@ import persistence.lifecycle.states.ManagedState;
 import persistence.lifecycle.states.RemovedState;
 import persistence.lifecycle.states.TransientState;
 import persistence.loader.ClientFactory;
+import persistence.metadata.KunderaMetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.Relation;
 import persistence.context.CacheBase;
@@ -89,9 +90,13 @@ public class PersistenceDelegator {
 
 	public void persist(Object e) {
 		EntityMetadata metadata = getMetadata(e.getClass());
-		getEventDispatcher().fireEventListeners(metadata, e, PrePersist.class);
+		System.out.println("-----------------------------------PERSISTE STARTS-------------------------------------");
+		// pre events might be needed later
+		// getEventDispatcher().fireEventListeners(metadata, e,
+		// PrePersist.class);
 		ObjectGraph graph = this.graphBuilder.getObjectGraph(e,
 				new TransientState(), getPersistenceCache());
+		
 		Node headNode = graph.getHeadNode();
 		if (headNode.getParents() == null) {
 			headNode.setHeadNode(true);
@@ -101,7 +106,13 @@ public class PersistenceDelegator {
 		flush();
 		graph.getNodeMapping().clear();
 		graph = null;
-		getEventDispatcher().fireEventListeners(metadata, e, PostPersist.class);
+		System.out.println("-----------------------------------PERSISTE ENDS-------------------------------------");
+		
+		// post events might be needed later
+		// getEventDispatcher().fireEventListeners(metadata, e,
+		// PostPersist.class);
+		
+
 		log.debug("Data persisted successfully for entity : " + e.getClass());
 	}
 
@@ -137,10 +148,12 @@ public class PersistenceDelegator {
 			// JSFUtil.pushData(graph, node.getNodeId());
 
 			// cache the graph
-			System.out.println("------------------------ADD GRAPH TO CACHE STARTS-----------------------");
+			System.out
+					.println("------------------------ADD GRAPH TO CACHE STARTS-----------------------");
 			getPersistenceCache().getMainCache().addGraphToCache(graph,
 					getPersistenceCache());
-			System.out.println("------------------------ADD GRAPH TO CACHE ENDS-----------------------");
+			System.out
+					.println("------------------------ADD GRAPH TO CACHE ENDS-----------------------");
 
 		}
 		return (E) nodeData;
@@ -339,8 +352,7 @@ public class PersistenceDelegator {
 	}
 
 	public EntityMetadata getMetadata(Class<?> clazz) {
-		// return KunderaMetadataManager.getEntityMetadata(clazz);
-		return null;
+		return KunderaMetadataManager.getEntityMetadata(clazz);
 	}
 
 	// public String getId(Object entity, EntityMetadata metadata) {

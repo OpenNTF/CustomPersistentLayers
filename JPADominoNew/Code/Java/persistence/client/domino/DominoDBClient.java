@@ -23,7 +23,6 @@ import lotus.domino.ViewEntry;
 import lotus.domino.ViewEntryCollection;
 import model.notes.Key;
 import model.notes.ModelBase;
-import model.notes.ModelBaseAnnotation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,16 +70,8 @@ public class DominoDBClient implements Client {
 		System.out.println("dominodbclient persiste(node) starts");
 		Object obj1 = node.getData();
 		if (obj1 instanceof ModelBase) {
-			try {
-				((ModelBase) obj1).checkState();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("!!!!!!!!!!!!!!!!!!!! " + obj1);
 			((ModelBase) obj1).persist();
 		}
-		// throw new NotImplementedException(" Not implemented");
 	}
 
 	public void persistJoinTable(JoinTableData joinTableData) {

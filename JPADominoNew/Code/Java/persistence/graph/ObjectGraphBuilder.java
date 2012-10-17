@@ -29,7 +29,6 @@ import util.JSFUtil;
 import util.ReflectionUtils;
 
 import model.notes.ModelBase;
-import model.notes.ModelBaseAnnotation;
 
 public class ObjectGraphBuilder {
 	PersistenceCache persistenceCache;
@@ -200,9 +199,7 @@ public class ObjectGraphBuilder {
 		EntityMetadata metadata = KunderaMetadataManager
 				.getEntityMetadata(parentNode.getDataClass());
 		nodeLink.setLinkProperties(getLinkProperties(metadata, relation));
-
 		childNode.addParentNode(nodeLink, parentNode);
-
 		parentNode.addChildNode(nodeLink, childNode);
 
 	}

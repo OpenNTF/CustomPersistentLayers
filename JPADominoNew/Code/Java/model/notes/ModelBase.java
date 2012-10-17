@@ -22,7 +22,7 @@ import lotus.domino.local.EmbeddedObject;
 /**
  * @author weihang chen
  */
-public class ModelBase extends ModelBaseAnnotation {
+public class ModelBase  {
 	private static final long serialVersionUID = -126355568954326940L;
 	protected static final String ITEM_FORM_NAME = "Form";
 	private String unid;
@@ -208,7 +208,7 @@ public class ModelBase extends ModelBaseAnnotation {
 			checkState();
 			doc.getDocument().computeWithForm(true, true);
 			doc.save();
-			persistRefDocuments();
+			//persistRefDocuments();
 		} catch (Exception ne) {
 			handleException(ne);
 		}

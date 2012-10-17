@@ -2,7 +2,6 @@ package persistence.annotation.support;
 
 import java.lang.reflect.Constructor;
 
-import model.notes.ModelBaseAnnotation;
 import net.sf.cglib.proxy.Enhancer;
 import model.notes.ModelBase;
 
@@ -30,7 +29,7 @@ public class JavaBeanFactory {
 			Constructor con = clazz
 					.getConstructor(new Class[] { Object.class });
 			T object1 = (T) con.newInstance(new Object[] { dominoDoc });
-			if (!(object1 instanceof ModelBaseAnnotation))
+			if (!(object1 instanceof ModelBase))
 				return null;
 			boolean isIntercepted = DominoEntityHelper.isIntercepted(object1
 					.getClass());

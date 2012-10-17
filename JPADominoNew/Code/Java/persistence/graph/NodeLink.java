@@ -5,6 +5,9 @@ import persistence.metadata.model.Relation.ForeignKey;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ibm.commons.util.StringUtil;
+
+
 public class NodeLink {
 	private String sourceNodeId;
 	private String targetNodeId;
@@ -81,10 +84,12 @@ public class NodeLink {
 		}
 
 		NodeLink targetNodeLink = (NodeLink) obj;
-
-		return new org.apache.commons.lang3.builder.EqualsBuilder().append(
-				getSourceNodeId(), targetNodeLink.getSourceNodeId()).append(
-				getTargetNodeId(), targetNodeLink.getTargetNodeId()).isEquals();
+		if (StringUtil.equals(getSourceNodeId(), targetNodeLink
+				.getSourceNodeId())
+				&& StringUtil.equals(getTargetNodeId(), targetNodeLink
+						.getTargetNodeId()))
+			return true;
+		return false;
 	}
 
 	public String toString() {

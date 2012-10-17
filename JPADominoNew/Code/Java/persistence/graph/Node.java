@@ -141,6 +141,7 @@ public class Node implements NodeStateContext {
 		if ((this.parents == null) || (this.parents.isEmpty())) {
 			this.parents = new HashMap();
 		}
+		System.out.println("is this a node? "+node.getClass());
 		this.parents.put(nodeLink, node);
 	}
 

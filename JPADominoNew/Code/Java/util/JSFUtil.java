@@ -2,6 +2,8 @@ package util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
@@ -25,6 +27,7 @@ import com.ibm.xsp.util.DataPublisher;
 import lotus.domino.Database;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
+import model.CSS;
 import model.Theme;
 import model.notes.Key;
 
@@ -112,7 +115,12 @@ public class JSFUtil {
 			System.out.println("list2" + theme.getCSSList2());
 			Theme theme1 = entityManager.find(Theme.class,
 					"954A9B5E0C30C8C5C1257A7300813F4C");
-
+			theme1.setThemeName("CCCCC");
+			
+			List<CSS> list1=theme1.getCSSList2();
+CSS css=list1.get(0);
+css.setCSSName("CCCC");
+entityManager.persist(theme1);
 			// System.out.println(theme.getThemeName());
 			// System.out.println(theme.getThemeType());
 		} catch (Throwable e) {
@@ -124,7 +132,7 @@ public class JSFUtil {
 		// Theme theme = JavaBeanFactory.getProxy(Theme.class);
 		// theme.setThemeName("newthemeHAHAHAH");
 		// theme.setThemeType(4);
-
+		// entityManager.persist(theme1);
 		// entityManager.flush();
 		// entityManager.rollback();
 		// entityManager.commit();
@@ -133,22 +141,7 @@ public class JSFUtil {
 
 	}
 
-	public static void test1() {
-		DaoBase base = new DaoBase();
-		Key key = new Key();
-		key.appendEntry("04BCDBDF26CBD4ACC1257A3E004C1B0E");
-		try {
-			Theme theme = (Theme) base.findOneByKey(key, null, "Theme",
-					Theme.class);
-			Theme weihang = org.apache.commons.lang3.SerializationUtils
-					.clone(theme);
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+	
 
 	//
 	public static Class getRealClass(Class clazz) {
@@ -188,7 +181,8 @@ public class JSFUtil {
 		return currentPath;
 	}
 
-	//push data to requestscope map, used in our project to show cache objects and graph
+	// push data to requestscope map, used in our project to show cache objects
+	// and graph
 	public static void pushData(Object obj, String name) {
 		DataPublisher dataPublisher = ((DominoFacesContext) FacesContext
 				.getCurrentInstance()).getDataPublisher();
