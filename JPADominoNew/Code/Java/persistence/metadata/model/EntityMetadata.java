@@ -38,7 +38,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 	private String dbName;
 	private String formName;
 	private String viewName;
-	private boolean isIntercepted;
 
 	public String getDbName() {
 		return dbName;
@@ -62,14 +61,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
-	}
-
-	public boolean isIntercepted() {
-		return isIntercepted;
-	}
-
-	public void setIntercepted(boolean isIntercepted) {
-		this.isIntercepted = isIntercepted;
 	}
 
 	/*     */

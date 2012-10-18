@@ -9,7 +9,7 @@ public class CustomApplicationListener implements
 		// com.ibm.xsp.application.DesignerApplicationEx
 		System.out
 				.println("Application started!!!!!!CREATE INSTANCE OF ENTITYMANAGERFACTORY");
-		persistence.core.KunderaPersistence persistenceProvider = new persistence.core.KunderaPersistence();
+		persistence.core.DominoPersistenceProvider persistenceProvider = new persistence.core.DominoPersistenceProvider();
 		persistenceProvider.createContainerEntityManagerFactory(null, null);
 		System.out.println("CREATE INSTANCE OF ENTITYMANAGERFACTORY FINISHED");
 	}

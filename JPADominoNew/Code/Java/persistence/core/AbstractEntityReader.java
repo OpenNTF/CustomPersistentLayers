@@ -7,7 +7,7 @@ import persistence.annotation.support.CollectionLazyLoader;
 import persistence.annotation.support.ConstructibleAnnotatedCollection;
 import persistence.client.Client;
 import persistence.client.EnhanceEntity;
-import persistence.metadata.KunderaMetadataManager; //import persistence.metadata.MetadataUtils;
+import persistence.metadata.MetadataManager; //import persistence.metadata.MetadataUtils;
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.Relation;
 
@@ -80,7 +80,7 @@ public class AbstractEntityReader {
 			// same
 			if (multiplicity.equals(Relation.ForeignKey.ONE_TO_MANY)) {
 
-				childMetadata = KunderaMetadataManager
+				childMetadata = MetadataManager
 						.getEntityMetadata(childClass);
 
 				childClient = persistenceDelegator.getClient(childMetadata);

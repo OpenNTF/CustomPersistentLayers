@@ -138,16 +138,7 @@ public class AllThemesController implements Serializable {
 	}
 
 	public Theme createNewTheme() {
-		System.out.println("create new theme");
 		Theme theme = JavaBeanFactory.getProxy(Theme.class);
-		DataPublisher localDataPublisher = ((FacesContextEx) FacesContext
-				.getCurrentInstance()).getDataPublisher();
-		List localList = localDataPublisher.createShadowedList();
-
-		localDataPublisher.pushObject(localList, "jingjing", theme);
-		// localDataPublisher.pushObject(localList, arrayOfString[i] +
-		// ".READONLY", localBoolean);
-
 		return theme;
 	}
 

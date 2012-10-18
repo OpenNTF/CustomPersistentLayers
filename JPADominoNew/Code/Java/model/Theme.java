@@ -11,13 +11,13 @@ import persistence.annotation.resource.FetchType;
 
 import model.notes.ModelBase;
 
-@DominoEntity(formName = "Theme", viewName = "Theme", intercept = true)
+@DominoEntity(formName = "Theme", viewName = "Theme")
 public class Theme extends ModelBase {
 
 	/**
 	 * @author weihang chen
 	 */
-	private static final long serialVersionUID = 2471594683085308276L;
+	private static final long serialVersionUID = 2471594683085308277L;
 	@DominoProperty(itemName = "ThemeName")
 	private String themeName;
 

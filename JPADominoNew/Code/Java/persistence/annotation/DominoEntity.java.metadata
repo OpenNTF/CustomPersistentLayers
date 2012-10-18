@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="C1257A91005D3475" version="8.5" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="2de" sequence="16" unid="B0F11B45B098403CC1257A7F0052E472">
+<noteinfo noteid="2de" sequence="18" unid="B0F11B45B098403CC1257A7F0052E472">
 <created><datetime dst="true">20120920T170524,34+02</datetime></created>
-<modified><datetime dst="true">20121008T185805,50+02</datetime></modified>
-<revised><datetime dst="true">20120930T203036,62+02</datetime></revised>
-<lastaccessed><datetime dst="true">20121008T185805,50+02</datetime></lastaccessed>
+<modified><datetime dst="true">20121017T211021,70+02</datetime></modified>
+<revised><datetime dst="true">20121017T211021,69+02</datetime></revised>
+<lastaccessed><datetime dst="true">20121017T211021,70+02</datetime></lastaccessed>
 <addedtofile><datetime dst="true">20121008T185805,50+02</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
 <wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
 <item name="$Flags"><text>34567Cg~[</text></item>
 <item name="$TITLE"><text>persistence/annotation/DominoEntity.java</text></item>
+
 <item name="$DesignerVersion"><text>8.5.3</text></item>
 
 
 <item name="$FileNames" sign="true"><text>persistence/annotation/DominoEntity.java</text></item>
-
 
 </note>

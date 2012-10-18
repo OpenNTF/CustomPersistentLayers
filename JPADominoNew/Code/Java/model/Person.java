@@ -4,12 +4,12 @@ import persistence.annotation.DominoEntity;
 import persistence.annotation.DominoProperty;
 import model.notes.ModelBase;
 
-@DominoEntity(formName = "Person", viewName = "People", DBName = "names.nsf", intercept=true)
+@DominoEntity(formName = "Person", viewName = "People", DBName = "names.nsf")
 public class Person extends ModelBase {
 	/**
 	 * @author weihang chen
 	 */
-	private static final long serialVersionUID = -2434472633779410295L;
+	private static final long serialVersionUID = -2434472633779410296L;
 
 	@DominoProperty(itemName = "FullName")
 	private String fullName;

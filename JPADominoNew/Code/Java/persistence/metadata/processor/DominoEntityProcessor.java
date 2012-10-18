@@ -13,8 +13,6 @@ public class DominoEntityProcessor implements MetadataProcessor {
 		metadata.setFormName(dominoEntityAnno.formName());
 		metadata.setViewName(dominoEntityAnno.viewName());
 		metadata.setDbName(dominoEntityAnno.DBName());
-		metadata.setIntercepted(dominoEntityAnno.intercept());
-
 	}
 
 }

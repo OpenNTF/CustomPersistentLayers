@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="C1257A91005D3475" version="8.5" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="302" sequence="18" unid="2178A225433EE771C1257A7F0052E4EF">
+<noteinfo noteid="302" sequence="20" unid="2178A225433EE771C1257A7F0052E4EF">
 <created><datetime dst="true">20120920T170525,59+02</datetime></created>
-<modified><datetime dst="true">20121009T002153,72+02</datetime></modified>
-<revised><datetime dst="true">20121009T002153,71+02</datetime></revised>
-<lastaccessed><datetime dst="true">20121009T002153,72+02</datetime></lastaccessed>
+<modified><datetime dst="true">20121017T135043,58+02</datetime></modified>
+<revised><datetime dst="true">20121017T135043,57+02</datetime></revised>
+<lastaccessed><datetime dst="true">20121017T135043,58+02</datetime></lastaccessed>
 <addedtofile><datetime dst="true">20121008T185805,68+02</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
 <wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>

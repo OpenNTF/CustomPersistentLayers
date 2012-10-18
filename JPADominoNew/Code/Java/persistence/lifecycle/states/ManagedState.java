@@ -5,7 +5,7 @@ import persistence.client.EnhanceEntity;
 import persistence.graph.Node;
 import persistence.graph.ObjectGraphBuilder;
 import persistence.lifecycle.NodeStateContext;
-import persistence.metadata.KunderaMetadataManager;
+import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.KunderaMetadata;
 import persistence.core.EntityReader;
@@ -56,7 +56,7 @@ public class ManagedState extends NodeState {
 	public void handleFind(NodeStateContext nodeStateContext) {
 		Client client = nodeStateContext.getClient();
 		Class nodeDataClass = nodeStateContext.getDataClass();
-		EntityMetadata entityMetadata = KunderaMetadataManager
+		EntityMetadata entityMetadata = MetadataManager
 				.getEntityMetadata(nodeDataClass);
 
 		String nodeId = nodeStateContext.getNodeId();

@@ -1,7 +1,7 @@
 package persistence.graph;
 
 import persistence.lifecycle.states.NodeState;
-import persistence.metadata.KunderaMetadataManager;
+import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.annotation.DocumentReferences;
 import persistence.annotation.resource.FetchType;
@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import net.sf.cglib.proxy.Enhancer;
 
 import persistence.metadata.model.Relation;
-import util.AnnotationUtil;
 import util.JSFUtil;
 import util.ReflectionUtils;
 
@@ -71,7 +70,7 @@ public class ObjectGraphBuilder {
 		// entitymetadata is stored for origainl classes, not enhanced
 		// ones always need to perform check to get the real class
 		Class realClass = JSFUtil.getRealClass(entity.getClass());
-		EntityMetadata entityMetadata = persistence.metadata.KunderaMetadataManager
+		EntityMetadata entityMetadata = persistence.metadata.MetadataManager
 				.getEntityMetadata(realClass);
 
 		if (entityMetadata == null) {
@@ -196,7 +195,7 @@ public class ObjectGraphBuilder {
 				.getNodeId());
 		nodeLink.setMultiplicity(relation.getType());
 
-		EntityMetadata metadata = KunderaMetadataManager
+		EntityMetadata metadata = MetadataManager
 				.getEntityMetadata(parentNode.getDataClass());
 		nodeLink.setLinkProperties(getLinkProperties(metadata, relation));
 		childNode.addParentNode(nodeLink, parentNode);

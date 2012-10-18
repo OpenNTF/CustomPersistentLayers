@@ -35,11 +35,11 @@ import persistence.annotation.support.JavaBeanFactory;
 import persistence.configure.Configurator;
 import persistence.core.EntityManagerFactoryImpl;
 import persistence.core.EntityManagerImpl;
-import persistence.core.KunderaPersistence;
 import persistence.graph.Node;
-import persistence.metadata.KunderaMetadataManager;
+import persistence.metadata.MetadataManager;
 import persistence.metadata.model.KunderaMetadata;
 
+import persistence.core.DominoPersistenceProvider;
 import dao.DaoBase;
 import exception.notes.InvalidStateException;
 
@@ -103,7 +103,7 @@ public class JSFUtil {
 
 	public static void test() {
 
-		EntityManagerFactory emf = KunderaPersistence.getEntityManagerFactory();
+		EntityManagerFactory emf = DominoPersistenceProvider.getEntityManagerFactory();
 		EntityManagerImpl entityManager = (EntityManagerImpl) emf
 				.createEntityManager();
 		entityManager.begin();
@@ -115,11 +115,11 @@ public class JSFUtil {
 			System.out.println("list2" + theme.getCSSList2());
 			Theme theme1 = entityManager.find(Theme.class,
 					"954A9B5E0C30C8C5C1257A7300813F4C");
-			theme1.setThemeName("CCCCC");
+			theme1.setThemeName("IIIII");
 			
 			List<CSS> list1=theme1.getCSSList2();
 CSS css=list1.get(0);
-css.setCSSName("CCCC");
+css.setCSSName("IIIII");
 entityManager.persist(theme1);
 			// System.out.println(theme.getThemeName());
 			// System.out.println(theme.getThemeType());

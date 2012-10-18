@@ -21,7 +21,7 @@ import persistence.core.PersistenceDelegator;
 import persistence.graph.ObjectGraph;
 import persistence.graph.ObjectGraphBuilder;
 import persistence.lifecycle.states.ManagedState;
-import persistence.metadata.KunderaMetadataManager;
+import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.Relation;
 

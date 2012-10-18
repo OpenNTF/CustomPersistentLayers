@@ -14,7 +14,7 @@ import persistence.lifecycle.states.ManagedState;
 import persistence.lifecycle.states.RemovedState;
 import persistence.lifecycle.states.TransientState;
 import persistence.loader.ClientFactory;
-import persistence.metadata.KunderaMetadataManager;
+import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.Relation;
 import persistence.context.CacheBase;
@@ -352,7 +352,7 @@ public class PersistenceDelegator {
 	}
 
 	public EntityMetadata getMetadata(Class<?> clazz) {
-		return KunderaMetadataManager.getEntityMetadata(clazz);
+		return MetadataManager.getEntityMetadata(clazz);
 	}
 
 	// public String getId(Object entity, EntityMetadata metadata) {
