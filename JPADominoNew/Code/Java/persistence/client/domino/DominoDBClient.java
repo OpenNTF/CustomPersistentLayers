@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.persistence.PersistenceException;
+
 import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
@@ -31,12 +33,6 @@ import com.ibm.commons.util.NotImplementedException;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
-import exception.notes.CreateException;
-import exception.notes.DeleteException;
-import exception.notes.EmptyKeyException;
-import exception.notes.InvalidIdException;
-import exception.notes.InvalidStateException;
-import exception.notes.ViewNotFoundException;
 
 /**
  * 
@@ -94,13 +90,13 @@ public class DominoDBClient implements Client {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	public Object find(Class entityClass, Key key) throws EmptyKeyException,
-			ViewNotFoundException, NotesException, SecurityException,
-			IllegalArgumentException, CreateException, NoSuchMethodException,
+	public Object find(Class entityClass, Key key) throws PersistenceException,
+	PersistenceException, NotesException, SecurityException,
+			IllegalArgumentException, NoSuchMethodException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException {
 		if (!(key instanceof Key) || key.getEntries().size() == 0)
-			throw new EmptyKeyException("empty key");
+			throw new PersistenceException("empty key");
 		String viewName = DominoEntityMetaDataUtil.getViewName(entityClass);
 		View lup = ResourceUtil.getViewByName1(dominoDb, viewName);
 		Document doc = lup.getDocumentByKey(key.getEntries(), true);
@@ -111,7 +107,7 @@ public class DominoDBClient implements Client {
 	}
 
 	public List findAll(Class entityClass, Key key)
-			throws ViewNotFoundException, NotesException, SecurityException,
+			throws PersistenceException, NotesException, SecurityException,
 			IllegalArgumentException, NoSuchMethodException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException {
@@ -140,7 +136,7 @@ public class DominoDBClient implements Client {
 	 * @throws ViewNotFoundException
 	 * @throws NotesException
 	 */
-	public void delete(Object entity, Key key) throws ViewNotFoundException,
+	public void delete(Object entity, Key key) throws PersistenceException,
 			NotesException {
 		String viewName = DominoEntityMetaDataUtil.getViewName(entity
 				.getClass());
@@ -224,7 +220,7 @@ public class DominoDBClient implements Client {
 	private Object documentToJava(String dbName, Document doc, Class clazz)
 			throws SecurityException, NoSuchMethodException,
 			IllegalArgumentException, InstantiationException,
-			IllegalAccessException, InvocationTargetException, CreateException {
+			IllegalAccessException, InvocationTargetException {
 		Object obj = null;
 		DominoDocument dominoDoc = DominoDocument.wrap(dbName, doc, "both",
 				"force", true, "", "");

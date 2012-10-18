@@ -2,7 +2,8 @@ package persistence.cache;
 
 
 /*    */ import java.util.Map;
-/*    */ import javax.persistence.Cache;
+import javax.persistence.Cache;
+import javax.persistence.PersistenceException;
 /*    */ 
 /*    */ public class NonOperationalCacheProvider
 /*    */   implements CacheProvider
@@ -19,7 +20,7 @@ package persistence.cache;
 /*    */   }
 /*    */ 
 /*    */   public Cache getCache(String name)
-/*    */     throws CacheException
+/*    */     throws PersistenceException
 /*    */   {
 /* 75 */     return null;
 /*    */   }
@@ -29,7 +30,7 @@ package persistence.cache;
 /*    */   }
 /*    */ 
 /*    */   public void init(String cacheResourceName)
-/*    */     throws CacheException
+/*    */     throws PersistenceException
 /*    */   {
 /*    */   }
 /*    */ }

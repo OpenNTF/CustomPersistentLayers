@@ -13,9 +13,7 @@ import java.util.Vector;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
-import exception.notes.CreateException;
-import exception.notes.InvalidIdException;
-import exception.notes.ViewNotFoundException;
+
 
 import lotus.domino.NotesException;
 import model.CSS;

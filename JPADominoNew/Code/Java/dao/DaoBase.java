@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
+import javax.persistence.PersistenceException;
+
 import persistence.annotation.support.JavaBeanFactory;
 
 import com.ibm.xsp.model.domino.DominoUtils;
@@ -12,11 +14,7 @@ import lotus.domino.*;
 import model.notes.Key;
 import util.ResourceUtil;
 
-import exception.notes.CreateException;
-import exception.notes.DeleteException;
-import exception.notes.EmptyKeyException;
-import exception.notes.InvalidIdException;
-import exception.notes.ViewNotFoundException;
+
 
 public class DaoBase implements Serializable {
 
@@ -31,13 +29,13 @@ public class DaoBase implements Serializable {
 			if (lup != null) {
 				Document doc = lup.getDocumentByKey(key.getEntries(), true);
 				if (doc == null) {
-					InvalidIdException ex0 = new InvalidIdException(
+					PersistenceException ex0 = new PersistenceException(
 							"Business Object with ID " + key + " not found!");
 					throw ex0;
 				}
 				boolean b = doc.remove(true);
 				if (b == false) {
-					DeleteException ex1 = new DeleteException(
+					PersistenceException ex1 = new PersistenceException(
 							"Business Object with ID " + key
 									+ " can not be deleted");
 					throw ex1;
@@ -102,7 +100,7 @@ public class DaoBase implements Serializable {
 	public Object documentToJava(String dbName, Document doc, Class clazz)
 			throws SecurityException, NoSuchMethodException,
 			IllegalArgumentException, InstantiationException,
-			IllegalAccessException, InvocationTargetException, CreateException {
+			IllegalAccessException, InvocationTargetException, PersistenceException {
 		Object obj = null;
 		DominoDocument dominoDoc = DominoDocument.wrap(dbName, doc, "both",
 				"force", true, "", "");
@@ -111,23 +109,23 @@ public class DaoBase implements Serializable {
 		// Constructor con = clazz.getConstructor(new Class[] { Object.class });
 		// obj = con.newInstance(new Object[] { dominoDoc });
 		if (obj == null)
-			throw new CreateException(
+			throw new PersistenceException(
 					"document fails to be converted to Java object: documentToJava(Document doc, Class clazz)");
 		return obj;
 	}
 
 	public Object findOneByKey(Key key, Database db, String viewName,
-			Class<?> clazz) throws InvalidIdException, ViewNotFoundException,
-			SecurityException, IllegalArgumentException, CreateException,
+			Class<?> clazz) throws PersistenceException, PersistenceException,
+			SecurityException, IllegalArgumentException, PersistenceException,
 			NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException,
-			EmptyKeyException, NotesException {
+			PersistenceException, NotesException {
 		if (!(key instanceof Key) || key.getEntries().size() == 0)
-			throw new EmptyKeyException("empty key");
+			throw new PersistenceException("empty key");
 		View lup = ResourceUtil.getViewByName1(db, viewName);
 		Document doc = lup.getDocumentByKey(key.getEntries(), true);
 		if (doc == null) {
-			InvalidIdException idex = new InvalidIdException(
+			PersistenceException idex = new PersistenceException(
 					"Business Object with ID " + key + " not found!");
 			throw idex;
 		}
@@ -141,8 +139,8 @@ public class DaoBase implements Serializable {
 	}
 
 	public Vector<?> findAllByKey(Key key, Database db, String viewName,
-			Class<?> clazz) throws InvalidIdException, ViewNotFoundException,
-			SecurityException, IllegalArgumentException, CreateException,
+			Class<?> clazz) throws PersistenceException, PersistenceException,
+			SecurityException, IllegalArgumentException,
 			NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException, NotesException {
 		View lup = ResourceUtil.getViewByName1(db, viewName);

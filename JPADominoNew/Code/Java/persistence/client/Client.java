@@ -7,24 +7,23 @@ import persistence.core.EntityReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
-import exception.notes.CreateException;
-import exception.notes.EmptyKeyException;
-import exception.notes.ViewNotFoundException;
 
 import lotus.domino.NotesException;
 import model.notes.Key;
 
 public abstract interface Client<Q extends Query> {
 	public abstract Object find(Class paramClass, Key paramObject)
-			throws EmptyKeyException, ViewNotFoundException, NotesException,
-			SecurityException, IllegalArgumentException, CreateException,
+			throws PersistenceException, NotesException,
+			SecurityException, IllegalArgumentException,
 			NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException;
 
 	public abstract <E> List<E> findAll(Class<E> paramClass, Key key)
-			throws ViewNotFoundException, NotesException, SecurityException,
+			throws PersistenceException, NotesException, SecurityException,
 			IllegalArgumentException, NoSuchMethodException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException;

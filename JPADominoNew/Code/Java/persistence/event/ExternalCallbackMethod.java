@@ -2,7 +2,9 @@ package persistence.event;
 
 
 /*    */ import java.lang.reflect.InvocationTargetException;
-/*    */ import java.lang.reflect.Method;
+import java.lang.reflect.Method;
+
+import javax.persistence.PersistenceException;
 /*    */ 
 /*    */ public final class ExternalCallbackMethod
 /*    */   implements CallbackMethod
@@ -16,7 +18,7 @@ package persistence.event;
 /* 46 */     this.method = method;
 /*    */   }
 /*    */ 
-/*    */   public void invoke(Object entity) throws EventListenerException
+/*    */   public void invoke(Object entity) throws PersistenceException
 /*    */   {
 /* 51 */     if (!(this.method.isAccessible()))
 /* 52 */       this.method.setAccessible(true);
@@ -26,19 +28,19 @@ package persistence.event;
 /*    */     }
 /*    */     catch (IllegalArgumentException e)
 /*    */     {
-/* 59 */       throw new EventListenerException(e);
+/* 59 */       throw new PersistenceException(e);
 /*    */     }
 /*    */     catch (IllegalAccessException e)
 /*    */     {
-/* 63 */       throw new EventListenerException(e);
+/* 63 */       throw new PersistenceException(e);
 /*    */     }
 /*    */     catch (InvocationTargetException e)
 /*    */     {
-/* 67 */       throw new EventListenerException(e);
+/* 67 */       throw new PersistenceException(e);
 /*    */     }
 /*    */     catch (InstantiationException e)
 /*    */     {
-/* 71 */       throw new EventListenerException(e);
+/* 71 */       throw new PersistenceException(e);
 /*    */     }
 /*    */   }
 /*    */ 

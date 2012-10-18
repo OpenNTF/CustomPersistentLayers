@@ -45,7 +45,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ibm.commons.util.StringUtil;
 
-import exception.notes.ViewNotFoundException;
 
 public class AbstractEntityReader {
 	private static Log log = LogFactory.getLog(AbstractEntityReader.class);
@@ -259,7 +258,7 @@ public class AbstractEntityReader {
 			return PropertyAccessorHelper.getId(entity, metadata);
 		} catch (RuntimeException e) {
 			log.error("Error while Getting ID. Details:" + e.getMessage());
-			throw new EntityReaderException(
+			throw new PersistenceException(
 					"Error while Getting ID for entity " + entity, e);
 		}
 	}

@@ -3,28 +3,28 @@ package util;
 /**
  * @author weihang chen
  */
-import com.ibm.xsp.model.domino.DominoUtils;
+import javax.persistence.PersistenceException;
 
-import exception.notes.ViewNotFoundException;
+import com.ibm.xsp.model.domino.DominoUtils;
 
 import lotus.domino.*;
 
 public class ResourceUtil {
 	public static View getViewByName(String viewName)
-			throws ViewNotFoundException, NotesException {
+			throws PersistenceException, NotesException {
 		View view = null;
 		Database db = DominoUtils.getCurrentDatabase();
 		if (db.isOpen())
 			view = db.getView(viewName);
 		if (view == null)
-			throw new ViewNotFoundException("view can not be found");
+			throw new PersistenceException("view can not be found");
 		if (db.isFTIndexed())
 			db.updateFTIndex(true);
 		return view;
 	}
 
 	public static View getViewByName1(Database db, String viewName)
-			throws ViewNotFoundException, NotesException {
+			throws PersistenceException, NotesException {
 		if (db == null)
 			return getViewByName(viewName);
 		View view = null;
@@ -35,7 +35,7 @@ public class ResourceUtil {
 		if (db.isOpen()) {
 			view = db.getView(viewName);
 			if (view == null)
-				throw new ViewNotFoundException("view can not be found");
+				throw new PersistenceException("view can not be found");
 			if (db.isFTIndexed())
 				db.updateFTIndex(true);
 		}

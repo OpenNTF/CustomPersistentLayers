@@ -1,6 +1,5 @@
 package persistence.core;
 
-import persistence.cache.CacheException;
 import persistence.cache.CacheProvider;
 import persistence.cache.NonOperationalCacheProvider;
 import persistence.loader.ClientFactory;
@@ -14,6 +13,7 @@ import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContextType;
+import javax.persistence.PersistenceException;
 import javax.persistence.PersistenceUnitUtil;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
@@ -161,16 +161,16 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 						.newInstance();
 				cacheProvider.init(classResourceName);
 			} catch (ClassNotFoundException e) {
-				throw new CacheException(
+				throw new PersistenceException(
 						"Could not find class "
 								+ cacheProviderClassName
 								+ ". Check whether you spelled it correctly in persistence.xml",
 						e);
 			} catch (InstantiationException e) {
-				throw new CacheException("Could not instantiate "
+				throw new PersistenceException("Could not instantiate "
 						+ cacheProviderClassName, e);
 			} catch (IllegalAccessException e) {
-				throw new CacheException(e);
+				throw new PersistenceException(e);
 			}
 		}
 		if (cacheProvider == null) {

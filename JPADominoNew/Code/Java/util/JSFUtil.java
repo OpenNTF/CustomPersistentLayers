@@ -41,7 +41,6 @@ import persistence.metadata.model.KunderaMetadata;
 
 import persistence.core.DominoPersistenceProvider;
 import dao.DaoBase;
-import exception.notes.InvalidStateException;
 
 public class JSFUtil {
 	public static Object getVariableValue(String varName) {

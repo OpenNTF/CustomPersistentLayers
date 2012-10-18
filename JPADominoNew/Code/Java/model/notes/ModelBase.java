@@ -2,15 +2,15 @@ package model.notes;
 
 import java.util.*;
 
+import javax.persistence.PersistenceException;
+
 import persistence.annotation.support.DominoEntityHelper;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
-import exception.notes.DeleteException;
-import exception.notes.InvalidStateException;
-import exception.notes.ViewNotFoundException;
+
 
 import util.Assert;
 import util.JSFUtil;
@@ -215,7 +215,7 @@ public class ModelBase  {
 	}
 
 	protected long getEntityCount(Key key, String viewName)
-			throws ViewNotFoundException {
+			throws PersistenceException {
 		long n = 0;
 		try {
 			View lup = ResourceUtil.getViewByName(viewName);
@@ -232,7 +232,7 @@ public class ModelBase  {
 	}
 
 	// CRUD - D
-	public boolean delete() throws DeleteException, InvalidStateException,
+	public boolean delete() throws PersistenceException,
 			NotesException {
 		this.checkState();
 		boolean ret = false;
@@ -249,11 +249,11 @@ public class ModelBase  {
 
 	// if not even restore wrappeddocument returns something, there must be
 	// something wrong
-	public void checkState() throws InvalidStateException, NotesException {
+	public void checkState() throws PersistenceException, NotesException {
 		if (doc.getDocument().isDeleted())
 			doc.restoreWrappedDocument();
 		if (doc.getDocument() == null || doc.getDocument().isDeleted())
-			throw new InvalidStateException("Business Object with id ["
+			throw new PersistenceException("Business Object with id ["
 					+ this.getUnid() + "] is in an invalid state");
 	}
 

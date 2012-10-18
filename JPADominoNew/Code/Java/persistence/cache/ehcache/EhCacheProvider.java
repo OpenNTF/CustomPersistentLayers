@@ -7,13 +7,16 @@ package persistence.cache.ehcache;
 /*     */ import java.util.List;
 /*     */ import java.util.Map;
 /*     */ import java.util.Set;
+
+import javax.persistence.PersistenceException;
+
 /*     */ import net.sf.ehcache.CacheManager;
 /*     */ import net.sf.ehcache.Ehcache;
 /*     */ import net.sf.ehcache.event.CacheEventListener;
 /*     */ import net.sf.ehcache.event.RegisteredEventListeners;
 /*     */ import net.sf.ehcache.util.ClassLoaderUtil;
 /*     */ import org.apache.commons.logging.Log;
-/*     */ import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 /*     */ 
 /*     */ public class EhCacheProvider
 /*     */   implements CacheProvider
@@ -102,7 +105,7 @@ package persistence.cache.ehcache;
 /*     */     catch (net.sf.ehcache.CacheException e)
 /*     */     {
 /* 155 */       if (e.getMessage().startsWith("Cannot parseConfiguration CacheManager. Attempt to create a new instance of CacheManager using the diskStorePath"));
-/* 163 */       throw new persistence.cache.CacheException(e);
+/* 163 */       throw new PersistenceException(e);
 /*     */     }
 /*     */     finally
 /*     */     {
@@ -136,7 +139,7 @@ package persistence.cache.ehcache;
 /*     */   {
 /* 207 */     if (this.manager == null)
 /*     */     {
-/* 209 */       throw new persistence.cache.CacheException("CacheFactory was not initialized. Call init() before creating a cache.");
+/* 209 */       throw new PersistenceException("CacheFactory was not initialized. Call init() before creating a cache.");
 /*     */     }
 /*     */     try
 /*     */     {
@@ -168,12 +171,12 @@ package persistence.cache.ehcache;
 /*     */     }
 /*     */     catch (net.sf.ehcache.CacheException e)
 /*     */     {
-/* 245 */       throw new persistence.cache.CacheException("Could not create cache: " + name, e);
+/* 245 */       throw new PersistenceException("Could not create cache: " + name, e);
 /*     */     }
 /*     */   }
 /*     */ 
 /*     */   public javax.persistence.Cache getCache(String cacheName)
-/*     */     throws persistence.cache.CacheException
+/*     */     throws PersistenceException
 /*     */   {
 /* 258 */     if (this.cache == null)
 /*     */     {

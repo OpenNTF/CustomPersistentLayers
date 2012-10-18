@@ -1,11 +1,12 @@
 package persistence.event;
 
+import javax.persistence.PersistenceException;
 
-import persistence.event.EventListenerException;
+
 
 public abstract interface CallbackMethod
 {
   public abstract void invoke(Object paramObject)
-    throws EventListenerException;
+    throws PersistenceException;
 }
 

@@ -1,9 +1,10 @@
 package persistence.utils;
 
-/*     */ import persistence.exception.KunderaException;
 /*     */ import java.lang.reflect.Field;
 /*     */ import java.lang.reflect.ParameterizedType;
-/*     */ import java.lang.reflect.Type;
+import java.lang.reflect.Type;
+
+import javax.persistence.PersistenceException;
 /*     */ 
 /*     */ public class ReflectUtils
 /*     */ {
@@ -89,7 +90,7 @@ package persistence.utils;
 /*     */     }
 /*     */     catch (ClassNotFoundException e)
 /*     */     {
-/* 160 */       throw new KunderaException(e);
+/* 160 */       throw new PersistenceException(e);
 /*     */     }
 /*     */   }
 /*     */ 

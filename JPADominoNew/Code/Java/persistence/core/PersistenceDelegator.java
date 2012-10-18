@@ -1,6 +1,5 @@
 package persistence.core;
 
-import persistence.exception.KunderaException;
 import persistence.client.Client;
 import persistence.client.domino.DominoDBClient;
 import persistence.client.domino.DominoEntityReader;
@@ -61,9 +60,7 @@ import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
-import exception.notes.CreateException;
-import exception.notes.EmptyKeyException;
-import exception.notes.ViewNotFoundException;
+
 
 public class PersistenceDelegator {
 	private static final Log log = LogFactory
