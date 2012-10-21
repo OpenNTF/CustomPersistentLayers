@@ -16,17 +16,21 @@ import javax.faces.context.FacesContext;
 import persistence.annotation.support.JavaBeanFactory;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.acl.NoAccessSignal;
 import com.ibm.xsp.context.FacesContextEx;
+import com.ibm.xsp.domino.ResourceHandler;
 import com.ibm.xsp.model.domino.DominoDocumentData;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 import com.ibm.xsp.util.DataPublisher;
 
+import lotus.domino.Agent;
 import lotus.domino.Database;
 import lotus.domino.Item;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
+import lotus.domino.cso.Document;
 import model.CSS;
 import model.Person;
 import model.Theme;
@@ -38,10 +42,21 @@ public class AllThemesController implements Serializable {
 	 */
 	private static final long serialVersionUID = -1999072042736004730L;
 	public List myList;
+	public Vector list1;
 
 	public AllThemesController() {
 		myList = new ArrayList();
+		list1 = new Vector();
 	}
+
+	public void setList1(Vector list1) {
+		this.list1 = list1;
+	}
+
+	public Vector getList1() {
+		return list1;
+	}
+
 
 	public List getMyList() {
 		return myList;
@@ -53,10 +68,14 @@ public class AllThemesController implements Serializable {
 
 	// get all themes
 	public Vector<Theme> getAllThemes() {
+		if (list1.size() > 0)
+			return list1;
 		ThemeDao themeDao = DaoFactory.getThemeDao();
 		Vector<Theme> themes = new Vector<Theme>();
+
 		try {
 			themes = themeDao.getAllThemes();
+			list1 = themes;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,18 +83,6 @@ public class AllThemesController implements Serializable {
 		return themes;
 	}
 
-	// get all themes
-	public Vector<Person> getPeople() {
-		PersonDao personDao = DaoFactory.getPersonDao();
-		Vector<Person> people = new Vector<Person>();
-		try {
-			people = personDao.getPeople();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return people;
-	}
 
 	// hard coded persist example
 	public void hardcodPersist() {

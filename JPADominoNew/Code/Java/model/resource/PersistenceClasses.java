@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import model.CSS;
+import model.Location;
 import model.Theme;
 
 public class PersistenceClasses {
@@ -15,6 +16,8 @@ public class PersistenceClasses {
 			persistenceClasses = new HashMap<String, Class<?>>();
 			persistenceClasses.put("model.Theme", Theme.class);
 			persistenceClasses.put("model.CSS", CSS.class);
+			persistenceClasses.put("model.Location", Location.class);
+			
 		}
 		return persistenceClasses;
 	}

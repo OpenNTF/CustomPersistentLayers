@@ -17,11 +17,18 @@
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
   <managed-bean>
-    <managed-bean-name>TestController
+    <managed-bean-name>PeopleLoadNamesNSFController
 		</managed-bean-name>
-    <managed-bean-class>controller.TestController
+    <managed-bean-class>controller.PeopleLoadNamesNSFController
 		</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  <managed-bean>
+    <managed-bean-name>LocationController
+		</managed-bean-name>
+    <managed-bean-class>controller.LocationController
+		</managed-bean-class>
+    <managed-bean-scope>view</managed-bean-scope>
   </managed-bean>
   <managed-bean>
     <managed-bean-name>JSFUtil

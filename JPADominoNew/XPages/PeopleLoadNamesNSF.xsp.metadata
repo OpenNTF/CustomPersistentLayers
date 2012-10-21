@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="C1257A91005D3475" version="8.5" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="13e" sequence="19" unid="ECEABCB315F5C5CEC1257A7F0052DDBD">
-<created><datetime dst="true">20120920T170507,17+02</datetime></created>
-<modified><datetime dst="true">20121008T185803,42+02</datetime></modified>
-<revised><datetime dst="true">20120930T203034,12+02</datetime></revised>
-<lastaccessed><datetime dst="true">20121008T185803,42+02</datetime></lastaccessed>
-<addedtofile><datetime dst="true">20121008T185803,42+02</datetime></addedtofile></noteinfo>
+<noteinfo noteid="54e" sequence="5" unid="9C444455278458B5C1257A9D006BCA11">
+<created><datetime dst="true">20121020T213720,81+02</datetime></created>
+<modified><datetime dst="true">20121020T214106,78+02</datetime></modified>
+<revised><datetime dst="true">20121020T214106,77+02</datetime></revised>
+<lastaccessed><datetime dst="true">20121020T214106,78+02</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20121020T213720,82+02</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
 <wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
-<item name="$Flags"><text>gC~4K</text></item>
 <item name="$TITLE"><text>PeopleLoadNamesNSF.xsp</text></item>
-
-
-<item name="$FileNames" sign="true"><text>PeopleLoadNamesNSF.xsp</text></item>
+<item name="$Flags"><text>gC~4K</text></item>
 <item name="$DesignerVersion"><text>8.5.3</text></item>
 
 
 
 
-</note>
+
+
+
+<item name="$FileNames" sign="true"><text>PeopleLoadNamesNSF.xsp</text></item></note>

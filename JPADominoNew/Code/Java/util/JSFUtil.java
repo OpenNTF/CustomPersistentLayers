@@ -85,24 +85,10 @@ public class JSFUtil {
 		return null;
 	}
 
-	public static void bark1(Session session) {
-		// Database d=null;
-		// try {
-		// d =
-		// session.getDatabase(DominoUtils.getCurrentDatabase().getServer(),"names.nsf");
-		// } catch (NotesException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//		
-		Database d = doOpenDatabase("names.nsf");
-		System.out.println("KKK" + d);
-		// System.out.println("1111"+d);
-	}
-
 	public static void test() {
 
-		EntityManagerFactory emf = DominoPersistenceProvider.getEntityManagerFactory();
+		EntityManagerFactory emf = DominoPersistenceProvider
+				.getEntityManagerFactory();
 		EntityManagerImpl entityManager = (EntityManagerImpl) emf
 				.createEntityManager();
 		entityManager.begin();
@@ -115,11 +101,12 @@ public class JSFUtil {
 			Theme theme1 = entityManager.find(Theme.class,
 					"954A9B5E0C30C8C5C1257A7300813F4C");
 			theme1.setThemeName("IIIII");
+
+			List<CSS> list1 = theme1.getCSSList2();
+			CSS css = list1.get(0);
+			css.setCSSName("IIIII");
+			entityManager.persist(theme1);
 			
-			List<CSS> list1=theme1.getCSSList2();
-CSS css=list1.get(0);
-css.setCSSName("IIIII");
-entityManager.persist(theme1);
 			// System.out.println(theme.getThemeName());
 			// System.out.println(theme.getThemeType());
 		} catch (Throwable e) {
@@ -139,8 +126,6 @@ entityManager.persist(theme1);
 		// entityManager.close();
 
 	}
-
-	
 
 	//
 	public static Class getRealClass(Class clazz) {
