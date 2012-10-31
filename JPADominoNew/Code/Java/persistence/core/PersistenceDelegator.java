@@ -26,6 +26,7 @@ import persistence.context.jointable.JoinTableData;
 import persistence.context.jointable.JoinTableData.OPERATION;
 import persistence.event.EntityEventDispatcher;
 import util.CloneUtil;
+import util.CommonUtil;
 import util.JSFUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,7 +50,6 @@ import javax.persistence.Query;
 
 import lotus.domino.Database;
 import lotus.domino.NotesException;
-import model.Theme;
 import model.notes.Key;
 
 import org.apache.commons.logging.Log;
@@ -60,8 +60,6 @@ import org.apache.lucene.util.Version;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
-
-
 
 public class PersistenceDelegator {
 	private static final Log log = LogFactory
@@ -88,13 +86,14 @@ public class PersistenceDelegator {
 
 	public void persist(Object e) {
 		EntityMetadata metadata = getMetadata(e.getClass());
-		System.out.println("-----------------------------------PERSISTE STARTS-------------------------------------");
+		System.out
+				.println("-----------------------------------PERSISTE STARTS-------------------------------------");
 		// pre events might be needed later
 		// getEventDispatcher().fireEventListeners(metadata, e,
 		// PrePersist.class);
 		ObjectGraph graph = this.graphBuilder.getObjectGraph(e,
 				new TransientState(), getPersistenceCache());
-		
+
 		Node headNode = graph.getHeadNode();
 		if (headNode.getParents() == null) {
 			headNode.setHeadNode(true);
@@ -104,16 +103,17 @@ public class PersistenceDelegator {
 		flush();
 		graph.getNodeMapping().clear();
 		graph = null;
-		System.out.println("-----------------------------------PERSISTE ENDS-------------------------------------");
-		
+		System.out
+				.println("-----------------------------------PERSISTE ENDS-------------------------------------");
+
 		// post events might be needed later
 		// getEventDispatcher().fireEventListeners(metadata, e,
 		// PostPersist.class);
-		
 
 		log.debug("Data persisted successfully for entity : " + e.getClass());
 	}
 
+	@SuppressWarnings("unchecked")
 	public <E> E find(Class<E> entityClass, Object primaryKey) {
 
 		boolean isCached = true;
@@ -122,7 +122,6 @@ public class PersistenceDelegator {
 		MainCache mainCache = (MainCache) getPersistenceCache().getMainCache();
 
 		Node node = mainCache.getNodeFromCache(nodeId);
-		System.out.println("!!!!!!!is node found from cache?? " + node);
 		// if node can not be found from cache, create a new one, and populate
 		// all its children objects as well
 
@@ -134,7 +133,10 @@ public class PersistenceDelegator {
 			node.setClient(client);
 			node.setPersistenceDelegator(this);
 			node.find();
-		}
+		} else
+			System.out
+					.println("NODE ALREADY EXISTIS IN CACHE, MAKE CLONE OF EXISTING MANAGED ENTITY AND RETURN THE DETACHED ONE: "
+							+ node);
 
 		Object nodeData = node.getData();
 		if (nodeData == null)
@@ -154,8 +156,20 @@ public class PersistenceDelegator {
 					.println("------------------------ADD GRAPH TO CACHE ENDS-----------------------");
 
 		}
-		//return (E) nodeData;
-		return (E) CloneUtil.cloneDominoEntity(nodeData);
+		// return (E) nodeData;
+		System.out
+				.println("METHOD SIGNATURE: "
+						+ CommonUtil.getMethodName(this.getClass().toString())
+						+ " /METHOD DESCRIPTION: deepclone an managed entity and return a detached one -- target: "
+						+ nodeData);
+		E clone = (E) CloneUtil.cloneDominoEntity(nodeData);
+		System.out
+				.println("METHOD SIGNATURE: "
+						+ CommonUtil.getMethodName(this.getClass().toString())
+						+ " /METHOD DESCRIPTION: deepclone an managed entity and return a detached one -- clone: "
+						+ clone);
+
+		return clone;
 	}
 
 	public <E> List<E> find(Class<E> entityClass, Object[] primaryKeys) {

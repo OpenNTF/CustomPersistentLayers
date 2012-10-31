@@ -15,7 +15,6 @@ import persistence.annotation.resource.FetchType;
 import util.JSFUtil;
 import util.ReflectionUtils;
 
-import model.CSS;
 import model.notes.Key;
 
 public class DocRefHandler implements InvocationHandler, Serializable {
@@ -54,25 +53,27 @@ public class DocRefHandler implements InvocationHandler, Serializable {
 	 * **/
 	@SuppressWarnings("unchecked")
 	protected void init() {
-		System.out
-				.println("-------------INITIALIZE REFERENCE DOCUMENTS----------------");
-		DaoBase daoBase = (DaoBase) JSFUtil.getBindingValue("#{DaoBase}");
-		String foreignKeyParam = referenceMetaData.foreignKey();
-		Method method2 = ReflectionUtils.findMethod(ownerObj.getClass(), "get"
-				+ foreignKeyParam);
-
-		try {
-			String foreignKeyValue = (String) method2.invoke(ownerObj, new Object[0]);
-			String viewName = referenceMetaData.viewName();
-			Key key = new Key();
-			key.appendEntry(foreignKeyValue);
-			Vector list = daoBase.findAllByKey(key, null, viewName, CSS.class);
-			for (Object o : list) {
-				collection.add(o);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// System.out
+		// .println("-------------INITIALIZE REFERENCE DOCUMENTS----------------");
+		// DaoBase daoBase = (DaoBase) JSFUtil.getBindingValue("#{DaoBase}");
+		// String foreignKeyParam = referenceMetaData.foreignKey();
+		// Method method2 = ReflectionUtils.findMethod(ownerObj.getClass(),
+		// "get"
+		// + foreignKeyParam);
+		//
+		// try {
+		// String foreignKeyValue = (String) method2.invoke(ownerObj, new
+		// Object[0]);
+		// String viewName = referenceMetaData.viewName();
+		// Key key = new Key();
+		// key.appendEntry(foreignKeyValue);
+		// Vector list = daoBase.findAllByKey(key, null, viewName, CSS.class);
+		// for (Object o : list) {
+		// collection.add(o);
+		// }
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 		this.initialized = true;
 	}
 

@@ -26,8 +26,6 @@ import javax.persistence.metamodel.Metamodel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import model.CSS;
-import model.Theme;
 import model.resource.PersistenceClasses;
 
 class MetamodelConfigurationTemp implements Configuration {

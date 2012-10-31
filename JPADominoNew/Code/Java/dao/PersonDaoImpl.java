@@ -1,9 +1,5 @@
 package dao;
 
-/**
- * @author weihang chen
- */
-
 import java.util.Vector;
 
 import com.ibm.xsp.model.domino.DominoUtils;

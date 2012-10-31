@@ -35,7 +35,6 @@ import util.Predicate;
 import util.ReflectionUtils;
 
 import lotus.domino.NotesException;
-import model.Theme;
 import model.notes.Key;
 import model.notes.ModelBase;
 import net.sf.cglib.proxy.Enhancer;

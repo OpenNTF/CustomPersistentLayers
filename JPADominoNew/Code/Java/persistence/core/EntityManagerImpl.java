@@ -334,4 +334,11 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		checkClosed();
 		this.persistenceDelegator.rollback();
 	}
+
+	//to display the cache
+	public PersistenceCache getPersistenceCache() {
+		return persistenceCache;
+	}
+	
+	
 }

@@ -1,5 +1,6 @@
 package persistence.client.domino;
 
+import persistence.annotation.support.DominoEntityHelper;
 import persistence.annotation.support.JavaBeanFactory;
 import persistence.client.Client;
 import persistence.graph.Node;
@@ -179,9 +180,10 @@ public class DominoDBClient implements Client {
 		Vector<Object> col = new Vector<Object>();
 		ViewEntry ve = vc.getFirstEntry();
 		ViewEntry tmp = null;
+		String dbName = DominoEntityHelper.getDBName(clazz);
 		while (ve != null) {
 			Document doc = ve.getDocument();
-			DominoDocument dominoDoc = DominoDocument.wrap("", doc, "both",
+			DominoDocument dominoDoc = DominoDocument.wrap(dbName, doc, "both",
 					"force", true, "", "");
 			Object obj = JavaBeanFactory.getInstance(clazz, dominoDoc);
 			col.add(obj);
@@ -199,8 +201,9 @@ public class DominoDBClient implements Client {
 			IllegalAccessException, InvocationTargetException {
 		Vector<Object> col = new Vector<Object>();
 		Document doc = dc.getFirstDocument();
+		String dbName = DominoEntityHelper.getDBName(clazz);
 		while (doc != null) {
-			DominoDocument dominoDoc = DominoDocument.wrap("", doc, "both",
+			DominoDocument dominoDoc = DominoDocument.wrap(dbName, doc, "both",
 					"force", true, "", "");
 			// 0716
 			Object obj = JavaBeanFactory.getInstance(clazz, dominoDoc);

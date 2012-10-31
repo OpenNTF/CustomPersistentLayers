@@ -36,16 +36,12 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument.FieldValueHolder;
 import com.ibm.xsp.util.DataPublisher;
 
-import controller.AllThemesController;
 
 import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
-import model.CSS;
-import model.Dog;
 import model.Location;
-import model.Theme;
 import model.Tool;
 import model.notes.Key;
 import model.notes.ModelBase;
@@ -117,34 +113,24 @@ public class JSFUtil {
 				.createEntityManager();
 		entityManager.begin();
 		try {
-			Theme theme = entityManager.find(Theme.class,
-					"954A9B5E0C30C8C5C1257A7300813F4C");
-			System.out.println("FINAL RESULT GENERATE AT JSFUTIL:  " + theme);
-			System.out.println("list1" + theme.getCSSList1());
-			System.out.println("list2" + theme.getCSSList2());
-			Theme theme1 = entityManager.find(Theme.class,
-					"954A9B5E0C30C8C5C1257A7300813F4C");
-			theme1.setThemeName("jingjingzaiji");
-
-			// entityManager.clear();
-			// entityManager.close();
-			List<CSS> list1 = theme1.getCSSList2();
-			CSS css = list1.get(0);
-			css.setCSSName("weiiiiiiiiiiiiiidddddddddddddddddddddddddddddddd");
-
-			System.out
-					.println("----------------------break---------------------");
-			System.out
-					.println("----------------------break---------------------");
-			System.out
-					.println("----------------------break---------------------");
-			Theme t1 = JavaBeanFactory.getProxy(Theme.class);
-			t1.setThemeName("FFFFFFFFFFFFFFFFF");
-			t1.setThemeType(111);
-			String id = t1.getUnid();
-			entityManager.persist(theme1);
-			System.out
-					.println("try to find the theme and check if its the same");
+//			Theme theme = entityManager.find(Theme.class,
+//					"954A9B5E0C30C8C5C1257A7300813F4C");
+//			System.out.println("FINAL RESULT GENERATE AT JSFUTIL:  " + theme);
+//			System.out.println("list1" + theme.getCSSList1());
+//			System.out.println("list2" + theme.getCSSList2());
+//			Theme theme1 = entityManager.find(Theme.class,
+//					"954A9B5E0C30C8C5C1257A7300813F4C");
+//			theme1.setThemeName("jingjingzaiji");
+//
+//			// entityManager.clear();
+//			// entityManager.close();
+//			List<CSS> list1 = theme1.getCSSList2();
+//			CSS css = list1.get(0);
+//
+//			
+//			entityManager.persist(theme1);
+//			System.out
+//					.println("try to find the theme and check if its the same");
 //			Theme theme2 = entityManager.find(Theme.class, id);
 //			if (theme2 == t1) {
 //				System.out
@@ -243,48 +229,11 @@ public class JSFUtil {
 
 	}
 
-	public static Object test2() {
-		EntityManagerFactory emf = DominoPersistenceProvider
-				.getEntityManagerFactory();
-		EntityManagerImpl entityManager = (EntityManagerImpl) emf
-				.createEntityManager();
-		entityManager.begin();
 
-		Theme theme1 = entityManager.find(Theme.class,
-				"954A9B5E0C30C8C5C1257A7300813F4C");
-		theme1.setThemeName("zhuzhuzaizhu");
-		Theme clone = CloneUtil.cloneDominoEntity(theme1);
-		
-		
-		System.out.println("HHHHHHHHHHHHH final returned cloned object: "+clone);
-		//now make comparison of the origianl entity and the copy
-		p("css1: ",theme1.getCSSList1());
-		Collection<CSS> c1=theme1.getCSSList1();
-		for (CSS c:c1){
-			System.out.println(c);
-			c.setCSSName("mmmmmm");
-			System.out.println(c.getCSSName());
-			
-		}
-		p("css1 clone: ",clone.getCSSList1());
-		Collection<CSS> c2=clone.getCSSList1();
-		for (CSS c:c2){
-			System.out.println(c);
-			System.out.println(c.getCSSName());
-			
-		}
-		
-		return clone;
-		
-
-	}
 
 	public static void p(String title, Object content) {
 		System.out.println(title + " : " + content.toString());
 	}
 
-	public static Collection recursiveClone() {
-		return null;
-
-	}
+	
 }
