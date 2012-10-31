@@ -25,6 +25,7 @@ import persistence.context.PersistenceCacheManager;
 import persistence.context.jointable.JoinTableData;
 import persistence.context.jointable.JoinTableData.OPERATION;
 import persistence.event.EntityEventDispatcher;
+import util.CloneUtil;
 import util.JSFUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -153,7 +154,8 @@ public class PersistenceDelegator {
 					.println("------------------------ADD GRAPH TO CACHE ENDS-----------------------");
 
 		}
-		return (E) nodeData;
+		//return (E) nodeData;
+		return (E) CloneUtil.cloneDominoEntity(nodeData);
 	}
 
 	public <E> List<E> find(Class<E> entityClass, Object[] primaryKeys) {

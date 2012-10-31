@@ -31,6 +31,13 @@
     <managed-bean-scope>view</managed-bean-scope>
   </managed-bean>
   <managed-bean>
+    <managed-bean-name>PersistenceContextController
+		</managed-bean-name>
+    <managed-bean-class>controller.PersistenceContextController
+		</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+  <managed-bean>
     <managed-bean-name>JSFUtil
 		</managed-bean-name>
     <managed-bean-class>util.JSFUtil

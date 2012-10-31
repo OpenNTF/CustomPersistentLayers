@@ -44,7 +44,7 @@ public class ModelBase  {
 		String formName = DominoEntityHelper.getFormName(this.getClass());
 		if (StringUtil.isEmpty(formName) && !(docObj instanceof DominoDocument))
 			throw new NullPointerException(
-					"Java entity fals to be initialized, neither formName or wrapped dominoDocument can be found");
+					"Java entity fails to be initialized, neither formName or wrapped dominoDocument can be found");
 		try {
 			if (!(docObj instanceof DominoDocument)) {
 				String dbName = DominoEntityHelper.getDBName(this.getClass());

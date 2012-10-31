@@ -10,5 +10,6 @@
   <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/javax.persistence_2.0.0.jar"/>
   <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/lucene-core-3.6.1.jar"/>
   <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/slf4j-api-1.6.1.jar"/>
+  <classpathentry kind="lib" path="C:/Users/SWECWI/Desktop/SECRET WEAPON/BACKUPRELEASE3/hibernate-2.0-final.jar"/>
   <classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

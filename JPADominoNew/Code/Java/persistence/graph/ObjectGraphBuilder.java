@@ -3,27 +3,21 @@ package persistence.graph;
 import persistence.lifecycle.states.NodeState;
 import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
-import persistence.annotation.DocumentReferences;
 import persistence.annotation.resource.FetchType;
-import persistence.context.CacheBase;
 import persistence.context.PersistenceCache;
 import persistence.utils.DeepEquals;
-import persistence.utils.ObjectUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import net.sf.cglib.proxy.Enhancer;
 
 import persistence.metadata.model.Relation;
+import util.CloneUtil;
 import util.JSFUtil;
 import util.ReflectionUtils;
 
@@ -39,7 +33,12 @@ public class ObjectGraphBuilder {
 		this.persistenceCache = persistenceCache;
 		System.out.println("----------------------SUB GRAPH BUILD FOR ENTITY "
 				+ entity + " STARTS----------------------");
-		Node headNode = getNode(entity, objectGraph, initialNodeState, null);
+		Node headNode = getNode(entity, objectGraph, initialNodeState);
+		
+		System.out.println("what is this headNode: "+headNode);
+		System.out.println("what is this headNode: "+headNode);
+		System.out.println("what is this headNode: "+headNode);
+		System.out.println("what is this headNode: "+headNode);
 
 		if (headNode != null) {
 			objectGraph.setHeadNode(headNode);
@@ -66,7 +65,7 @@ public class ObjectGraphBuilder {
 	// 1. returns a cache node as headNode if it's found in cache
 	// 2. assign cached data back to the pojo Fields
 	private Node getNode(Object entity, ObjectGraph graph,
-			NodeState initialNodeState, ArrayList replaceCollection) {
+			NodeState initialNodeState) {
 		// entitymetadata is stored for origainl classes, not enhanced
 		// ones always need to perform check to get the real class
 		Class realClass = JSFUtil.getRealClass(entity.getClass());
@@ -88,40 +87,35 @@ public class ObjectGraphBuilder {
 		Node node = null;
 		Node nodeInPersistenceCache = this.persistenceCache.getMainCache()
 				.getNodeFromCache(nodeId);
+		System.out.println("!?????????????????????????????????????? "+entity);
+		System.out.println("!?????????????????????????????????????? "+entity);
+		System.out.println("!?????????????????????????????????????? "+entity);
+		System.out.println("!?????????????????????????????????????? "+entity);
+		
+		Object nodeDataCopy = CloneUtil.cloneDominoEntity(entity);
 		Node nodeInGraph = graph.getNode(nodeId);
-		// if a node is not found in neither local graph or global cache, put
-		// the original object into the replacecollection
-		if (nodeInGraph == null && nodeInPersistenceCache == null) {
-			if (replaceCollection instanceof Collection) {
-				replaceCollection.add(entity);
-			}
-		}
+
+		// if it already exists in the graph return null
 		if (nodeInGraph != null && nodeInPersistenceCache == null) {
-			System.out
-					.println("IMPORTANT ASSIGN EXISTING NODE FROM GRAPH TO CURRENT VISTING NODE");
-			System.out.println("what is entity: " + entity);
-			System.out.println("what is existing node data: "
-					+ graph.getNode(nodeId).getData());
-			if (replaceCollection instanceof Collection)
-				replaceCollection.add(nodeInGraph.getData());
 			return null;
 		}
 
 		if (nodeInPersistenceCache == null) {
-			node = new Node(nodeId, entity, initialNodeState,
+			node = new Node(nodeId, nodeDataCopy, initialNodeState,
 					this.persistenceCache);
 		} else {
 			node = nodeInPersistenceCache;
-			// IMPORTANT 1007 assign existing node data in graph to the compared
-			// entity
-			System.out
-					.println("IMPORTANT ASSIGN EXISTING NODE FROM CACHE TO CURRENT VISTING NODE");
-			System.out.println("Input entity: " + entity);
-			System.out.println("Cached node data: "
-					+ nodeInPersistenceCache.getData());
-			entity = nodeInPersistenceCache.getData();
-			if (replaceCollection instanceof Collection)
-				replaceCollection.add(entity);
+			// //////////???????????????????
+			// ////////???????????????????
+			// ////////???????????????????//////////???????????????????
+			// deep equals do not work yet
+			if (!(DeepEquals.deepEquals(node.getData(), entity))) {
+				node.setData(nodeDataCopy);
+				node.setDirty(true);
+			} else {
+				node.setDirty(false);
+			}
+
 		}
 
 		graph.addNode(nodeId, node);
@@ -142,7 +136,6 @@ public class ObjectGraphBuilder {
 
 			System.out.println("PROCESS RELATION " + relation + " STARTS/"
 					+ childObject);
-			ArrayList replaceList = new ArrayList();
 			if (childObject != null) {
 				if (Collection.class.isAssignableFrom(childObject.getClass())) {
 					Collection childrenObjects = (Collection) childObject;
@@ -151,29 +144,13 @@ public class ObjectGraphBuilder {
 						Object childObj = i.next();
 						if (childObj != null) {
 							addChildNodesToGraph(graph, node, relation,
-									childObj, initialNodeState, replaceList);
+									childObj, initialNodeState);
 						}
 					}
 				} else {
 					addChildNodesToGraph(graph, node, relation, childObject,
-							initialNodeState, null);
+							initialNodeState);
 				}
-			}
-			// 1007 replace current collection with the updated
-			// collection, so all children collection will share the
-			// same entities from the graph
-			System.out.println("REPLACE LIST: " + replaceList);
-			System.out.println("entity: " + entity + "/assigned field: "
-					+ relationTargetField + "/assigned value: " + replaceList);
-
-			if (replaceList instanceof Collection) {
-				ReflectionUtils.setFieldObject(entity, relationTargetField,
-						replaceList);
-				Collection tmp1 = (Collection) ReflectionUtils.getFieldObject(
-						entity, relationTargetField);
-
-				System.out.println("new collection replaceing the old one: "
-						+ tmp1);
 			}
 
 			System.out.println("PROCESS RELATION " + relation + " ENDS");
@@ -183,10 +160,8 @@ public class ObjectGraphBuilder {
 	}
 
 	private void addChildNodesToGraph(ObjectGraph graph, Node parentNode,
-			Relation relation, Object childObject, NodeState initialNodeState,
-			ArrayList replaceCollection) {
-		Node childNode = getNode(childObject, graph, initialNodeState,
-				replaceCollection);
+			Relation relation, Object childObject, NodeState initialNodeState) {
+		Node childNode = getNode(childObject, graph, initialNodeState);
 
 		if (childNode == null) {
 			return;
@@ -195,8 +170,8 @@ public class ObjectGraphBuilder {
 				.getNodeId());
 		nodeLink.setMultiplicity(relation.getType());
 
-		EntityMetadata metadata = MetadataManager
-				.getEntityMetadata(parentNode.getDataClass());
+		EntityMetadata metadata = MetadataManager.getEntityMetadata(parentNode
+				.getDataClass());
 		nodeLink.setLinkProperties(getLinkProperties(metadata, relation));
 		childNode.addParentNode(nodeLink, parentNode);
 		parentNode.addChildNode(nodeLink, childNode);

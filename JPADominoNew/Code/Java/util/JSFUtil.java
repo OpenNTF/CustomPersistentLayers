@@ -1,9 +1,15 @@
 package util;
 
+import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
@@ -14,30 +20,48 @@ import javax.persistence.spi.PersistenceUnitInfo;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.cglib.proxy.Enhancer;
+import net.sf.hibernate.Hibernate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cloner.CloneException;
+import org.cloner.Cloner;
+import org.cloner.deep.DeepCloner;
+import org.cloner.deep.HibernateBeanCloner;
 
 import com.ibm.commons.util.NotImplementedException;
 import com.ibm.xsp.domino.context.DominoFacesContext;
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
+import com.ibm.xsp.model.domino.wrapped.DominoDocument.FieldValueHolder;
 import com.ibm.xsp.util.DataPublisher;
 
+import controller.AllThemesController;
+
 import lotus.domino.Database;
+import lotus.domino.Document;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 import model.CSS;
+import model.Dog;
+import model.Location;
 import model.Theme;
+import model.Tool;
 import model.notes.Key;
+import model.notes.ModelBase;
 
 import persistence.annotation.support.JavaBeanFactory;
+import persistence.annotation.support.JavaBeanProxyFactory;
 import persistence.configure.Configurator;
+import persistence.context.CacheBase;
 import persistence.core.EntityManagerFactoryImpl;
 import persistence.core.EntityManagerImpl;
 import persistence.graph.Node;
 import persistence.metadata.MetadataManager;
+import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.KunderaMetadata;
+import persistence.metadata.model.Relation;
+import persistence.metadata.model.Relation.ForeignKey;
 
 import persistence.core.DominoPersistenceProvider;
 import dao.DaoBase;
@@ -100,13 +124,37 @@ public class JSFUtil {
 			System.out.println("list2" + theme.getCSSList2());
 			Theme theme1 = entityManager.find(Theme.class,
 					"954A9B5E0C30C8C5C1257A7300813F4C");
-			theme1.setThemeName("IIIII");
+			theme1.setThemeName("jingjingzaiji");
 
+			// entityManager.clear();
+			// entityManager.close();
 			List<CSS> list1 = theme1.getCSSList2();
 			CSS css = list1.get(0);
-			css.setCSSName("IIIII");
+			css.setCSSName("weiiiiiiiiiiiiiidddddddddddddddddddddddddddddddd");
+
+			System.out
+					.println("----------------------break---------------------");
+			System.out
+					.println("----------------------break---------------------");
+			System.out
+					.println("----------------------break---------------------");
+			Theme t1 = JavaBeanFactory.getProxy(Theme.class);
+			t1.setThemeName("FFFFFFFFFFFFFFFFF");
+			t1.setThemeType(111);
+			String id = t1.getUnid();
 			entityManager.persist(theme1);
-			
+			System.out
+					.println("try to find the theme and check if its the same");
+//			Theme theme2 = entityManager.find(Theme.class, id);
+//			if (theme2 == t1) {
+//				System.out
+//						.println("COOOOOOOOLLLLLLLLLLLLLLLLLL THE NEWLY PERSISTED ENTITY GOT MANAGED , AND STAY IN THE FIRST LEVEL CACHE");
+//			}
+			// EntityManagerImpl entityManager1 = (EntityManagerImpl) emf
+			// .createEntityManager();
+			// entityManager1.begin();
+			// entityManager1.persist(theme1);
+
 			// System.out.println(theme.getThemeName());
 			// System.out.println(theme.getThemeType());
 		} catch (Throwable e) {
@@ -173,4 +221,70 @@ public class JSFUtil {
 		dataPublisher.pushObject(dataPublisher.createShadowedList(), name, obj);
 	}
 
+	public void test1() {
+
+		try {
+			Tool t = JavaBeanFactory.getProxy(Tool.class);
+			Map cloned = new HashMap();
+			Map<String, FieldValueHolder> e = t.getDoc().getChangedFields();
+			HibernateBeanCloner cloner = new HibernateBeanCloner();
+
+			// Object oo1=cloner.deepClone(e, null);
+			System.out.println("!!!!!!!!!!!!!!!!!!!!! " + e.getClass());
+
+			// HibernateBeanCloner cloner = new HibernateBeanCloner();
+			// Object o = cloner.doclone(t, t.getClass(), cloned);
+			// System.out.println("!!!!!!!!!!!!!!!!!! " + o);
+			// ReflectionUtils.
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static Object test2() {
+		EntityManagerFactory emf = DominoPersistenceProvider
+				.getEntityManagerFactory();
+		EntityManagerImpl entityManager = (EntityManagerImpl) emf
+				.createEntityManager();
+		entityManager.begin();
+
+		Theme theme1 = entityManager.find(Theme.class,
+				"954A9B5E0C30C8C5C1257A7300813F4C");
+		theme1.setThemeName("zhuzhuzaizhu");
+		Theme clone = CloneUtil.cloneDominoEntity(theme1);
+		
+		
+		System.out.println("HHHHHHHHHHHHH final returned cloned object: "+clone);
+		//now make comparison of the origianl entity and the copy
+		p("css1: ",theme1.getCSSList1());
+		Collection<CSS> c1=theme1.getCSSList1();
+		for (CSS c:c1){
+			System.out.println(c);
+			c.setCSSName("mmmmmm");
+			System.out.println(c.getCSSName());
+			
+		}
+		p("css1 clone: ",clone.getCSSList1());
+		Collection<CSS> c2=clone.getCSSList1();
+		for (CSS c:c2){
+			System.out.println(c);
+			System.out.println(c.getCSSName());
+			
+		}
+		
+		return clone;
+		
+
+	}
+
+	public static void p(String title, Object content) {
+		System.out.println(title + " : " + content.toString());
+	}
+
+	public static Collection recursiveClone() {
+		return null;
+
+	}
 }

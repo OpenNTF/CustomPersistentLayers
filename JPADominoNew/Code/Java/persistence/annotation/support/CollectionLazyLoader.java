@@ -84,31 +84,41 @@ public class CollectionLazyLoader implements LazyLoader {
 		for (Object o : childs) {
 			collection.add(o);
 		}
-		System.out.println("before======>");
-
+		System.out.println("<=========lazy loaded collection======");
 		for (Object o : collection)
 			System.out.println(o);
-		ArrayList replaceCollection = new ArrayList();
-		for (Object nodeData : collection) {
-			ObjectGraph graph = new ObjectGraphBuilder().getObjectGraph(
-					nodeData, new ManagedState(), persistenceDelegator
-							.getPersistenceCache());
-			// the head node being returned is always the one from cache if its
-			// found in cache
-			replaceCollection.add(graph.getHeadNode().getData());
-			// merge the graph
-			persistenceDelegator.getPersistenceCache().getMainCache()
-					.addGraphToCache(graph,
-							persistenceDelegator.getPersistenceCache());
-		}
-		System.out
-				.println("!!!!!!!!!!!!!!!!!!!!!!!!LAZY LOADING ENDS!!!!!!!!!!!!!!!!!!!!!!compare the collection before and after");
+		System.out.println("=========lazy loaded collection======>");
 
-		System.out.println("after======>");
+		// the purpose of the code below is to ensure that the colleciton list
+		// contains only the entity from the first level cache, I might have
+		// missunderstood the whole concept, since the return list is always
+		// detached ones
+		// System.out.println("before======>");
+		//
+		// for (Object o : collection)
+		// System.out.println(o);
+		// ArrayList replaceCollection = new ArrayList();
+		// for (Object nodeData : collection) {
+		// ObjectGraph graph = new ObjectGraphBuilder().getObjectGraph(
+		// nodeData, new ManagedState(), persistenceDelegator
+		// .getPersistenceCache());
+		// // the head node being returned is always the one from cache if its
+		// // found in cache
+		// replaceCollection.add(graph.getHeadNode().getData());
+		// // merge the graph
+		// persistenceDelegator.getPersistenceCache().getMainCache()
+		// .addGraphToCache(graph,
+		// persistenceDelegator.getPersistenceCache());
+		// }
+		// System.out
+		// .println("!!!!!!!!!!!!!!!!!!!!!!!!LAZY LOADING ENDS!!!!!!!!!!!!!!!!!!!!!!compare the collection before and after");
+		//
+		// System.out.println("after======>");
+		//
+		// for (Object o : replaceCollection)
+		// System.out.println(o);
+		// return replaceCollection;
+		return collection;
 
-		for (Object o : replaceCollection)
-			System.out.println(o);
-		// return collection;
-		return replaceCollection;
 	}
 }

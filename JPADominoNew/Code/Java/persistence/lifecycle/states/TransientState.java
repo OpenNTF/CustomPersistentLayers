@@ -5,7 +5,7 @@ package persistence.lifecycle.states;
 /*    */ import persistence.lifecycle.NodeStateContext;
 /*    */ import persistence.context.CacheBase;
 /*    */ import persistence.context.PersistenceCache;
-/*    */ import persistence.utils.ObjectUtils;
+import util.CloneUtil;
 /*    */ 
 /*    */ public class TransientState extends NodeState
 /*    */ {
@@ -36,7 +36,7 @@ package persistence.lifecycle.states;
 /*    */ 
 /*    */   public void handleMerge(NodeStateContext nodeStateContext)
 /*    */   {
-/* 76 */     Object copiedNodeData = ObjectUtils.deepCopy(nodeStateContext.getData());
+/* 76 */     Object copiedNodeData = CloneUtil.cloneDominoEntity(nodeStateContext.getData());
 /* 77 */     nodeStateContext.setData(copiedNodeData);
 /*    */   }
 /*    */ 

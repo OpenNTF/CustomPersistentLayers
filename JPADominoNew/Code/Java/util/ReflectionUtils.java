@@ -4,6 +4,14 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import lotus.domino.Document;
+import model.Tool;
+import model.notes.ModelBase;
+import persistence.annotation.support.JavaBeanFactory;
+
+import com.ibm.xsp.model.domino.wrapped.DominoDocument;
+import com.ibm.xsp.model.domino.wrapped.DominoDocument.FieldValueHolder;
+
 import net.sf.cglib.proxy.Enhancer;
 
 /**
@@ -165,7 +173,7 @@ public class ReflectionUtils {
 	// concrete collection object to be assigned to the field
 	public static void setFieldObject(Object parentObj, Field assignedField,
 			Object assignedValue) {
-		if (parentObj==null||assignedField==null||assignedValue==null)
+		if (parentObj == null || assignedField == null || assignedValue == null)
 			return;
 		Method m = getFieldSetterMethod(assignedField);
 		if (!m.isAccessible())
@@ -228,4 +236,5 @@ public class ReflectionUtils {
 		return clazz;
 	}
 
+	
 }

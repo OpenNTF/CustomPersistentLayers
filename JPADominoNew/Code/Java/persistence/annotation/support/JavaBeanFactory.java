@@ -38,6 +38,7 @@ public class JavaBeanFactory {
 			String originalUNID = ((ModelBase) object1).getUnid();
 			result = enhancer.create();
 			((ModelBase) result).setUnid(originalUNID);
+			
 			return (T) result;
 
 		} catch (Throwable e) {

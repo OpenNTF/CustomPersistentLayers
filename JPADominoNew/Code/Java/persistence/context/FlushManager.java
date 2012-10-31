@@ -26,7 +26,7 @@ public class FlushManager {
 			System.out.println("headnode has to be dirty to be flushed?? : "+headNode.isDirty());
 			//hard code , set dirty true
 			headNode.setDirty(true);
-			if (headNode.isDirty())
+			if (headNode!=null&&headNode.isDirty())
 				addNodesToFlushStack(pc, headNode);
 		}
 	}
@@ -35,9 +35,9 @@ public class FlushManager {
 		
 		FlushStack flushStack = pc.getFlushStack();
 		MainCache mainCache = (MainCache) pc.getMainCache();
-
+		if (node==null)
+			return;
 		Map children = node.getChildren();
-
 		if (children != null) {
 			Map oneToOneChildren = new HashMap();
 			Map oneToManyChildren = new HashMap();
@@ -187,6 +187,7 @@ public class FlushManager {
 			/*     */
 			/*     */}
 		/*     */
+		
 		/* 223 */if ((node.isTraversed()) || (!(node.isDirty())))
 			/*     */return;
 		/* 225 */node.setTraversed(true);
@@ -205,9 +206,3 @@ public class FlushManager {
 	/*     */
 }
 
-/*
- * Location: C:\Users\SWECWI\Desktop\SECRET
- * WEAPON\Kundera\kundera-mongo\kundera-mongo-2.0.6-jar-with-dependencies.jar
- * Qualified Name: com.impetus.kundera.persistence.context.FlushManager Java
- * Class Version: 6 (50.0) JD-Core Version: 0.5.3
- */

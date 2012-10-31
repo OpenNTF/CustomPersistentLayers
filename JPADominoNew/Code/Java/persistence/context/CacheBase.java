@@ -2,7 +2,7 @@ package persistence.context;
 
 import persistence.graph.Node;
 import persistence.graph.ObjectGraph;
-import persistence.utils.ObjectUtils;
+import util.CloneUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +29,10 @@ public class CacheBase {
 	}
 
 	public void addNodeToCache(Node node) {
+		
+		
+		//Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
+		//node.setData(nodeDataCopy);
 		if (this.nodeMappings.containsKey(node.getNodeId())) {
 			Node existingNode = (Node) this.nodeMappings.get(node.getNodeId());
 
