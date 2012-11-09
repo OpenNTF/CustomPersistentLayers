@@ -141,7 +141,6 @@ public class Node implements NodeStateContext {
 		if ((this.parents == null) || (this.parents.isEmpty())) {
 			this.parents = new HashMap();
 		}
-		System.out.println("is this a node? "+node.getClass());
 		this.parents.put(nodeLink, node);
 	}
 
@@ -186,6 +185,14 @@ public class Node implements NodeStateContext {
 
 	public String toString() {
 		return "[" + this.nodeId + "]";
+	}
+	
+	public String getSimpleName(){
+		//mode.Location@1111222
+		//location1111 first 4 digits enough to identify
+		String name=data.toString();
+		name=name.substring(name.indexOf(".")+1).replace("@", "");
+		return name;
 	}
 
 	public boolean equals(Object otherNode) {
@@ -246,6 +253,10 @@ public class Node implements NodeStateContext {
 	}
 
 	public void flush() {
+		//1107 delete
+		System.out.println("is it dirty? "+isDirty());
+		setDirty(true);
+		//1107
 		if (!(isDirty()))
 			return;
 		getCurrentNodeState().handleFlush(this);

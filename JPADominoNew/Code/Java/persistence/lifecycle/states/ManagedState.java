@@ -49,7 +49,6 @@ public class ManagedState extends NodeState {
 	public void handleMerge(NodeStateContext nodeStateContext) {
 		nodeStateContext.getPersistenceCache().getMainCache().addNodeToCache(
 				(Node) nodeStateContext);
-
 		recursivelyPerformOperation(nodeStateContext, NodeState.OPERATION.MERGE);
 	}
 

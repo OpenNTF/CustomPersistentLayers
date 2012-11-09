@@ -51,6 +51,7 @@ import javax.persistence.Query;
 import lotus.domino.Database;
 import lotus.domino.NotesException;
 import model.notes.Key;
+import model.notes.ModelBase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -168,7 +169,7 @@ public class PersistenceDelegator {
 						+ CommonUtil.getMethodName(this.getClass().toString())
 						+ " /METHOD DESCRIPTION: deepclone an managed entity and return a detached one -- clone: "
 						+ clone);
-
+		// return (E) nodeData;
 		return clone;
 	}
 
@@ -197,9 +198,15 @@ public class PersistenceDelegator {
 		log.debug("Data removed successfully for entity : " + e.getClass());
 	}
 
+	/**
+	 * FlutModeType in this project is bydefault AUTO, there are a couple of
+	 * steps in the flush process
+	 * <p>
+	 * 1. build stack using the persistence cache
+	 */
 	public void flush() {
 		// by default flush mode is FlushModeType.AUTO
-		System.out.println("what is flush mode: " + getFlushMode());
+		System.out.println("FLUSH MODE DEFAULT: " + getFlushMode());
 		if (FlushModeType.COMMIT.equals(getFlushMode())) {
 			return;
 		}
@@ -207,15 +214,16 @@ public class PersistenceDelegator {
 			return;
 		}
 		this.flushManager.buildFlushStack(getPersistenceCache());
-		System.out.println("FLUSHSTACK IS BUILT");
+
 		FlushStack fs = getPersistenceCache().getFlushStack();
-		System.out.println("what is flushstack: " + fs);
-		log
-				.debug("Flushing following flush stack to database(s) (showing stack objects from top to bottom):\n"
-						+ fs);
+		System.out.println("FLUSHSTACK IS BUILT in size of " + fs.size());// log
+		// .debug("Flushing following flush stack to database(s) (showing stack objects from top to bottom):\n"
+		// + fs);
 		Node node;
 		while (!(fs.isEmpty())) {
 			node = (Node) fs.pop();
+			
+			
 			if ((node.isInState(ManagedState.class))
 					|| (node.isInState(RemovedState.class))) {
 				// metadata is null, hardcode through it
@@ -279,7 +287,7 @@ public class PersistenceDelegator {
 	public <E> E merge(E e) {
 		log.debug("Merging Entity : " + e);
 		EntityMetadata m = getMetadata(e.getClass());
-		getEventDispatcher().fireEventListeners(m, e, PreUpdate.class);
+		// getEventDispatcher().fireEventListeners(m, e, PreUpdate.class);
 		ObjectGraph graph = this.graphBuilder.getObjectGraph(e,
 				new ManagedState(), getPersistenceCache());
 
@@ -288,10 +296,12 @@ public class PersistenceDelegator {
 			headNode.setHeadNode(true);
 		}
 		headNode.merge();
-
+		System.out.println("after merging the persistence cache "
+				+ persistenceCache.getMainCache().toString()
+				+ " is in size of " + persistenceCache.getMainCache().size());
 		flush();
 
-		getEventDispatcher().fireEventListeners(m, e, PostUpdate.class);
+		// getEventDispatcher().fireEventListeners(m, e, PostUpdate.class);
 		return (E) headNode.getData();
 	}
 

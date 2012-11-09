@@ -12,32 +12,48 @@ import persistence.context.jointable.JoinTableData;
 import persistence.context.jointable.JoinTableData.OPERATION;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import model.Location;
+
 public class FlushManager {
+
+	/**
+	 * 1. mark all the nodes in the persistence cache as not traversed - new
+	 * PersistenceCacheManager(pc).markAllNodesNotTraversed();
+	 * <p>
+	 * 2. go through all the head nodes and invoke addNodesToFlushStack(pc,
+	 * headNode) on each of them
+	 * 
+	 * @param pc
+	 */
 	public void buildFlushStack(PersistenceCache pc) {
 		MainCache mainCache = (MainCache) pc.getMainCache();
 		new PersistenceCacheManager(pc).markAllNodesNotTraversed();
 		Set headNodes = mainCache.getHeadNodes();
 		for (Object obj : headNodes) {
 			Node headNode = (Node) obj;
-			System.out.println("add all headnodes from cache to flushstack: "+headNode);
-			System.out.println("headnode has to be dirty to be flushed?? : "+headNode.isDirty());
-			//hard code , set dirty true
-			headNode.setDirty(true);
-			if (headNode!=null&&headNode.isDirty())
+			if (headNode != null && headNode.isDirty())
 				addNodesToFlushStack(pc, headNode);
 		}
 	}
 
+	/**
+	 * recursivly add nodes to stock
+	 * 
+	 * @param pc
+	 * @param node
+	 */
 	public void addNodesToFlushStack(PersistenceCache pc, Node node) {
-		
+
 		FlushStack flushStack = pc.getFlushStack();
 		MainCache mainCache = (MainCache) pc.getMainCache();
-		if (node==null)
+		if (node == null)
 			return;
 		Map children = node.getChildren();
+
 		if (children != null) {
 			Map oneToOneChildren = new HashMap();
 			Map oneToManyChildren = new HashMap();
@@ -47,24 +63,18 @@ public class FlushManager {
 			for (Object obj : children.keySet()) {
 				NodeLink nodeLink = (NodeLink) obj;
 				Relation.ForeignKey multiplicity = nodeLink.getMultiplicity();
-
 				switch (multiplicity.ordinal()) {
-				case 1:
-
+				case 0:
 					oneToOneChildren.put(nodeLink, children.get(nodeLink));
 					break;
-				case 2:
-
+				case 1:
 					oneToManyChildren.put(nodeLink, children.get(nodeLink));
 					break;
-				case 3:
-
+				case 2:
 					manyToOneChildren.put(nodeLink, children.get(nodeLink));
 					break;
-				case 4:
-
+				case 3:
 					manyToManyChildren.put(nodeLink, children.get(nodeLink));
-
 				}
 
 			}
@@ -73,11 +83,9 @@ public class FlushManager {
 				NodeLink nodeLink = (NodeLink) obj;
 				Node childNode = mainCache.getNodeFromCache(nodeLink
 						.getTargetNodeId());
-
 				if (!(childNode.isTraversed())) {
 					addNodesToFlushStack(pc, childNode);
 				}
-
 			}
 
 			for (Object obj : manyToManyChildren.keySet()) {
@@ -87,36 +95,36 @@ public class FlushManager {
 
 				if (childNode != null) {
 					if ((node.isDirty()) && (!(node.isTraversed()))) {
-//						JoinTableMetadata jtmd = (JoinTableMetadata) nodeLink
-//								.getLinkProperty(NodeLink.LinkProperty.JOIN_TABLE_METADATA);
-//
-//						if (jtmd != null) {
-//							String joinColumnName = (String) jtmd
-//									.getJoinColumns().toArray()[0];
-//							String inverseJoinColumnName = (String) jtmd
-//									.getInverseJoinColumns().toArray()[0];
-//							Object entityId = ObjectGraphBuilder
-//									.getEntityId(node.getNodeId());
-//							Object childId = ObjectGraphBuilder
-//									.getEntityId(childNode.getNodeId());
-//
-//							Set childValues = new HashSet();
-//							childValues.add(childId);
-//
-//							JoinTableData.OPERATION operation = null;
-//							if (node.getCurrentNodeState().getClass().equals(
-//									ManagedState.class)) {
-//								operation = JoinTableData.OPERATION.INSERT;
-//							} else if (node.getCurrentNodeState().getClass()
-//									.equals(RemovedState.class)) {
-//								operation = JoinTableData.OPERATION.DELETE;
-//							}
-//
-//							pc.addJoinTableDataIntoMap(operation, jtmd
-//									.getJoinTableName(), joinColumnName,
-//									inverseJoinColumnName, node.getDataClass(),
-//									entityId, childValues);
-//						}
+						// JoinTableMetadata jtmd = (JoinTableMetadata) nodeLink
+						// .getLinkProperty(NodeLink.LinkProperty.JOIN_TABLE_METADATA);
+						//
+						// if (jtmd != null) {
+						// String joinColumnName = (String) jtmd
+						// .getJoinColumns().toArray()[0];
+						// String inverseJoinColumnName = (String) jtmd
+						// .getInverseJoinColumns().toArray()[0];
+						// Object entityId = ObjectGraphBuilder
+						// .getEntityId(node.getNodeId());
+						// Object childId = ObjectGraphBuilder
+						// .getEntityId(childNode.getNodeId());
+						//
+						// Set childValues = new HashSet();
+						// childValues.add(childId);
+						//
+						// JoinTableData.OPERATION operation = null;
+						// if (node.getCurrentNodeState().getClass().equals(
+						// ManagedState.class)) {
+						// operation = JoinTableData.OPERATION.INSERT;
+						// } else if (node.getCurrentNodeState().getClass()
+						// .equals(RemovedState.class)) {
+						// operation = JoinTableData.OPERATION.DELETE;
+						// }
+						//
+						// pc.addJoinTableDataIntoMap(operation, jtmd
+						// .getJoinTableName(), joinColumnName,
+						// inverseJoinColumnName, node.getDataClass(),
+						// entityId, childValues);
+						// }
 
 					}
 
@@ -146,63 +154,50 @@ public class FlushManager {
 				if (!(node.isTraversed())) {
 					node.setTraversed(true);
 					flushStack.push(node);
-					/*     */}
-				/*     */
-				/* 188 */Node childNode = mainCache.getNodeFromCache(nodeLink
+				}
+				Node childNode = mainCache.getNodeFromCache(nodeLink
 						.getTargetNodeId());
-				/*     */
-				/* 192 */Map parents = childNode.getParents();
-				/* 193 */for (Object obj1 : parents.keySet())
-				/*     */{
+
+				Map parents = childNode.getParents();
+				for (Object obj1 : parents.keySet()) {
 					NodeLink parentLink = (NodeLink) obj1;
-					/* 195 */Relation.ForeignKey multiplicity = parentLink
+					Relation.ForeignKey multiplicity = parentLink
 							.getMultiplicity();
-					/* 196 */if (multiplicity
-							.equals(Relation.ForeignKey.MANY_TO_ONE))
-					/*     */{
-						/* 198 */Node parentNode = (Node) parents
-								.get(parentLink);
-						/*     */
-						/* 200 */if ((!(parentNode.isTraversed()))
-								&& (parentNode.isDirty()))
-						/*     */{
-							/* 202 */addNodesToFlushStack(pc, parentNode);
-							/*     */}
-						/*     */}
-					/*     */
-					/*     */}
-				/*     */
-				/* 208 */if ((!(childNode.isTraversed()))
-						&& (childNode.isDirty()))
-				/*     */{
-					/* 210 */addNodesToFlushStack(pc, childNode);
-					/*     */}
-				/* 212 */else if (!(childNode.isDirty()))
-				/*     */{
-					/* 214 */childNode.setTraversed(true);
-					/* 215 */flushStack.push(childNode);
-					/*     */}
-				/*     */
-				/*     */}
-			/*     */
-			/*     */}
-		/*     */
-		
-		/* 223 */if ((node.isTraversed()) || (!(node.isDirty())))
-			/*     */return;
-		/* 225 */node.setTraversed(true);
-		/* 226 */flushStack.push(node);
-		/*     */}
+					if (multiplicity.equals(Relation.ForeignKey.MANY_TO_ONE)) {
+						Node parentNode = (Node) parents.get(parentLink);
 
-	/*     */
-	/*     */public void clearFlushStack(PersistenceCache pc)
-	/*     */{
-		/* 239 */FlushStack flushStack = pc.getFlushStack();
-		/*     */
-		/* 241 */if ((flushStack == null) || (flushStack.isEmpty()))
-			/*     */return;
-		/* 243 */flushStack.clear();
-		/*     */}
-	/*     */
+						if ((!(parentNode.isTraversed()))
+								&& (parentNode.isDirty())) {
+							addNodesToFlushStack(pc, parentNode);
+						}
+					}
+
+				}
+
+				if ((!(childNode.isTraversed())) && (childNode.isDirty())) {
+					addNodesToFlushStack(pc, childNode);
+				} else if (!(childNode.isDirty())) {
+					childNode.setTraversed(true);
+					flushStack.push(childNode);
+				}
+
+			}
+		}
+		// System.out.println("!!!!!!!!!!!!!!!!!!!!!! node: "+node.getData().toString());
+		// System.out.println("!!!!!!!!!!!!!!!!!!!!!! istraversed()" +
+		// node.isTraversed());
+		// System.out.println("!!!!!!!!!!!!!!!!!!!!!! isdirty()" +
+		// node.isDirty());
+		if ((node.isTraversed()) || (!(node.isDirty())))
+			return;
+		node.setTraversed(true);
+		flushStack.push(node);
+	}
+
+	public void clearFlushStack(PersistenceCache pc) {
+		FlushStack flushStack = pc.getFlushStack();
+		if ((flushStack == null) || (flushStack.isEmpty()))
+			return;
+		flushStack.clear();
+	}
 }
-

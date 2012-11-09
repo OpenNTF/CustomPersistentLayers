@@ -27,13 +27,14 @@ import lotus.domino.ViewEntryCollection;
 import model.notes.Key;
 import model.notes.ModelBase;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ibm.commons.util.NotImplementedException;
+import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
-
 
 /**
  * 
@@ -92,7 +93,7 @@ public class DominoDBClient implements Client {
 	 * @throws InvocationTargetException
 	 */
 	public Object find(Class entityClass, Key key) throws PersistenceException,
-	PersistenceException, NotesException, SecurityException,
+			PersistenceException, NotesException, SecurityException,
 			IllegalArgumentException, NoSuchMethodException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException {
@@ -102,8 +103,15 @@ public class DominoDBClient implements Client {
 		View lup = ResourceUtil.getViewByName1(dominoDb, viewName);
 		Document doc = lup.getDocumentByKey(key.getEntries(), true);
 		Assert.notNull(doc, "Business Object with ID " + key + " not found!");
-		String dbName = dominoDb.getTitle();
-		Object obj = documentToJava(dbName, doc, entityClass);
+		String dbName = dominoDb.getFileName();
+		// if dbName is same as current dbname, no need to use it
+		String currentDbName = DominoUtils.getCurrentDatabase().getFileName();
+		Object obj = null;
+		if (StringUtil.equals(currentDbName, dbName)) {
+			obj = documentToJava("", doc, entityClass);
+		} else {
+			obj = documentToJava(dbName, doc, entityClass);
+		}
 		return obj;
 	}
 
@@ -185,6 +193,7 @@ public class DominoDBClient implements Client {
 			Document doc = ve.getDocument();
 			DominoDocument dominoDoc = DominoDocument.wrap(dbName, doc, "both",
 					"force", true, "", "");
+
 			Object obj = JavaBeanFactory.getInstance(clazz, dominoDoc);
 			col.add(obj);
 			tmp = vc.getNextEntry();

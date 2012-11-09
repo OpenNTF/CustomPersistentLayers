@@ -28,11 +28,19 @@ public class CacheBase {
 		return node;
 	}
 
+	/**
+	 * 1. clone the input node and put the clone into the persistence cache
+	 * <p>
+	 * 2. if input node does existing in cache, put parent/children nodes from
+	 * the existingnode from persistence cache to the new clone, else just put
+	 * it in cache
+	 * 
+	 * @param node
+	 */
 	public void addNodeToCache(Node node) {
-		
-		
-		//Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
-		//node.setData(nodeDataCopy);
+		Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
+		node.setData(nodeDataCopy);
+		// node already exists from persistence cache
 		if (this.nodeMappings.containsKey(node.getNodeId())) {
 			Node existingNode = (Node) this.nodeMappings.get(node.getNodeId());
 
@@ -53,13 +61,16 @@ public class CacheBase {
 			this.nodeMappings.put(node.getNodeId(), node);
 			logCacheEvent("ADDED TO ", node.getNodeId());
 		} else {
+			// node does not exist from persistence cache
 			logCacheEvent("ADDED TO ", node.getNodeId());
 			this.nodeMappings.put(node.getNodeId(), node);
 		}
 
 		if (!(node.isHeadNode()))
 			return;
+
 		node.getPersistenceCache().getMainCache().addHeadNode(node);
+
 	}
 
 	public void removeNodeFromCache(Node node) {

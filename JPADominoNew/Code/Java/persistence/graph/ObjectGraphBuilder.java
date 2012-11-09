@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.ibm.commons.util.StringUtil;
 
 import persistence.metadata.model.Relation;
 import util.CloneUtil;
@@ -31,14 +32,13 @@ public class ObjectGraphBuilder {
 			NodeState initialNodeState, PersistenceCache persistenceCache) {
 		ObjectGraph objectGraph = new ObjectGraph();
 		this.persistenceCache = persistenceCache;
+		Collection<Node> allNodes = this.persistenceCache.getMainCache()
+				.getAllNodes();
+		System.out.println("all entities in cache: " + allNodes.size());
+
 		System.out.println("----------------------SUB GRAPH BUILD FOR ENTITY "
 				+ entity + " STARTS----------------------");
 		Node headNode = getNode(entity, objectGraph, initialNodeState);
-		
-		System.out.println("what is this headNode: "+headNode);
-		System.out.println("what is this headNode: "+headNode);
-		System.out.println("what is this headNode: "+headNode);
-		System.out.println("what is this headNode: "+headNode);
 
 		if (headNode != null) {
 			objectGraph.setHeadNode(headNode);
@@ -48,10 +48,13 @@ public class ObjectGraphBuilder {
 		Map<String, Node> nodeMap = objectGraph.getNodeMapping();
 		Set<Entry<String, Node>> nodeSet = nodeMap.entrySet();
 		Iterator<Entry<String, Node>> iter = nodeSet.iterator();
+		System.out.println("headNode: " + headNode.getData());
 		while (iter.hasNext()) {
 			Entry<String, Node> nodeEntry = iter.next();
 			Node n = nodeEntry.getValue();
-			System.out.print("subgraph node: " + n.getData() + "/");
+			if (!StringUtil.equals(n.getData().toString(), headNode.getData()
+					.toString()))
+				System.out.print("subgraph node: " + n.getData() + "/");
 		}
 		// PUSH THIS HEAD NODE TO XPAGES REQUESTMAP, TO VIASUALIZE THE GRAPH
 		JSFUtil.pushData(objectGraph, headNode.getNodeId());
@@ -87,37 +90,57 @@ public class ObjectGraphBuilder {
 		Node node = null;
 		Node nodeInPersistenceCache = this.persistenceCache.getMainCache()
 				.getNodeFromCache(nodeId);
+
 		Object nodeDataCopy = CloneUtil.cloneDominoEntity(entity);
+		// System.out
+		// .println("-----deep clone the current entity-----original entity is: "
+		// + entity + " and clone is: " + nodeDataCopy);
+
 		Node nodeInGraph = graph.getNode(nodeId);
 
 		// if it already exists in the graph return null
+		// System.out.println("nodeInGraph: " + nodeInGraph
+		// + " /nodeInPersistenceCache: " + nodeInPersistenceCache);
 		if (nodeInGraph != null && nodeInPersistenceCache == null) {
 			return null;
 		}
-
 		if (nodeInPersistenceCache == null) {
 			node = new Node(nodeId, nodeDataCopy, initialNodeState,
 					this.persistenceCache);
+			// 1108 change code from Kundera, a new node should always be dirty
+			node.setDirty(true);
+			// 1108
 		} else {
 			node = nodeInPersistenceCache;
+			try {
+				boolean b = DeepEquals.deepEquals(node.getData(), entity);
+				System.out.println("compare this: "+node.getData()+" vs. "+entity);
+				System.out.println("what is the result for deepequal? " + b);
+				System.out.println("what is the result for deepequal? " + b);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			// //////////???????????????????
 			// ////////???????????????????
 			// ////////???????????????????//////////???????????????????
 			// deep equals do not work yet
-			if (!(DeepEquals.deepEquals(node.getData(), entity))) {
-				node.setData(nodeDataCopy);
-				node.setDirty(true);
-			} else {
-				node.setDirty(false);
-			}
+			// if (!(DeepEquals.deepEquals(node.getData(), entity))) {
+			// node.setData(nodeDataCopy);
+			// node.setDirty(true);
+			// } else {
+			// node.setDirty(false);
+			// }
+			node.setData(nodeDataCopy);
+			node.setDirty(true);
 
 		}
 
 		graph.addNode(nodeId, node);
 
 		// recursive place objects into the graph
-		System.out.println("relation amounts for entity "+entity+": "
-				+ entityMetadata.getRelations().size());
+		// System.out.println("relation amounts for entity " + entity + ": "
+		// + entityMetadata.getRelations().size());
 		for (Relation relation : entityMetadata.getRelations()) {
 			// do not invoke any getter if the relation is lazy
 			Field relationTargetField = relation.getProperty();

@@ -4,6 +4,8 @@ import persistence.graph.Node;
 import persistence.graph.NodeLink;
 import persistence.graph.NodeLink.LinkProperty;
 import persistence.lifecycle.NodeStateContext;
+import util.CommonUtil;
+
 import java.util.List;
 import java.util.Map;
 import javax.persistence.CascadeType;
@@ -49,16 +51,24 @@ public abstract class NodeState {
 		nodeStateContext.setCurrentNodeState(nextState);
 	}
 
+	/**
+	 * the cascadetype is empty at the moment, can only hard code through it
+	 * 
+	 * @param nodeStateContext
+	 * @param operation
+	 */
 	protected void recursivelyPerformOperation(
 			NodeStateContext nodeStateContext, OPERATION operation) {
+		// System.out.println("NodeState as super class for all states "+CommonUtil.getMethodName(this.getClass().toString()));
 		Map children = nodeStateContext.getChildren();
-		System.out.println("HHHHHHHHHHHHHHHHHHHHHHHH????");
 		if (children == null)
 			return;
 		for (Object obj : children.keySet()) {
 			NodeLink nodeLink = (NodeLink) obj;
 			List cascadeTypes = (List) nodeLink
 					.getLinkProperty(NodeLink.LinkProperty.CASCADE);
+			// cascadetype is none
+			// System.out.println("all the cascade type: "+cascadeTypes);
 
 			switch (operation.ordinal()) {
 			case 1:
@@ -102,6 +112,11 @@ public abstract class NodeState {
 				}
 
 			}
+			// delete this 1107
+			Node childNode = (Node) children.get(nodeLink);
+			childNode.merge();
+			// delete this 1107
+
 		}
 	}
 

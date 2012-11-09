@@ -2,11 +2,11 @@
 <!DOCTYPE note SYSTEM 'xmlschemas/domino_8_5_3.dtd'>
 <note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='8.5'
  maintenanceversion='3.0' replicaid='C1257A91005D3475'>
-<noteinfo noteid='11e' unid='C1191E733FDB1F5EC12579AF0051259F' sequence='49'>
+<noteinfo noteid='11e' unid='C1191E733FDB1F5EC12579AF0051259F' sequence='50'>
 <created><datetime>20120225T154620,47+01</datetime></created>
-<modified><datetime dst='true'>20121008T185806,54+02</datetime></modified>
-<revised><datetime dst='true'>20121008T185806,53+02</datetime></revised>
-<lastaccessed><datetime dst='true'>20121008T185806,54+02</datetime></lastaccessed>
+<modified><datetime>20121031T212317,95+01</datetime></modified>
+<revised><datetime>20121031T212317,94+01</datetime></revised>
+<lastaccessed><datetime>20121031T212317,95+01</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20121008T185803,26+02</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
 <item name='$DefaultWebLaunchPage'><text>MenuFooter</text></item>
@@ -26,9 +26,9 @@ EREREREf//8RERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERER
 EREREREREREREREREREREREREQ==
 </rawitemdata></item>
 <item name='$DefaultFrameset'><text>FujitsuUI.Start</text></item>
-<item name='$DefaultXPage'><text>Main.xsp</text></item>
 <item name='$Flags'><text>J7F!</text></item>
 <item name='$FlagsNoRefresh'><text>rv</text></item>
 <item name='$Daos'><text>0</text></item>
-<item name='$TITLE'><text>JPADomino</text></item></note>
+<item name='$TITLE'><text>JPADomino</text></item>
+<item name='$DefaultXPage'><text>LocationCRUD.xsp</text></item></note>
 

@@ -10,8 +10,6 @@ import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
-
-
 import util.Assert;
 import util.JSFUtil;
 import util.ResourceUtil;
@@ -22,7 +20,7 @@ import lotus.domino.local.EmbeddedObject;
 /**
  * @author weihang chen
  */
-public class ModelBase  {
+public class ModelBase {
 	private static final long serialVersionUID = -126355568954326940L;
 	protected static final String ITEM_FORM_NAME = "Form";
 	private String unid;
@@ -63,7 +61,7 @@ public class ModelBase  {
 				dominoDoc = (DominoDocument) docObj;
 
 			this.unid = dominoDoc.getDocument().getUniversalID();
-			System.out.println("create object instance with id: " + unid);
+			// System.out.println("create object instance with id: " + unid);
 
 		} catch (Exception ne) {
 			handleException(ne);
@@ -73,10 +71,28 @@ public class ModelBase  {
 	}
 
 	public String getUnid() {
-		return unid;
+		//1109
+		String id = "";
+		try {
+			checkState();
+			id = doc.getDocument().getUniversalID();
+		} catch (Exception ne) {
+			handleException(ne);
+		}
+		return id;
+		//1109
+		//return unid;
 	}
 
 	public void setUnid(String unid) {
+		//1109
+//		try {
+//			checkState();
+//			doc.getDocument().setUniversalID(unid);
+//		} catch (Exception ne) {
+//			handleException(ne);
+//		}
+		//1109
 		this.unid = unid;
 	}
 
@@ -208,7 +224,7 @@ public class ModelBase  {
 			checkState();
 			doc.getDocument().computeWithForm(true, true);
 			doc.save();
-			//persistRefDocuments();
+			// persistRefDocuments();
 		} catch (Exception ne) {
 			handleException(ne);
 		}
@@ -232,8 +248,7 @@ public class ModelBase  {
 	}
 
 	// CRUD - D
-	public boolean delete() throws PersistenceException,
-			NotesException {
+	public boolean delete() throws PersistenceException, NotesException {
 		this.checkState();
 		boolean ret = false;
 		try {
