@@ -9,7 +9,8 @@ package persistence.context;
 /*    */   public String toString()
 /*    */   {
 /* 37 */     StringBuffer sb = new StringBuffer();
-/* 38 */     sb.append("Flush Stack(From top to bottom):\n");
+			 sb.append("Flush Stack size of :"+this.size());
+/* 38 */     sb.append(" (From top to bottom):\n");
 /* 39 */     sb.append("--------------------------------------------\n");
 /* 40 */     for (int i = this.elementCount - 1; i >= 0; --i)
 /*    */     {

@@ -28,6 +28,7 @@ public class ObjectGraphBuilder {
 	PersistenceCache persistenceCache;
 
 	// builds the graph by populating new nodes or fetching them from cache
+	// IMPORTANT:NODE IN GRAPH ARE ATTACHED ONES, NOT DETACHED
 	public ObjectGraph getObjectGraph(Object entity,
 			NodeState initialNodeState, PersistenceCache persistenceCache) {
 		ObjectGraph objectGraph = new ObjectGraph();
@@ -48,7 +49,6 @@ public class ObjectGraphBuilder {
 		Map<String, Node> nodeMap = objectGraph.getNodeMapping();
 		Set<Entry<String, Node>> nodeSet = nodeMap.entrySet();
 		Iterator<Entry<String, Node>> iter = nodeSet.iterator();
-		System.out.println("headNode: " + headNode.getData());
 		while (iter.hasNext()) {
 			Entry<String, Node> nodeEntry = iter.next();
 			Node n = nodeEntry.getValue();
@@ -60,8 +60,8 @@ public class ObjectGraphBuilder {
 		JSFUtil.pushData(objectGraph, headNode.getNodeId());
 		// PRINT TO CHECK END
 		System.out.println("----------------------SUB GRAPH BUILD FINISHS "
-				+ objectGraph + " IN SIZE OF " + nodeMap.size()
-				+ "----------------------");
+				+ objectGraph + " IN SIZE OF " + nodeMap.size() + " with "
+				+ objectGraph.getHeadNode() + " as head node");
 		return objectGraph;
 	}
 
@@ -114,10 +114,11 @@ public class ObjectGraphBuilder {
 			node = nodeInPersistenceCache;
 			try {
 				boolean b = DeepEquals.deepEquals(node.getData(), entity);
-				System.out.println("compare this: "+node.getData()+" vs. "+entity);
+				System.out.println("compare this: " + node.getData() + " vs. "
+						+ entity);
 				System.out.println("what is the result for deepequal? " + b);
 				System.out.println("what is the result for deepequal? " + b);
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -137,6 +138,16 @@ public class ObjectGraphBuilder {
 		}
 
 		graph.addNode(nodeId, node);
+		// 1111 different from Kundera, Kundera's cache is request scope. ex.
+		// once entity is removed, a new cache is built, therefore, the
+		// childnodes/parentsNodes are always new ones
+		// in this application, I make it viewScope, the removed entity is still
+		// in the childnodes from the Location
+		// do not do explict nulling, it never works on reference
+		if (node.getChildren() != null) {
+			node.getChildren().clear();
+		}
+		// 111
 
 		// recursive place objects into the graph
 		// System.out.println("relation amounts for entity " + entity + ": "
@@ -154,6 +165,7 @@ public class ObjectGraphBuilder {
 
 			System.out.println("PROCESS RELATION " + relation + " STARTS/"
 					+ childObject);
+
 			if (childObject != null) {
 				if (Collection.class.isAssignableFrom(childObject.getClass())) {
 					Collection childrenObjects = (Collection) childObject;

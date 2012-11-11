@@ -185,16 +185,23 @@ public class PersistenceDelegator {
 
 	public void remove(Object e) {
 		EntityMetadata metadata = getMetadata(e.getClass());
-		getEventDispatcher().fireEventListeners(metadata, e, PreRemove.class);
+		// getEventDispatcher().fireEventListeners(metadata, e,
+		// PreRemove.class);
 		ObjectGraph graph = this.graphBuilder.getObjectGraph(e,
 				new ManagedState(), getPersistenceCache());
 		Node headNode = graph.getHeadNode();
+		// 1111 different from Kundera, only the location object is in the
+		// headnodes, and its not dirty, flush method goes through all headnodes
+		// and find none of it being dirty, notthing happends
+		getPersistenceCache().getMainCache().addHeadNode(headNode);
+		// 1111
 		if (headNode.getParents() == null) {
 			headNode.setHeadNode(true);
 		}
 		headNode.remove();
 		flush();
-		getEventDispatcher().fireEventListeners(metadata, e, PostRemove.class);
+		// getEventDispatcher().fireEventListeners(metadata, e,
+		// PostRemove.class);
 		log.debug("Data removed successfully for entity : " + e.getClass());
 	}
 
@@ -205,8 +212,6 @@ public class PersistenceDelegator {
 	 * 1. build stack using the persistence cache
 	 */
 	public void flush() {
-		// by default flush mode is FlushModeType.AUTO
-		System.out.println("FLUSH MODE DEFAULT: " + getFlushMode());
 		if (FlushModeType.COMMIT.equals(getFlushMode())) {
 			return;
 		}
@@ -216,14 +221,12 @@ public class PersistenceDelegator {
 		this.flushManager.buildFlushStack(getPersistenceCache());
 
 		FlushStack fs = getPersistenceCache().getFlushStack();
-		System.out.println("FLUSHSTACK IS BUILT in size of " + fs.size());// log
+		System.out.println(fs);
 		// .debug("Flushing following flush stack to database(s) (showing stack objects from top to bottom):\n"
 		// + fs);
 		Node node;
 		while (!(fs.isEmpty())) {
 			node = (Node) fs.pop();
-			
-			
 			if ((node.isInState(ManagedState.class))
 					|| (node.isInState(RemovedState.class))) {
 				// metadata is null, hardcode through it
@@ -298,7 +301,9 @@ public class PersistenceDelegator {
 		headNode.merge();
 		System.out.println("after merging the persistence cache "
 				+ persistenceCache.getMainCache().toString()
-				+ " is in size of " + persistenceCache.getMainCache().size());
+				+ " is in size of " + persistenceCache.getMainCache().size()
+				+ " and headnode is " + headNode.toString());
+
 		flush();
 
 		// getEventDispatcher().fireEventListeners(m, e, PostUpdate.class);

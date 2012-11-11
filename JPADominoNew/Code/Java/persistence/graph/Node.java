@@ -2,7 +2,10 @@ package persistence.graph;
 
 import persistence.client.Client;
 import persistence.lifecycle.NodeStateContext;
+import persistence.lifecycle.states.DetachedState;
+import persistence.lifecycle.states.ManagedState;
 import persistence.lifecycle.states.NodeState;
+import persistence.lifecycle.states.RemovedState;
 import persistence.lifecycle.states.TransientState;
 import persistence.core.PersistenceDelegator;
 import persistence.context.PersistenceCache;
@@ -38,7 +41,16 @@ public class Node implements NodeStateContext {
 		if (initialNodeState == null) {
 			this.currentNodeState = new TransientState();
 		} else {
-			this.currentNodeState = initialNodeState;
+			// 1111 create a copy of that state instead, else modifying state of
+			// one node will impact other nodes
+			if (initialNodeState.getClass() == ManagedState.class)
+				this.currentNodeState = new ManagedState();
+			else if (initialNodeState.getClass() == RemovedState.class)
+				this.currentNodeState = new RemovedState();
+			else if (initialNodeState.getClass() == DetachedState.class)
+				this.currentNodeState = new DetachedState();
+			// 1111 deleted, create new nodestate instead
+			// this.currentNodeState = initialNodeState;
 		}
 	}
 
@@ -184,14 +196,15 @@ public class Node implements NodeStateContext {
 	}
 
 	public String toString() {
-		return "[" + this.nodeId + "]";
+		return "[" + this.nodeId + ": " + getData() + ": "
+				+ getCurrentNodeState() + ": isDirty - " + isDirty() + "]";
 	}
-	
-	public String getSimpleName(){
-		//mode.Location@1111222
-		//location1111 first 4 digits enough to identify
-		String name=data.toString();
-		name=name.substring(name.indexOf(".")+1).replace("@", "");
+
+	public String getSimpleName() {
+		// mode.Location@1111222
+		// location1111 first 4 digits enough to identify
+		String name = data.toString();
+		name = name.substring(name.indexOf(".") + 1).replace("@", "");
 		return name;
 	}
 
@@ -253,10 +266,10 @@ public class Node implements NodeStateContext {
 	}
 
 	public void flush() {
-		//1107 delete
-		System.out.println("is it dirty? "+isDirty());
+		// 1107 delete
+		System.out.println("is it dirty? " + isDirty());
 		setDirty(true);
-		//1107
+		// 1107
 		if (!(isDirty()))
 			return;
 		getCurrentNodeState().handleFlush(this);

@@ -18,10 +18,11 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
 import lotus.domino.Session;
 import model.notes.Key;
+
 /**
  * 
  * @author weihang chen
- *
+ * 
  */
 public class ManagedState extends NodeState {
 	public void initialize(NodeStateContext nodeStateContext) {
@@ -36,7 +37,11 @@ public class ManagedState extends NodeState {
 		moveNodeToNextState(nodeStateContext, new RemovedState());
 
 		nodeStateContext.setDirty(true);
-
+		// 1111 ADD THE SHOULD BE REMOVED NODE to the cache head nodes, so the
+		// flush will proccess it change Kundera code
+//		nodeStateContext.getPersistenceCache().getMainCache().addHeadNode(
+//				(Node) nodeStateContext);
+		// 1111
 		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.REMOVE);
 	}

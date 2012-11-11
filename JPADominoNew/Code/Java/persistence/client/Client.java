@@ -33,7 +33,9 @@ public abstract interface Client<Q extends Query> {
 
 	public abstract void close();
 
-	public abstract void delete(Object paramObject1, Object paramObject2);
+	
+	public abstract void delete(Object paramObject1, String docUNID) throws PersistenceException,
+	NotesException;
 
 	public abstract String getPersistenceUnit();
 

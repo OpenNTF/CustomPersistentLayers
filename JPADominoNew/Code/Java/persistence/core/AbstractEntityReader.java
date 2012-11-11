@@ -1,7 +1,6 @@
 package persistence.core;
 
 import persistence.annotation.DocumentReferences;
-import persistence.annotation.resource.CascadeType;
 import persistence.annotation.resource.FetchType;
 import persistence.annotation.support.CollectionLazyLoader;
 import persistence.annotation.support.ConstructibleAnnotatedCollection;

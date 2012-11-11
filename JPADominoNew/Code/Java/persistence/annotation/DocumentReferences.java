@@ -4,7 +4,8 @@ package persistence.annotation;
  */
 import java.lang.annotation.*;
 
-import persistence.annotation.resource.CascadeType;
+import javax.persistence.CascadeType;
+
 import persistence.annotation.resource.FetchType;
 
 /**
@@ -46,7 +47,7 @@ public @interface DocumentReferences {
 	 * 
 	 * @return
 	 */
-	public CascadeType[] cascade() default { CascadeType.NONE };
+	public CascadeType[] cascade() default { CascadeType.ALL };
 
 	/**
 	 * unid from owner class as foreignkey

@@ -2,7 +2,9 @@ package persistence.metadata.model;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import persistence.annotation.resource.CascadeType;
+
+import javax.persistence.CascadeType;
+
 import persistence.annotation.resource.FetchType;
 
 public final class Relation {

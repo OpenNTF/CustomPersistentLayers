@@ -7,6 +7,7 @@ import persistence.graph.Node;
 import persistence.core.EntityReader;
 import persistence.context.jointable.JoinTableData;
 import util.Assert;
+import util.JSFUtil;
 import util.ResourceUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -145,17 +146,21 @@ public class DominoDBClient implements Client {
 	 * @throws ViewNotFoundException
 	 * @throws NotesException
 	 */
-	public void delete(Object entity, Key key) throws PersistenceException,
-			NotesException {
-		String viewName = DominoEntityMetaDataUtil.getViewName(entity
-				.getClass());
+	public void delete(Object entity, String docUNID)
+			throws PersistenceException, NotesException {
+		String viewName = DominoEntityMetaDataUtil.getViewName(JSFUtil
+				.getRealClass(entity.getClass()));
 		View lup = ResourceUtil.getViewByName(viewName);
+		System.out.println("do I get a view " + lup);
 		if (lup != null) {
-			Document doc = lup.getDocumentByKey(key.getEntries(), true);
-			Assert.notNull(doc, "Business Object with ID " + key
+			Document doc = DominoUtils.getCurrentDatabase().getDocumentByUNID(
+					docUNID);
+
+			System.out.println("do I get a doc " + doc);
+			Assert.notNull(doc, "Business Object with ID " + docUNID
 					+ " not found!");
 			boolean b = doc.remove(true);
-			Assert.isTrue(b, "Business Object with ID " + key
+			Assert.isTrue(b, "Business Object with ID " + docUNID
 					+ " can not be deleted");
 		}
 	}
@@ -242,11 +247,6 @@ public class DominoDBClient implements Client {
 						obj,
 						"document fails to be converted to Java object: documentToJava(Document doc, Class clazz)");
 		return obj;
-	}
-
-	public void delete(Object paramObject1, Object paramObject2) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void deleteByColumn(String paramString1, String paramString2,

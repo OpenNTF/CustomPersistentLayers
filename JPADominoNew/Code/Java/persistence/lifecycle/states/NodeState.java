@@ -2,9 +2,7 @@ package persistence.lifecycle.states;
 
 import persistence.graph.Node;
 import persistence.graph.NodeLink;
-import persistence.graph.NodeLink.LinkProperty;
 import persistence.lifecycle.NodeStateContext;
-import util.CommonUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -67,11 +65,9 @@ public abstract class NodeState {
 			NodeLink nodeLink = (NodeLink) obj;
 			List cascadeTypes = (List) nodeLink
 					.getLinkProperty(NodeLink.LinkProperty.CASCADE);
-			// cascadetype is none
-			// System.out.println("all the cascade type: "+cascadeTypes);
 
 			switch (operation.ordinal()) {
-			case 1:
+			case 0:
 
 				if ((cascadeTypes.contains(CascadeType.PERSIST))
 						|| (cascadeTypes.contains(CascadeType.ALL))) {
@@ -79,23 +75,22 @@ public abstract class NodeState {
 					childNode.persist();
 				}
 				break;
-			case 2:
-
+			case 1:
 				if ((cascadeTypes.contains(CascadeType.MERGE))
 						|| (cascadeTypes.contains(CascadeType.ALL))) {
 					Node childNode = (Node) children.get(nodeLink);
+					System.out.println("!!!!!!!!!!!!!!!!! "+childNode);
 					childNode.merge();
 				}
 				break;
-			case 3:
-
+			case 2:
 				if ((cascadeTypes.contains(CascadeType.REMOVE))
 						|| (cascadeTypes.contains(CascadeType.ALL))) {
 					Node childNode = (Node) children.get(nodeLink);
 					childNode.remove();
 				}
 				break;
-			case 4:
+			case 3:
 
 				if ((cascadeTypes.contains(CascadeType.REFRESH))
 						|| (cascadeTypes.contains(CascadeType.ALL))) {
@@ -103,7 +98,7 @@ public abstract class NodeState {
 					childNode.refresh();
 				}
 				break;
-			case 5:
+			case 4:
 
 				if ((cascadeTypes.contains(CascadeType.DETACH))
 						|| (cascadeTypes.contains(CascadeType.ALL))) {
@@ -112,10 +107,6 @@ public abstract class NodeState {
 				}
 
 			}
-			// delete this 1107
-			Node childNode = (Node) children.get(nodeLink);
-			childNode.merge();
-			// delete this 1107
 
 		}
 	}

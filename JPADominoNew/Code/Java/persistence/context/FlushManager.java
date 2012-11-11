@@ -31,10 +31,14 @@ public class FlushManager {
 	 */
 	public void buildFlushStack(PersistenceCache pc) {
 		MainCache mainCache = (MainCache) pc.getMainCache();
+		System.out.println("EEEEEEEMAIN CACHE: "+mainCache+"/size: "+mainCache.size());
 		new PersistenceCacheManager(pc).markAllNodesNotTraversed();
 		Set headNodes = mainCache.getHeadNodes();
 		for (Object obj : headNodes) {
+			System.out.println("is there any headnode?? "+obj);
 			Node headNode = (Node) obj;
+			System.out.println("head node is not dirty therefore stack size is 0?? "+headNode.isDirty());
+			System.out.println("head node is not dirty therefore stack size is 0?? "+headNode.isDirty());System.out.println("head node is not dirty therefore stack size is 0?? "+headNode.isDirty());
 			if (headNode != null && headNode.isDirty())
 				addNodesToFlushStack(pc, headNode);
 		}

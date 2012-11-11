@@ -7,7 +7,7 @@ import java.util.*;
  * @author henrik lundgren
  *
  */
-public enum CascadeType {
+public enum CascadeType2 {
 	/**
 	 * All operations are cascaded to the child documents.
 	 */
@@ -25,8 +25,8 @@ public enum CascadeType {
 	 */
 	NONE;
 	
-	public static boolean intersects(CascadeType[] anyOf, EnumSet<CascadeType> types) {
-		for (CascadeType ct : anyOf) {
+	public static boolean intersects(CascadeType2[] anyOf, EnumSet<CascadeType2> types) {
+		for (CascadeType2 ct : anyOf) {
 			if (types.contains(ct)) {
 				return true;
 			}
@@ -34,7 +34,7 @@ public enum CascadeType {
 		return false;
 	}
 	
-	public final static EnumSet<CascadeType> DELETE_TYPES = EnumSet.of(ALL, DELETE);
-	public final static EnumSet<CascadeType> PERSIST_TYPES = EnumSet.of(ALL, SAVE_UPDATE);
+	public final static EnumSet<CascadeType2> DELETE_TYPES = EnumSet.of(ALL, DELETE);
+	public final static EnumSet<CascadeType2> PERSIST_TYPES = EnumSet.of(ALL, SAVE_UPDATE);
 	
 }
