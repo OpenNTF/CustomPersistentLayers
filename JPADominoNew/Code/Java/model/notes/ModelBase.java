@@ -18,25 +18,44 @@ import lotus.domino.*;
 import lotus.domino.local.EmbeddedObject;
 
 /**
+ * This is the parent class that all Domino entity Pojo class should extend,
+ * providing some important functionalities
+ * 
  * @author weihang chen
  */
 public class ModelBase {
 	private static final long serialVersionUID = -126355568954326940L;
 	protected static final String ITEM_FORM_NAME = "Form";
+	@SuppressWarnings("unused")
 	private String unid;
 	public DominoDocument doc;
 
+	/**
+	 * empty constructor will invoke another constructor instead, passing null
+	 * as argument
+	 */
 	protected ModelBase() {
 		this(null);
 	}
 
-	// this constructor is used for creating a brand new java object, or
-	// wrapping an existing dominoDocument into java object
+	/**
+	 * this is the real functional constructor in use to create a new java
+	 * entity wrapping a DominoDocument
+	 * 
+	 * @param doc
+	 */
+
 	protected ModelBase(Object doc) {
 		this.doc = initDoc(doc);
 	}
 
-	// if doc is null, create a new dominoDocument + set form
+	/**
+	 * if docObj is null, create a new DominoDocument and assign it to dominoDoc
+	 * if docObj is not null, assign it to dominoDoc
+	 * 
+	 * @param docObj
+	 * @return
+	 */
 	protected DominoDocument initDoc(Object docObj) {
 		DominoDocument dominoDoc = null;
 		String formName = DominoEntityHelper.getFormName(this.getClass());
@@ -70,8 +89,13 @@ public class ModelBase {
 		return dominoDoc;
 	}
 
+	/**
+	 * return the document UniversalID return unid; is not going to work due to
+	 * the attach/detach behavior
+	 * 
+	 * @return
+	 */
 	public String getUnid() {
-		//1109
 		String id = "";
 		try {
 			checkState();
@@ -80,19 +104,9 @@ public class ModelBase {
 			handleException(ne);
 		}
 		return id;
-		//1109
-		//return unid;
 	}
 
 	public void setUnid(String unid) {
-		//1109
-//		try {
-//			checkState();
-//			doc.getDocument().setUniversalID(unid);
-//		} catch (Exception ne) {
-//			handleException(ne);
-//		}
-		//1109
 		this.unid = unid;
 	}
 
@@ -219,6 +233,9 @@ public class ModelBase {
 		}
 	}
 
+	/**
+	 * compute the document and perform save
+	 */
 	public void persist() {
 		try {
 			checkState();
@@ -262,8 +279,13 @@ public class ModelBase {
 		return ret;
 	}
 
-	// if not even restore wrappeddocument returns something, there must be
-	// something wrong
+	/**
+	 * Notes Documents are recycled between requests, restore them if they are
+	 * found being deleted
+	 * 
+	 * @throws PersistenceException
+	 * @throws NotesException
+	 */
 	public void checkState() throws PersistenceException, NotesException {
 		if (doc.getDocument().isDeleted())
 			doc.restoreWrappedDocument();

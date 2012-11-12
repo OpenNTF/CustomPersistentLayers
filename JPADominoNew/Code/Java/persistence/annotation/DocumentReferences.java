@@ -1,22 +1,19 @@
 package persistence.annotation;
-/**
- * @author weihang chen
- */
+
 import java.lang.annotation.*;
 
 import javax.persistence.CascadeType;
-
-import persistence.annotation.resource.FetchType;
+import javax.persistence.FetchType;
 
 /**
- * Follow references to other documents when loading and updating this
- * collection based on the result of a view query. The parameter
- * <code>view</code> defines the name of a view located in the design document
- * of the class or in the design document specified by <code>designDoc</code>.
- * The parameter <code>fetch</code> controls when reference loading is
- * performed. This annotation only has meaning on collection class members.
+ * This annotation is used to define one-to-many relation between relation owner
+ * object and the relation targeting object collection. view name is used for
+ * look up, once objects are retrieved assign it to the relation owner object
+ * using reflection. if its eager fetch, when relation object is loaded,
+ * relation targeting collection is populated as well, else if its lazy,
+ * collection is only populated when its getter is invoked
  * 
- * @author ragnar rova
+ * @author weihang chen
  * 
  */
 @Target( { ElementType.FIELD })
@@ -24,35 +21,41 @@ import persistence.annotation.resource.FetchType;
 public @interface DocumentReferences {
 
 	/**
-	 * Controls when referenced documents are loaded. Default is
-	 * <code>LAZY</code> and implies that references should be loaded when a
-	 * method on the collection is accessed which needs the documents.
-	 * <code>EAGER</code> means that all references of arbitrary depth will be
-	 * followed directly at load time.
+	 * Controls when referenced Domino entity collection should be loaded. in
+	 * case of LAZY, collection is not loaded until collection getter is
+	 * invoked, in case of EAGER, collection is loaded when owner object is
+	 * loaded
 	 */
 	public FetchType fetch() default FetchType.LAZY;
 
 	/**
-	 * descending , ascending
+	 * descending , ascending - not implemented
 	 */
 	public boolean descendingSortOrder() default false;
 
 	/**
-	 * collection order field
+	 * collection order field - not implemented
 	 */
 	public String orderBy() default "";
 
 	/**
-	 * Set the type if cascade behaviour this collection should have.
+	 * Define how operation issued on relation owner object should cascade on
+	 * collection objects
 	 * 
-	 * @return
+	 * @return array of CascadeType
 	 */
 	public CascadeType[] cascade() default { CascadeType.ALL };
 
 	/**
-	 * unid from owner class as foreignkey
+	 * unid from owner class as foreignkey - not implemented
 	 */
 	public String foreignKey();
+
+	/**
+	 * define the viewname to look for the collection objects
+	 * 
+	 * @return viewname
+	 */
 
 	public String viewName();
 

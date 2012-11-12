@@ -1,7 +1,6 @@
 package persistence.core;
 
 import persistence.annotation.DocumentReferences;
-import persistence.annotation.resource.FetchType;
 import persistence.annotation.support.CollectionLazyLoader;
 import persistence.annotation.support.ConstructibleAnnotatedCollection;
 import persistence.client.Client;
@@ -24,6 +23,8 @@ import java.util.Iterator; /*      */
 import java.util.List; /*      */
 import java.util.Map; /*      */
 import java.util.Set; /*      */
+
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn; /*      */
 import javax.persistence.PersistenceException;
 import persistence.utils.PropertyAccessorHelper;/*      */

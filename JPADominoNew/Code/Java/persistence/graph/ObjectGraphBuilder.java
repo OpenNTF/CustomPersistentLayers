@@ -3,7 +3,6 @@ package persistence.graph;
 import persistence.lifecycle.states.NodeState;
 import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
-import persistence.annotation.resource.FetchType;
 import persistence.context.PersistenceCache;
 import persistence.utils.DeepEquals;
 
@@ -14,6 +13,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+
+import javax.persistence.FetchType;
 
 import com.ibm.commons.util.StringUtil;
 

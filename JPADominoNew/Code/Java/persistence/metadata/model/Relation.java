@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 
-import persistence.annotation.resource.FetchType;
 
 public final class Relation {
 	private Field property;

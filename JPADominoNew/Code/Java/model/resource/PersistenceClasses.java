@@ -7,6 +7,13 @@ import model.Location;
 import model.Tool;
 import model.ToolBox;
 
+/**
+ * instead of using a persistence.xml, all Pojo classes should be registered
+ * here, so that annotated meta-data will be stored at application scope
+ * 
+ * @author weihang chen
+ * 
+ */
 public class PersistenceClasses {
 
 	public static Map<String, Class<?>> persistenceClasses;

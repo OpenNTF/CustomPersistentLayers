@@ -5,7 +5,10 @@ import persistence.annotation.DominoProperty;
 import model.notes.ModelBase;
 
 /**
+ * annotated pojo class
+ * 
  * @author weihang chen
+ * 
  */
 @DominoEntity(formName = "Person", viewName = "People", DBName = "names.nsf")
 public class Person extends ModelBase {

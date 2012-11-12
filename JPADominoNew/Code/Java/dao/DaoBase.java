@@ -15,13 +15,20 @@ import lotus.domino.*;
 import model.notes.Key;
 import util.ResourceUtil;
 
-
+/**
+ * this class provides all the interaction with the database, all other Dao
+ * should extend this class. This class is associated with LocationCRUD.xsp, not
+ * with the persistence context part
+ * <p>
+ * all the methods responsibilities are self-explained, therefore no extra
+ * description is written for individual methods
+ * 
+ * @author weihang chen
+ * 
+ */
 
 public class DaoBase implements Serializable {
 
-	/**
-	 * @author weihang chen
-	 */
 	private static final long serialVersionUID = -5542911989121450439L;
 
 	protected void removeEntityById(Key key, String viewName) {
@@ -103,7 +110,8 @@ public class DaoBase implements Serializable {
 	public Object documentToJava(String dbName, Document doc, Class clazz)
 			throws SecurityException, NoSuchMethodException,
 			IllegalArgumentException, InstantiationException,
-			IllegalAccessException, InvocationTargetException, PersistenceException {
+			IllegalAccessException, InvocationTargetException,
+			PersistenceException {
 		Object obj = null;
 		DominoDocument dominoDoc = DominoDocument.wrap(dbName, doc, "both",
 				"force", true, "", "");
@@ -143,9 +151,9 @@ public class DaoBase implements Serializable {
 
 	public Vector<?> findAllByKey(Key key, Database db, String viewName,
 			Class<?> clazz) throws PersistenceException, PersistenceException,
-			SecurityException, IllegalArgumentException,
-			NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException, NotesException {
+			SecurityException, IllegalArgumentException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException, NotesException {
 		View lup = ResourceUtil.getViewByName1(db, viewName);
 		// return all documents in view
 		if (key == null) {

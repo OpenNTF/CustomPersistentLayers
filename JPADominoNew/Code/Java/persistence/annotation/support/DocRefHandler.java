@@ -8,10 +8,11 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import javax.persistence.FetchType;
+
 import dao.DaoBase;
 
 import persistence.annotation.DocumentReferences;
-import persistence.annotation.resource.FetchType;
 import util.JSFUtil;
 import util.ReflectionUtils;
 

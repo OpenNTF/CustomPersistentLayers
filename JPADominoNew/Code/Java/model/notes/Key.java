@@ -1,13 +1,18 @@
 package model.notes;
-/**
- * @author weihang chen
- */
+
 import java.util.*;
 
+/**
+ * GetAllDocumentsByKey/GetAllEntriesByKey can take a vector of string as
+ * parameter, this class simply wrap over such a Vector object
+ * 
+ * @author weihang chen
+ * 
+ */
 public class Key {
-	private Vector entries = new Vector();
+	private Vector<String> entries = new Vector<String>();
 
-	public Vector getEntries() {
+	public Vector<String> getEntries() {
 		return entries;
 	}
 
@@ -17,8 +22,7 @@ public class Key {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer("[");
-		Enumeration e1 = entries.elements();
-
+		Enumeration<String> e1 = entries.elements();
 		while (e1.hasMoreElements()) {
 			sb.append((String) e1.nextElement());
 			sb.append(' ');
