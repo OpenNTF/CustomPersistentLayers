@@ -1,27 +1,13 @@
 package persistence.annotation.support;
 
-/**
- * @author weihang chen
- */
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import java.util.Vector;
-
-import dao.DaoBase;
-
-import persistence.annotation.DocumentReferences;
 import persistence.client.Client;
 import persistence.core.PersistenceDelegator;
-import persistence.graph.ObjectGraph;
-import persistence.graph.ObjectGraphBuilder;
-import persistence.lifecycle.states.ManagedState;
-import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.Relation;
 
@@ -29,9 +15,16 @@ import model.notes.Key;
 import model.notes.ModelBase;
 import net.sf.cglib.proxy.LazyLoader;
 import util.CommonUtil;
-import util.JSFUtil;
 import util.ReflectionUtils;
 
+/**
+ * this class implements CGLib LazyLoader, when property getter method is
+ * invoked the first time, load() method is invoked to populate child collection.
+ * load() is invoked only once. This class in action refer to
+ * AbstractEntityReader.recursivelyFindEntities()
+ * 
+ * @author weihang chen
+ */
 public class CollectionLazyLoader implements LazyLoader {
 	protected ModelBase ownerObj;
 	protected Relation relation;
@@ -52,21 +45,18 @@ public class CollectionLazyLoader implements LazyLoader {
 		this.entityMetadata = entityMetadata;
 	}
 
-	// this method is invoked, when underlying objects being accessed, and its
-	// loaded once, no need to have boolean initialized to check?
+	
 	@SuppressWarnings("unchecked")
 	public Object loadObject() throws Exception {
-		// TODO Auto-generated method stub
 		System.out
 				.println("!!!!!!!!!!!!!!!!!!!!!!!!LAZY LOADING STARTS!!!!!!!!!!!!!!!!!!!!!!");
 		if (ownerObj == null || relation == null
 				|| constructibleAnnotatedCollection == null
 				|| persistenceDelegator == null)
 			return null;
-
+		//get dbclient, in this case DominoDBClient
 		Client dbClient = persistenceDelegator.getClient(entityMetadata);
 		String foreignKey = relation.getDominoForeignKey();
-		String viewName = relation.getDominoView();
 		Method foreignKeyGetter = ReflectionUtils.findMethod(ownerObj
 				.getClass(), "get"
 				+ CommonUtil.firstCharToUpperCase(foreignKey));

@@ -40,7 +40,6 @@ import model.notes.Key;
 import model.notes.ModelBase;
 
 import persistence.annotation.support.JavaBeanFactory;
-import persistence.annotation.support.JavaBeanProxyFactory;
 import persistence.configure.Configurator;
 import persistence.context.CacheBase;
 import persistence.core.EntityManagerFactoryImpl;

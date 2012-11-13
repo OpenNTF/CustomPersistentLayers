@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import java.util.Map;
 
-import persistence.annotation.DocumentReferences;
 import persistence.annotation.DominoProperty;
 
 import util.CommonUtil;
@@ -20,36 +19,40 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 /**
+ * this intercepter only intercept Fields' (annotated with @DominoProperty)
+ * getter/setter to hide read/write action to document, make a cleaner entity
+ * class
+ * 
+ * <code>@DominoProperty </code>
+ * 
+ * annotated Fields getter/setter are cached in intercepter instance, then
+ * according to the method return type it will find the corresponding read/write
+ * method for the DominoDocument, and invoke the read/write method instead of
+ * invoking the original getter/setter method.
+ * 
+ * <code>@DocumentReference </code>annotated getter methods are cached,
+ * restoreDocument before returning the objects. This only applies to children
+ * objects, where parent object will be restored directly within the cache from
+ * persistenDelegator
+ * 
  * @author weihang chen
  */
 public class JavaBeanInterceptor implements MethodInterceptor {
 
 	/**
-	 * this interceptor only intercept Fields' (annotated with @DominoProperty)
-	 * getter/setter intension is to hide read/write action to document, make a
-	 * cleaner entity class
-	 * 
-	 * @DominoProperty annotated Fields getter/setter are cached in interceptor
-	 *                 instance, then according to the method return type it
-	 *                 will find the corresponding read/write method for the
-	 *                 DominoDocument, and invoke the read/write method instead
-	 *                 of invoking the original getter/setter method.
-	 * 
-	 * @DocumentReference annotated getter methods are cached, restoreDocument
-	 *                    before returning the objects. This only applies to
-	 *                    children objects, where parent object will be restored
-	 *                    directly within the cache from persistenDelegator
-	 * 
-	 * 
+	 * Original entity that is sent in and enhanced
 	 */
 	private Object target;
 	private ArrayList<Field> cachedDominoPropertyFields;
-
-	// store all java bean getter method for a Field which is annotated by
-	// @DominoProperty
+	/**
+	 * store all java bean getter method for a Field which is annotated by
+	 * DominoProperty
+	 */
 	private HashMap<String, String> getterMap;
-	// store all java bean setter method for a Field which is annotated by
-	// @DominoProperty
+	/**
+	 * store all java bean setter method for a Field which is annotated by
+	 * DominoProperty
+	 */
 	private HashMap<String, String> setterMap;
 
 	public JavaBeanInterceptor() {
@@ -62,6 +65,7 @@ public class JavaBeanInterceptor implements MethodInterceptor {
 	public void setTarget(Object target) {
 
 		this.target = target;
+		//go through all DominoProperty annotated fields and put them in a collection
 		cachedDominoPropertyFields = (ArrayList<Field>) ReflectionUtils
 				.eachField(target.getClass(), new Predicate<Field>() {
 					public boolean apply(Field input) {
@@ -72,7 +76,7 @@ public class JavaBeanInterceptor implements MethodInterceptor {
 						return false;
 					}
 				});
-
+		//go through the DominoProperty Field collection and put the getter/setter methods in getter/setter map
 		for (Field field : cachedDominoPropertyFields) {
 			String getterName = "get"
 					+ CommonUtil.firstCharToUpperCase(field.getName());
@@ -86,6 +90,9 @@ public class JavaBeanInterceptor implements MethodInterceptor {
 
 	}
 
+	/**
+	 * static variable mapping the returntype with the document read operation
+	 */
 	final static Map<String, String> _javaDocumentPropertyMap = new HashMap<String, String>();
 	static {
 		_javaDocumentPropertyMap.put("java.lang.String", "readString");
@@ -95,7 +102,7 @@ public class JavaBeanInterceptor implements MethodInterceptor {
 	public Object intercept(Object obj, Method method, Object[] args,
 			MethodProxy proxy) throws Throwable {
 
-		//System.out.println("intercept starts: " + method.getName());
+		// System.out.println("intercept starts: " + method.getName());
 		String methodName = method.getName();
 		if (!getterMap.containsKey(methodName)
 				&& !setterMap.containsKey(methodName)) {
@@ -150,9 +157,5 @@ public class JavaBeanInterceptor implements MethodInterceptor {
 				realMethodStr);
 		realMethod.setAccessible(true);
 		return realMethod.invoke(obj, mArgs);
-		//
-		// method.setAccessible(true);
-		// return method.invoke(target, args);
-		// return methodProxy.invokeSuper(object, args);
 	}
 }
