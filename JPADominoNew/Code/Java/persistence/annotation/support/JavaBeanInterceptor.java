@@ -65,7 +65,7 @@ public class JavaBeanInterceptor implements MethodInterceptor {
 	public void setTarget(Object target) {
 
 		this.target = target;
-		//go through all DominoProperty annotated fields and put them in a collection
+		//go through all fields and put them in a collection if they are annotated with DominoProperty
 		cachedDominoPropertyFields = (ArrayList<Field>) ReflectionUtils
 				.eachField(target.getClass(), new Predicate<Field>() {
 					public boolean apply(Field input) {

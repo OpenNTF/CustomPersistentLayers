@@ -19,8 +19,8 @@ import util.ReflectionUtils;
 
 /**
  * this class implements CGLib LazyLoader, when property getter method is
- * invoked the first time, load() method is invoked to populate child collection.
- * load() is invoked only once. This class in action refer to
+ * invoked the first time, load() method is invoked to populate child
+ * collection. load() is invoked only once. This class in action refer to
  * AbstractEntityReader.recursivelyFindEntities()
  * 
  * @author weihang chen
@@ -45,7 +45,14 @@ public class CollectionLazyLoader implements LazyLoader {
 		this.entityMetadata = entityMetadata;
 	}
 
-	
+	/**
+	 * 1. get dbclient from entity metadata, in this case DominoDBClient <br>
+	 * 2. gather information from relation object, get the foreignkey value <br>
+	 * 3. find the corresponding constructor of the collection Field, init the
+	 * collection object <br>
+	 * 4. invoke dbClient.findAll, get converted objects from database,populate
+	 * the collection object with the fetched objects
+	 */
 	@SuppressWarnings("unchecked")
 	public Object loadObject() throws Exception {
 		System.out
@@ -54,7 +61,6 @@ public class CollectionLazyLoader implements LazyLoader {
 				|| constructibleAnnotatedCollection == null
 				|| persistenceDelegator == null)
 			return null;
-		//get dbclient, in this case DominoDBClient
 		Client dbClient = persistenceDelegator.getClient(entityMetadata);
 		String foreignKey = relation.getDominoForeignKey();
 		Method foreignKeyGetter = ReflectionUtils.findMethod(ownerObj

@@ -1,5 +1,11 @@
 package persistence.cache;
 
+/**
+ * All concrete cache class need to extend this class not used
+ * 
+ * @author weihang chen
+ * 
+ */
 public abstract interface Cache extends javax.persistence.Cache {
 	public abstract int size();
 

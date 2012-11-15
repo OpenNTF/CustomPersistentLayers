@@ -1,6 +1,6 @@
 package persistence.metadata.model;
 
-/*     */import persistence.client.DBType; /*     */
+
 import persistence.event.CallbackMethod; /*     */
 import java.lang.reflect.Field; /*     */
 import java.lang.reflect.Method; /*     */
