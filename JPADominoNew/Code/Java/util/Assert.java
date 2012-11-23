@@ -3,6 +3,7 @@ package util;
 import java.util.*;
 
 /**
+ * utility assert function , if condition is not passed, throw runtime exception
  * 
  * @author weihang chen
  * 

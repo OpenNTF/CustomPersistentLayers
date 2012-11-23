@@ -1,6 +1,6 @@
 package persistence.property;
 
-import persistence.utils.ReflectUtils;
+import util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
@@ -26,7 +26,8 @@ public class PropertyAccessorHelper {
 			return genericClass;
 		}
 		if (isCollection(collectionField.getType())) {
-			Type[] parameters = ReflectUtils.getTypeArguments(collectionField);
+			Type[] parameters = ReflectionUtils
+					.getTypeArguments(collectionField);
 			if (parameters != null) {
 				if (parameters.length == 1) {
 					genericClass = (Class) parameters[0];

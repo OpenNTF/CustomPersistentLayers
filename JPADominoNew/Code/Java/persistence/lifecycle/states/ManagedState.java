@@ -7,16 +7,9 @@ import persistence.graph.ObjectGraphBuilder;
 import persistence.lifecycle.NodeStateContext;
 import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
-import persistence.metadata.model.KunderaMetadata;
 import persistence.core.EntityReader;
-import persistence.context.CacheBase;
-import persistence.context.PersistenceCache;
-import java.util.List;
 import javax.persistence.PersistenceContextType;
 
-import com.ibm.xsp.model.domino.wrapped.DominoDocument;
-
-import lotus.domino.Session;
 import model.notes.Key;
 
 /**
@@ -39,8 +32,8 @@ public class ManagedState extends NodeState {
 		nodeStateContext.setDirty(true);
 		// 1111 ADD THE SHOULD BE REMOVED NODE to the cache head nodes, so the
 		// flush will proccess it change Kundera code
-//		nodeStateContext.getPersistenceCache().getMainCache().addHeadNode(
-//				(Node) nodeStateContext);
+		// nodeStateContext.getPersistenceCache().getMainCache().addHeadNode(
+		// (Node) nodeStateContext);
 		// 1111
 		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.REMOVE);

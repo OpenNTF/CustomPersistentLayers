@@ -2,8 +2,6 @@ package persistence.core;
 
 import persistence.cache.CacheProvider;
 import persistence.cache.NonOperationalCacheProvider;
-import persistence.loader.ClientFactory;
-import persistence.loader.ClientLifeCycleManager;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;

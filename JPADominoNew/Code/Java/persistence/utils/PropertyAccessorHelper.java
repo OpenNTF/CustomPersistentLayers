@@ -2,7 +2,8 @@ package persistence.utils;
 
 /*     */import persistence.metadata.model.EntityMetadata; /*     */
 import persistence.proxy.EnhancedEntity; /*     */
-import persistence.utils.ReflectUtils; /*     */
+import util.ReflectionUtils;
+/*     */
 import java.lang.reflect.Field; /*     */
 import java.lang.reflect.InvocationTargetException; /*     */
 import java.lang.reflect.Method; /*     */
@@ -196,7 +197,7 @@ import java.util.Set;
 			/*     */}
 		/* 349 */if (isCollection(collectionField.getType()))
 		/*     */{
-			/* 352 */Type[] parameters = ReflectUtils
+			/* 352 */Type[] parameters = ReflectionUtils
 					.getTypeArguments(collectionField);
 			/* 353 */if (parameters != null)
 			/*     */{

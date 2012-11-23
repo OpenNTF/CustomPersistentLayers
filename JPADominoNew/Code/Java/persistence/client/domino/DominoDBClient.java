@@ -7,6 +7,7 @@ import persistence.graph.Node;
 import persistence.core.EntityReader;
 import persistence.context.jointable.JoinTableData;
 import util.Assert;
+import util.CommonUtil;
 import util.JSFUtil;
 import util.ResourceUtil;
 
@@ -28,33 +29,27 @@ import lotus.domino.ViewEntryCollection;
 import model.notes.Key;
 import model.notes.ModelBase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.ibm.commons.util.NotImplementedException;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
 /**
+ * class responsibility: <br>
+ * 1. concrete implementation of database transaction<br>
+ * 2. convert document/documents to java object <br>
+ * 3. java object are created by JavaBeanFactory, and get intercepted
  * 
  * @author weihang chen
- * 
  */
 
-/**
- * class responsibility: 1. direct interaction with database, wrapping document
- * inside of java object 2. java object are created by JavaBeanFactory, and get
- * intercepted
- */
-
+@SuppressWarnings("unchecked")
 public class DominoDBClient implements Client {
 	// public class DominoDBClient extends ClientBase {
 
 	private Database dominoDb;
 	private String persistenceUnit;
 	private EntityReader reader;
-	private static Log log = LogFactory.getLog(DominoDBClient.class);
 
 	public DominoDBClient(Object dominoDb, EntityReader reader,
 			String persistenceUnit) {
@@ -63,6 +58,9 @@ public class DominoDBClient implements Client {
 		this.persistenceUnit = persistenceUnit;
 	}
 
+	/**
+	 * synchronise a single java object state with database
+	 */
 	public void persist(Node node) {
 		// indexNode(node, entityMetadata, getIndexManager());
 		System.out.println("dominodbclient persiste(node) starts");
@@ -77,6 +75,9 @@ public class DominoDBClient implements Client {
 	}
 
 	/**
+	 * find one notes document from database using Key object, convert notes
+	 * document to domino document, convert domino document to java object
+	 * 
 	 * 
 	 * @param entityClass
 	 * @param key
@@ -98,7 +99,8 @@ public class DominoDBClient implements Client {
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException {
 		if (!(key instanceof Key) || key.getEntries().size() == 0)
-			throw new PersistenceException("empty key");
+			throw new PersistenceException("empty key"
+					+ CommonUtil.getMethodName(this.getClass().toString()));
 		String viewName = DominoEntityMetaDataUtil.getViewName(entityClass);
 		View lup = ResourceUtil.getViewByName1(dominoDb, viewName);
 		Document doc = lup.getDocumentByKey(key.getEntries(), true);
@@ -115,6 +117,10 @@ public class DominoDBClient implements Client {
 		return obj;
 	}
 
+	/**
+	 * find notes documents from database using Key object, convert them into
+	 * domino documents, convert domino documents into java objects
+	 */
 	public List findAll(Class entityClass, Key key)
 			throws PersistenceException, NotesException, SecurityException,
 			IllegalArgumentException, NoSuchMethodException,
@@ -139,6 +145,7 @@ public class DominoDBClient implements Client {
 	}
 
 	/**
+	 * delete a document from database
 	 * 
 	 * @param entity
 	 * @param key
@@ -150,12 +157,9 @@ public class DominoDBClient implements Client {
 		String viewName = DominoEntityMetaDataUtil.getViewName(JSFUtil
 				.getRealClass(entity.getClass()));
 		View lup = ResourceUtil.getViewByName(viewName);
-		System.out.println("do I get a view " + lup);
 		if (lup != null) {
 			Document doc = DominoUtils.getCurrentDatabase().getDocumentByUNID(
 					docUNID);
-
-			System.out.println("do I get a doc " + doc);
 			Assert.notNull(doc, "Business Object with ID " + docUNID
 					+ " not found!");
 			boolean b = doc.remove(true);
@@ -172,6 +176,7 @@ public class DominoDBClient implements Client {
 		return this.reader;
 	}
 
+	@SuppressWarnings("unused")
 	private String[] getString(Object[] pKeys) {
 		if (pKeys != null) {
 			String[] arr = new String[pKeys.length];
@@ -184,7 +189,20 @@ public class DominoDBClient implements Client {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * convert viewentrycollection to java object collection
+	 * 
+	 * @param vc
+	 * @param clazz
+	 * @return
+	 * @throws NotesException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	private Vector viewEntryCollectionToJava(ViewEntryCollection vc, Class clazz)
 			throws NotesException, SecurityException, NoSuchMethodException,
 			IllegalArgumentException, InstantiationException,
@@ -207,7 +225,20 @@ public class DominoDBClient implements Client {
 		return col;
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * documentcollection to java objects
+	 * 
+	 * @param dc
+	 * @param clazz
+	 * @return
+	 * @throws NotesException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	private Vector documentCollectionToJava(DocumentCollection dc, Class clazz)
 			throws NotesException, SecurityException, NoSuchMethodException,
 			IllegalArgumentException, InstantiationException,
@@ -232,12 +263,26 @@ public class DominoDBClient implements Client {
 		return col;
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * one single document to java
+	 * 
+	 * @param dbName
+	 * @param doc
+	 * @param clazz
+	 * @return
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	private Object documentToJava(String dbName, Document doc, Class clazz)
 			throws SecurityException, NoSuchMethodException,
 			IllegalArgumentException, InstantiationException,
 			IllegalAccessException, InvocationTargetException {
 		Object obj = null;
+		// reflection to create java entity, IOC inject the dominoDoc
 		DominoDocument dominoDoc = DominoDocument.wrap(dbName, doc, "both",
 				"force", true, "", "");
 		obj = JavaBeanFactory.getInstance(clazz, dominoDoc);

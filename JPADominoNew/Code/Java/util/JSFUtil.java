@@ -47,7 +47,6 @@ import persistence.core.EntityManagerImpl;
 import persistence.graph.Node;
 import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
-import persistence.metadata.model.KunderaMetadata;
 import persistence.metadata.model.Relation;
 import persistence.metadata.model.Relation.ForeignKey;
 
@@ -159,6 +158,10 @@ public class JSFUtil {
 		if (Enhancer.isEnhanced(clazz))
 			clazz = clazz.getSuperclass();
 		return clazz;
+	}
+	
+	public static boolean isEnhanced(Class clazz){
+		return Enhancer.isEnhanced(clazz);
 	}
 
 	public static String getRelativeDBPath(Database db) {

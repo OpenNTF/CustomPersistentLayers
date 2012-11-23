@@ -4,7 +4,6 @@ import persistence.graph.Node;
 import persistence.graph.ObjectGraph;
 import util.CloneUtil;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +17,7 @@ public class CacheBase {
 	private Map<String, Node> nodeMappings;
 	private Set<Node> headNodes;
 
+	@SuppressWarnings("unchecked")
 	public CacheBase() {
 		this.headNodes = new HashSet();
 		this.nodeMappings = new HashMap();
@@ -37,10 +37,18 @@ public class CacheBase {
 	 * 
 	 * @param node
 	 */
+	@SuppressWarnings("unchecked")
 	public void addNodeToCache(Node node) {
-		Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
-		node.setData(nodeDataCopy);
-		// node already exists from persistence cache
+		//1123 DELETE
+		if (node.isDirty()){
+			Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
+			node.setData(nodeDataCopy);
+			
+		}
+		//1123
+//		Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
+//		node.setData(nodeDataCopy);
+//		// node already exists from persistence cache
 		if (this.nodeMappings.containsKey(node.getNodeId())) {
 			Node existingNode = (Node) this.nodeMappings.get(node.getNodeId());
 

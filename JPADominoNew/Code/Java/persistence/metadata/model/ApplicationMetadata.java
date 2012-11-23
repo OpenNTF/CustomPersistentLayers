@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.persistence.PersistenceException;
 import javax.persistence.metamodel.Metamodel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -134,7 +136,7 @@ public class ApplicationMetadata {
 					+ "found! Already there is a query with same name:"
 					+ this.namedNativeQueries.get(queryName));
 
-			throw new ApplicationLoaderException(
+			throw new PersistenceException(
 					"Duplicate named/native query with name:" + queryName
 							+ "found! Already there is a query with same name:"
 							+ this.namedNativeQueries.get(queryName));
@@ -165,7 +167,7 @@ public class ApplicationMetadata {
 	private void onError(String clazzName) {
 		logger.error("Duplicate name:" + clazzName
 				+ "Please provide entity with complete package name.");
-		throw new ApplicationLoaderException("Duplicate name:" + clazzName
+		throw new PersistenceException("Duplicate name:" + clazzName
 				+ "Please provide entity with complete package name");
 	}
 

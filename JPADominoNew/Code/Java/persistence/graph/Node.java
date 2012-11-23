@@ -12,20 +12,72 @@ import persistence.context.PersistenceCache;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Node instance is representative entity within persistence context NOT DONE
+ * 
+ * @author weihang chen
+ * 
+ */
 public class Node implements NodeStateContext {
+	/**
+	 * document unid
+	 */
 	private String nodeId;
+	/**
+	 * POJO class instance
+	 */
 	private Object data;
+	/**
+	 * NodeState - REMOVE/MANAGED/DETACHED
+	 */
 	private NodeState currentNodeState;
+	/**
+	 * POJO class
+	 */
 	private Class<?> dataClass;
+	/**
+	 * map holds the the nodes that are relation owner to current node
+	 */
 	private Map<NodeLink, Node> parents;
+	/**
+	 * map holds the nodes which current node is relation owner to
+	 */
 	private Map<NodeLink, Node> children;
+	/**
+	 * a Node instance that is already traversed will not be visited again
+	 */
 	private boolean traversed;
+	/**
+	 * if a node instance is not dirty, it will not be visited
+	 */
 	private boolean dirty;
+	/**
+	 * if a Node instance is head node, it will be put into the headnode map in
+	 * cache, then it will be flushed if its dirty and not traversed
+	 */
 	private boolean isHeadNode;
+	/**
+	 * dbclient being associated with current Node object, instance is injected
+	 */
+	@SuppressWarnings("unchecked")
 	Client client;
+	/**
+	 * first level cache instance being injected through constructor
+	 */
 	private PersistenceCache persistenceCache;
+	/**
+	 * main implementation class for almost all operations within persistence
+	 * context issued by entityManager, instance is injected
+	 */
 	PersistenceDelegator pd;
 
+	/**
+	 * if there is no initial nodestate, make it Transient
+	 * 
+	 * @param nodeId
+	 * @param data
+	 * @param pc
+	 */
 	public Node(String nodeId, Object data, PersistenceCache pc) {
 		initializeNode(nodeId, data);
 		setPersistenceCache(pc);
@@ -33,6 +85,14 @@ public class Node implements NodeStateContext {
 		this.currentNodeState = new TransientState();
 	}
 
+	/**
+	 * constructor to initialise a Node, with initial state
+	 * 
+	 * @param nodeId
+	 * @param data
+	 * @param initialNodeState
+	 * @param pc
+	 */
 	public Node(String nodeId, Object data, NodeState initialNodeState,
 			PersistenceCache pc) {
 		initializeNode(nodeId, data);
@@ -41,15 +101,16 @@ public class Node implements NodeStateContext {
 		if (initialNodeState == null) {
 			this.currentNodeState = new TransientState();
 		} else {
-			// 1111 create a copy of that state instead, else modifying state of
-			// one node will impact other nodes
+
 			if (initialNodeState.getClass() == ManagedState.class)
 				this.currentNodeState = new ManagedState();
 			else if (initialNodeState.getClass() == RemovedState.class)
 				this.currentNodeState = new RemovedState();
 			else if (initialNodeState.getClass() == DetachedState.class)
 				this.currentNodeState = new DetachedState();
-			// 1111 deleted, create new nodestate instead
+			// without initialise a new state instance, will lead to that all
+			// nodes
+			// sharing same state instance
 			// this.currentNodeState = initialNodeState;
 		}
 	}
@@ -89,10 +150,12 @@ public class Node implements NodeStateContext {
 		this.data = data;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Class getDataClass() {
 		return this.dataClass;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setDataClass(Class dataClass) {
 		this.dataClass = dataClass;
 	}
@@ -149,6 +212,7 @@ public class Node implements NodeStateContext {
 		return ((Node) this.children.get(link));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addParentNode(NodeLink nodeLink, Node node) {
 		if ((this.parents == null) || (this.parents.isEmpty())) {
 			this.parents = new HashMap();
@@ -156,6 +220,7 @@ public class Node implements NodeStateContext {
 		this.parents.put(nodeLink, node);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addChildNode(NodeLink nodeLink, Node node) {
 		if ((this.children == null) || (this.children.isEmpty())) {
 			this.children = new HashMap();
@@ -179,10 +244,12 @@ public class Node implements NodeStateContext {
 		this.dirty = dirty;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Client getClient() {
 		return this.client;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setClient(Client client) {
 		this.client = client;
 	}
@@ -198,14 +265,6 @@ public class Node implements NodeStateContext {
 	public String toString() {
 		return "[" + this.nodeId + ": " + getData() + ": "
 				+ getCurrentNodeState() + ": isDirty - " + isDirty() + "]";
-	}
-
-	public String getSimpleName() {
-		// mode.Location@1111222
-		// location1111 first 4 digits enough to identify
-		String name = data.toString();
-		name = name.substring(name.indexOf(".") + 1).replace("@", "");
-		return name;
 	}
 
 	public boolean equals(Object otherNode) {
@@ -266,10 +325,6 @@ public class Node implements NodeStateContext {
 	}
 
 	public void flush() {
-		// 1107 delete
-		System.out.println("is it dirty? " + isDirty());
-		setDirty(true);
-		// 1107
 		if (!(isDirty()))
 			return;
 		getCurrentNodeState().handleFlush(this);

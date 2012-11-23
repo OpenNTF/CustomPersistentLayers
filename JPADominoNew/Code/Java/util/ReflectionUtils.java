@@ -4,13 +4,7 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-import lotus.domino.Document;
-import model.Tool;
-import model.notes.ModelBase;
-import persistence.annotation.support.JavaBeanFactory;
-
-import com.ibm.xsp.model.domino.wrapped.DominoDocument;
-import com.ibm.xsp.model.domino.wrapped.DominoDocument.FieldValueHolder;
+import javax.persistence.PersistenceException;
 
 import net.sf.cglib.proxy.Enhancer;
 
@@ -236,5 +230,86 @@ public class ReflectionUtils {
 		return clazz;
 	}
 
-	
+	public static boolean hasInterface(Class<?> has, Class<?> in) {
+		if (has.equals(in)) {
+			return true;
+		}
+		boolean match = false;
+		for (Class intrface : in.getInterfaces()) {
+			if (intrface.getInterfaces().length > 0) {
+				match = hasInterface(has, intrface);
+			} else {
+				match = intrface.equals(has);
+			}
+
+			if (match) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static Type[] getTypeArguments(Field property) {
+		Type type = property.getGenericType();
+		if (type instanceof ParameterizedType) {
+			return ((ParameterizedType) type).getActualTypeArguments();
+		}
+		return null;
+	}
+
+	public static boolean hasSuperClass(Class<?> has, Class<?> in) {
+		if (in.equals(has)) {
+			return true;
+		}
+		boolean match = false;
+
+		if (in.getSuperclass().equals(Object.class)) {
+			return match;
+		}
+		match = hasSuperClass(has, in.getSuperclass());
+		return match;
+	}
+
+	public static Class<?> classForName(String className,
+			ClassLoader classLoader) {
+		try {
+			Class c = null;
+			try {
+				c = Class.forName(className, true, Thread.currentThread()
+						.getContextClassLoader());
+			} catch (ClassNotFoundException e) {
+				try {
+					c = Class.forName(className);
+				} catch (ClassNotFoundException e1) {
+					if (classLoader == null) {
+						throw e1;
+					}
+
+					c = classLoader.loadClass(className);
+				}
+			}
+
+			return c;
+		} catch (ClassNotFoundException e) {
+			throw new PersistenceException(e);
+		}
+	}
+
+	public static Class<?> stripEnhancerClass(Class<?> c) {
+		String className = c.getName();
+
+		int enhancedIndex = className.indexOf("$$EnhancerByCGLIB");
+		if (enhancedIndex != -1) {
+			className = className.substring(0, enhancedIndex);
+		}
+
+		if (className.equals(c.getName())) {
+			return c;
+		}
+
+		c = classForName(className, c.getClassLoader());
+
+		return c;
+	}
+
 }

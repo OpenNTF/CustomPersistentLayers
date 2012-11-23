@@ -3,6 +3,13 @@ package persistence.client.domino;
 import persistence.annotation.DominoEntity;
 import util.Assert;
 
+/**
+ * this class should be deleted later, use
+ * MetadataManager.getEntityMetadata(clazz) instead
+ * 
+ * @author weihang chen
+ * 
+ */
 public class DominoEntityMetaDataUtil {
 
 	public static <E> String getFormName(Class<E> entityClass) {

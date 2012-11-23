@@ -4,13 +4,11 @@ package persistence.lifecycle.states;
 import persistence.graph.Node; /*     */
 import persistence.graph.ObjectGraphBuilder; /*     */
 import persistence.lifecycle.NodeStateContext; /*     */
-import persistence.context.CacheBase; /*     */
-import persistence.context.PersistenceCache;
+
 import javax.persistence.PersistenceContextType;
 import javax.persistence.PersistenceException;
 
 import lotus.domino.NotesException;
-import model.notes.Key;
 
 /*     */
 /*     */public class RemovedState extends NodeState

@@ -9,7 +9,7 @@ import java.util.Map;
  *
  */
 /**
- * this class is a wrapper of ordinary java pojo class, with extra infomation
+ * this class is a wrapper of ordinary java pojo class, with extra information
  * such as id and relations
  */
 public class EnhanceEntity {

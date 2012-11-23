@@ -5,7 +5,8 @@ import persistence.metadata.model.EntityMetadata;
 import persistence.event.CallbackMethod;
 import persistence.event.ExternalCallbackMethod;
 import persistence.event.InternalCallbackMethod;
-import persistence.utils.ReflectUtils;
+import util.ReflectionUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,8 +26,6 @@ import org.apache.commons.logging.LogFactory;
 
 public class EntityListenersProcessor implements MetadataProcessor {
 	private static Log log = LogFactory.getLog(EntityListenersProcessor.class);
-
-
 
 	private static final List<Class> JPAListenersAnnotations = Arrays
 			.asList(new Class[] { PrePersist.class, PostPersist.class,
@@ -99,7 +98,7 @@ public class EntityListenersProcessor implements MetadataProcessor {
 
 			boolean hasUncheckedExceptions = false;
 			for (Class exception : method.getExceptionTypes()) {
-				if (ReflectUtils.hasSuperClass(RuntimeException.class,
+				if (ReflectionUtils.hasSuperClass(RuntimeException.class,
 						exception))
 					continue;
 				hasUncheckedExceptions = true;

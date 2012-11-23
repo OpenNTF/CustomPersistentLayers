@@ -6,6 +6,12 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * this is the main entry point going through all kinds of initial setting
+ * 
+ * @author SWECWI
+ * 
+ */
 public final class Configurator {
 	private static Log logger = LogFactory.getLog(Configurator.class);
 	private List<Configuration> configurer = new ArrayList<Configuration>();
@@ -13,11 +19,10 @@ public final class Configurator {
 
 	/**
 	 * all three configurator will be updated later, use the temporary
-	 * configurator instead, this configurator do not use persistence.xml, hard
-	 * code all the functionality
+	 * configurator instead, this configurator do not use persistence.xml
 	 */
 	public static Configurator getInstance(String[] persistenceUnits) {
-		if (instance == null) 
+		if (instance == null)
 			instance = new Configurator(persistenceUnits);
 		return instance;
 	}
@@ -35,6 +40,9 @@ public final class Configurator {
 		this.configurer.add(new MetamodelConfigurationTemp());
 	}
 
+	/**
+	 * loop through all Configuration instances and configure them
+	 */
 	public void configure() {
 		for (Configuration conf : this.configurer) {
 			logger.debug("Loading configuration for :"

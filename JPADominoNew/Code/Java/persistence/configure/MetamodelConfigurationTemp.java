@@ -3,15 +3,10 @@ package persistence.configure;
 import persistence.metadata.MetadataBuilder;
 import persistence.metadata.model.ApplicationMetadata;
 import persistence.metadata.model.EntityMetadata;
-import persistence.metadata.model.KunderaMetadata;
+import persistence.metadata.model.DominoMetadata;
 import persistence.metadata.model.MetamodelImpl;
 import util.CommonUtil;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.persistence.Entity;
 import javax.persistence.metamodel.Metamodel;
 
 import org.apache.commons.logging.Log;
@@ -28,6 +22,14 @@ import org.apache.commons.logging.LogFactory;
 
 import model.resource.PersistenceClasses;
 
+/**
+ * this class reads the registered persistent classes from
+ * model.resource.PersistenceClasses and store all entity meta data and
+ * relations between entities
+ * 
+ * @author weihang chen
+ * 
+ */
 class MetamodelConfigurationTemp implements Configuration {
 	private final String DOMINOPERSISTENUNIT = "DOMINOJPATEST";
 	private static Log log = LogFactory
@@ -41,32 +43,48 @@ class MetamodelConfigurationTemp implements Configuration {
 		loadEntityMetadata();
 	}
 
+	/**
+	 * create three maps, invoke scanClassAndPutMetadata to manipulate the maps,
+	 * set the maps to DominoMetadata.ApplicationMetadata
+	 */
+	@SuppressWarnings("unchecked")
 	private void loadEntityMetadata() {
 
-		KunderaMetadata kunderaMetadata = KunderaMetadata.getInstance();
-		ApplicationMetadata appMetadata = kunderaMetadata
+		DominoMetadata dominoMetadata = DominoMetadata.getInstance();
+		ApplicationMetadata appMetadata = dominoMetadata
 				.getApplicationMetadata();
 		// metamodelImpl implements javax.persistence.metamodel,populate three
 		// maps in metamodel
 		Metamodel metamodel = new MetamodelImpl();
+		// map using class as key , metadata as value
 		Map<Class<?>, EntityMetadata> entityMetadataMap = ((MetamodelImpl) metamodel)
 				.getEntityMetadataMap();
+		// map using class name string as key, class as value
 		Map<String, Class<?>> entityNameToClassMap = PersistenceClasses
 				.getPersistenceClasses();
 		((MetamodelImpl) metamodel)
 				.setEntityNameToClassMap(entityNameToClassMap);
 		Map puToClazzMap = new HashMap();
+		// main method to process all the maps
 		scanClassAndPutMetadata(entityMetadataMap, entityNameToClassMap,
 				puToClazzMap);
-		// important, assigne value to applicationmetadata, current version does
-		// not handle all the aspects
+		// set map to DominoMetadata.ApplicationMetadata
 		((MetamodelImpl) metamodel).setEntityMetadataMap(entityMetadataMap);
 		appMetadata.getMetamodelMap().put(DOMINOPERSISTENUNIT, metamodel);
 		appMetadata.setClazzToPuMap(puToClazzMap);
 
 	}
 
-	// this method originally go through the xml, for now hard code through it
+	/**
+	 * this method originally go through the persistence.xml, go through every
+	 * entry from entityNameClassEntry, get the class, use MetadataBuilder to
+	 * build class metadata, put the class as key and metadata as value in
+	 * entityMetadataMap
+	 * 
+	 * @param entityMetadataMap
+	 * @param entityNameToClassMap
+	 * @param clazzToPuMap
+	 */
 	private void scanClassAndPutMetadata(
 			Map<Class<?>, EntityMetadata> entityMetadataMap,
 			Map<String, Class<?>> entityNameToClassMap,
@@ -106,6 +124,15 @@ class MetamodelConfigurationTemp implements Configuration {
 
 	}
 
+	/**
+	 * do not remember if this method is needed
+	 * 
+	 * @param clazz
+	 * @param pu
+	 * @param clazzToPuMap
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	private Map<String, List<String>> mapClazztoPu(Class<?> clazz, String pu,
 			Map<String, List<String>> clazzToPuMap) {
 		List puCol = new ArrayList(1);

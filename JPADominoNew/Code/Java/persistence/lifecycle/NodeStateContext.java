@@ -8,6 +8,12 @@ import persistence.core.PersistenceDelegator;
 import persistence.context.PersistenceCache;
 import java.util.Map;
 
+/**
+ * INTERFACE FOR persistence.graph.Node
+ * 
+ * @author SWECWI
+ * 
+ */
 public abstract interface NodeStateContext {
 	public abstract NodeState getCurrentNodeState();
 
@@ -21,8 +27,10 @@ public abstract interface NodeStateContext {
 
 	public abstract void setData(Object paramObject);
 
+	@SuppressWarnings("unchecked")
 	public abstract Class getDataClass();
 
+	@SuppressWarnings("unchecked")
 	public abstract void setDataClass(Class paramClass);
 
 	public abstract Map<NodeLink, Node> getParents();
@@ -53,8 +61,10 @@ public abstract interface NodeStateContext {
 
 	public abstract void setHeadNode(boolean paramBoolean);
 
+	@SuppressWarnings("unchecked")
 	public abstract Client getClient();
 
+	@SuppressWarnings("unchecked")
 	public abstract void setClient(Client paramClient);
 
 	public abstract PersistenceDelegator getPersistenceDelegator();
@@ -97,10 +107,3 @@ public abstract interface NodeStateContext {
 	public abstract void setPersistenceCache(
 			PersistenceCache paramPersistenceCache);
 }
-
-/*
- * Location: C:\Users\SWECWI\Desktop\SECRET
- * WEAPON\Kundera\kundera-mongo\kundera-mongo-2.0.6-jar-with-dependencies.jar
- * Qualified Name: com.impetus.kundera.lifecycle.NodeStateContext Java Class
- * Version: 6 (50.0) JD-Core Version: 0.5.3
- */

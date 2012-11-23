@@ -1,15 +1,26 @@
 package util;
 
-/**
- * @author weihang chen
- */
 import javax.persistence.PersistenceException;
 
 import com.ibm.xsp.model.domino.DominoUtils;
 
 import lotus.domino.*;
 
+/**
+ * DominoUtil functions
+ * 
+ * @author weihang chen
+ * 
+ */
 public class ResourceUtil {
+	/**
+	 * get view from current database
+	 * 
+	 * @param viewName
+	 * @return
+	 * @throws PersistenceException
+	 * @throws NotesException
+	 */
 	public static View getViewByName(String viewName)
 			throws PersistenceException, NotesException {
 		View view = null;
@@ -23,6 +34,15 @@ public class ResourceUtil {
 		return view;
 	}
 
+	/**
+	 * get view from a database
+	 * 
+	 * @param db
+	 * @param viewName
+	 * @return
+	 * @throws PersistenceException
+	 * @throws NotesException
+	 */
 	public static View getViewByName1(Database db, String viewName)
 			throws PersistenceException, NotesException {
 		if (db == null)

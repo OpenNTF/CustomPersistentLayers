@@ -9,6 +9,7 @@ import persistence.annotation.support.DominoEntityHelper;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
+import com.ibm.xsp.model.domino.wrapped.DominoDocument.FieldValueHolder;
 
 import util.Assert;
 import util.JSFUtil;
@@ -292,6 +293,14 @@ public class ModelBase {
 		if (doc.getDocument() == null || doc.getDocument().isDeleted())
 			throw new PersistenceException("Business Object with id ["
 					+ this.getUnid() + "] is in an invalid state");
+	}
+
+	public int getChangedFieldSize() {
+		return doc.getChangedFields().size();
+	}
+
+	public HashMap<String, FieldValueHolder> getChangedFields() {
+		return (HashMap<String, FieldValueHolder>) doc.getChangedFields();
 	}
 
 }
