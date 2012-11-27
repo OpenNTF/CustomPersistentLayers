@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import model.Location;
-import model.Tool;
 import model.ToolBox;
 
 /**
@@ -23,7 +22,6 @@ public class PersistenceClasses {
 			persistenceClasses = new HashMap<String, Class<?>>();
 			persistenceClasses.put("model.Location", Location.class);
 			persistenceClasses.put("model.ToolBox", ToolBox.class);
-			persistenceClasses.put("model.Tool", Tool.class);
 		}
 		return persistenceClasses;
 	}

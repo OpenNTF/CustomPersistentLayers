@@ -2,22 +2,19 @@ package persistence.context;
 
 import persistence.graph.Node;
 import persistence.graph.NodeLink;
-import persistence.graph.NodeLink.LinkProperty;
-import persistence.graph.ObjectGraphBuilder;
-import persistence.lifecycle.states.ManagedState;
-import persistence.lifecycle.states.RemovedState;
 import persistence.metadata.model.Relation;
-import persistence.metadata.model.Relation.ForeignKey;
-import persistence.context.jointable.JoinTableData;
-import persistence.context.jointable.JoinTableData.OPERATION;
+import util.CommonUtil;
+
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import model.Location;
-
+/**
+ * manager class building/clearing flushstack
+ * 
+ * @author weihang chen
+ * 
+ */
 public class FlushManager {
 
 	/**
@@ -25,31 +22,34 @@ public class FlushManager {
 	 * PersistenceCacheManager(pc).markAllNodesNotTraversed();
 	 * <p>
 	 * 2. go through all the head nodes and invoke addNodesToFlushStack(pc,
-	 * headNode) on each of them
+	 * headNode) on it if its dirty and being not null
 	 * 
 	 * @param pc
 	 */
+	@SuppressWarnings("unchecked")
 	public void buildFlushStack(PersistenceCache pc) {
 		MainCache mainCache = (MainCache) pc.getMainCache();
-		System.out.println("EEEEEEEMAIN CACHE: "+mainCache+"/size: "+mainCache.size());
+		System.out.println(CommonUtil.getMethodName(this.getClass().toString())
+				+ "/MAIN CACHE: " + mainCache + "/size: " + mainCache.size());
 		new PersistenceCacheManager(pc).markAllNodesNotTraversed();
 		Set headNodes = mainCache.getHeadNodes();
 		for (Object obj : headNodes) {
-			System.out.println("is there any headnode?? "+obj);
+			// System.out.println("current headnode is: "+obj);
 			Node headNode = (Node) obj;
-			System.out.println("head node is not dirty therefore stack size is 0?? "+headNode.isDirty());
-			System.out.println("head node is not dirty therefore stack size is 0?? "+headNode.isDirty());System.out.println("head node is not dirty therefore stack size is 0?? "+headNode.isDirty());
 			if (headNode != null && headNode.isDirty())
 				addNodesToFlushStack(pc, headNode);
 		}
 	}
 
 	/**
-	 * recursivly add nodes to stock
+	 * get FlushStack object from perisistenceCache, recursively add relative
+	 * nodes to FlushStack object <br>
+	 * IMPORTANT: NOT code is in use, only OneToMany
 	 * 
 	 * @param pc
 	 * @param node
 	 */
+	@SuppressWarnings("unchecked")
 	public void addNodesToFlushStack(PersistenceCache pc, Node node) {
 
 		FlushStack flushStack = pc.getFlushStack();
@@ -198,6 +198,11 @@ public class FlushManager {
 		flushStack.push(node);
 	}
 
+	/**
+	 * clear the FlushStack object from a PersistenceCache object
+	 * 
+	 * @param pc
+	 */
 	public void clearFlushStack(PersistenceCache pc) {
 		FlushStack flushStack = pc.getFlushStack();
 		if ((flushStack == null) || (flushStack.isEmpty()))

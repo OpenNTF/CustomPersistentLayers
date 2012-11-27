@@ -12,9 +12,22 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * parent cache class<br>
+ * manage nodes in first level cache
+ * 
+ * @author weihang chen
+ * 
+ */
 public class CacheBase {
 	private static Log log = LogFactory.getLog(CacheBase.class);
+	/**
+	 * reference to all nodes
+	 */
 	private Map<String, Node> nodeMappings;
+	/**
+	 * reference to all head nodes
+	 */
 	private Set<Node> headNodes;
 
 	@SuppressWarnings("unchecked")
@@ -23,32 +36,37 @@ public class CacheBase {
 		this.nodeMappings = new HashMap();
 	}
 
+	/**
+	 * get a node from all nodes map by id, id is document unique "$+id"
+	 * 
+	 * @param nodeId
+	 * @return
+	 */
 	public Node getNodeFromCache(String nodeId) {
 		Node node = (Node) this.nodeMappings.get(nodeId);
 		return node;
 	}
 
 	/**
-	 * 1. clone the input node and put the clone into the persistence cache
+	 * clone and node and put in cache only if its dirty (new node is dirty,
+	 * node with changed Field value is dirty)
 	 * <p>
 	 * 2. if input node does existing in cache, put parent/children nodes from
-	 * the existingnode from persistence cache to the new clone, else just put
-	 * it in cache
+	 * the existing node from persistence cache to the new clone
 	 * 
 	 * @param node
 	 */
 	@SuppressWarnings("unchecked")
 	public void addNodeToCache(Node node) {
-		//1123 DELETE
-		if (node.isDirty()){
-			Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
-			node.setData(nodeDataCopy);
-			
-		}
-		//1123
-//		Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
-//		node.setData(nodeDataCopy);
-//		// node already exists from persistence cache
+		// 1126 old version does not have dirty check
+		if (!node.isDirty())
+			return;
+		// 1126
+		Object nodeDataCopy = CloneUtil.cloneDominoEntity(node.getData());
+		node.setData(nodeDataCopy);
+
+		// node already exists from persistence cache, put parent, children
+		// nodes into the
 		if (this.nodeMappings.containsKey(node.getNodeId())) {
 			Node existingNode = (Node) this.nodeMappings.get(node.getNodeId());
 
@@ -81,6 +99,11 @@ public class CacheBase {
 
 	}
 
+	/**
+	 * when a node is removed, remove it from headnode map and allnode map
+	 * 
+	 * @param node
+	 */
 	public void removeNodeFromCache(Node node) {
 		if (getHeadNodes().contains(node)) {
 			getHeadNodes().remove(node);
@@ -94,6 +117,18 @@ public class CacheBase {
 		node = null;
 	}
 
+	/**
+	 * when an object graph is built, it is merged with the existing persistence
+	 * cache<br>
+	 * 1.go through all nodes from the graph, invoke addNodeToCache()<br>
+	 * 2. since flush manager only checks the head nodes for flush, if current
+	 * visiting graph node is not head node and it exists in cache as head node,
+	 * remove it from cache headnode map 3.one graph has only one headNode, add
+	 * it to the cache, so it will be flushed
+	 * 
+	 * @param graph
+	 * @param persistenceCache
+	 */
 	public void addGraphToCache(ObjectGraph graph,
 			PersistenceCache persistenceCache) {
 		for (String key : graph.getNodeMapping().keySet()) {

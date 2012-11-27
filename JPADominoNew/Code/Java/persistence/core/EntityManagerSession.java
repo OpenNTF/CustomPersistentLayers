@@ -6,17 +6,25 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * associate with second level cache, not implemented
+ * 
+ * @author weihang chen
+ * 
+ */
 public class EntityManagerSession {
 	private static final Log LOG = LogFactory
 			.getLog(EntityManagerSession.class);
 	private Map<Object, Object> sessionCache;
 	private Cache l2Cache;
 
+	@SuppressWarnings("unchecked")
 	public EntityManagerSession(Cache cache) {
 		this.sessionCache = new ConcurrentHashMap();
 		setL2Cache(cache);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <T> T lookup(Class<T> entityClass, Object id) {
 		String key = cacheKey(entityClass, id);
 		LOG.debug("Reading from L1 >> " + key);
@@ -62,6 +70,7 @@ public class EntityManagerSession {
 			boolean spillOverToL2) {
 		String key = cacheKey(entityClass, id);
 		LOG.debug("Removing from L1 >> " + key);
+		@SuppressWarnings("unused")
 		Object o = this.sessionCache.remove(key);
 
 		if (!(spillOverToL2))
@@ -77,6 +86,7 @@ public class EntityManagerSession {
 		return clazz.getName() + "_" + id;
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void clear() {
 		this.sessionCache = new ConcurrentHashMap();
 

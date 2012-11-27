@@ -18,7 +18,6 @@ import persistence.context.FlushStack;
 import persistence.context.MainCache;
 import persistence.context.PersistenceCache;
 import persistence.context.PersistenceCacheManager;
-import persistence.context.jointable.JoinTableData;
 import persistence.event.EntityEventDispatcher;
 import util.CloneUtil;
 import util.CommonUtil;
@@ -38,18 +37,56 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ibm.xsp.model.domino.DominoUtils;
 
+/**
+ * most important class in this API, all operations passed in from EntityManager
+ * are implemented in this class
+ * 
+ * @author weihang chen
+ * 
+ */
 public class PersistenceDelegator {
 	private static final Log log = LogFactory
 			.getLog(PersistenceDelegator.class);
 	private boolean closed = false;
+	/**
+	 * associate with second level cache, not used
+	 */
 	private EntityManagerSession session;
+	/**
+	 * multiple DBClient can be supported, but this API supports only
+	 * DominoDBClient
+	 */
+	@SuppressWarnings("unchecked")
 	private Map<String, Client> clientMap;
+	/**
+	 * used to handle event such as @presave @posesave, not implemented
+	 */
 	private EntityEventDispatcher eventDispatcher;
+	/**
+	 * not used
+	 */
 	boolean isRelationViaJoinTable;
+	/**
+	 * flush mode is AUTO in this API, persistence cache state will synchronise
+	 * with database at the end of all operations (remove, persist, merge)
+	 */
 	private FlushModeType flushMode = FlushModeType.AUTO;
+	/**
+	 * used to build object graph, extremely important, since almost all
+	 * operations require the building of an object graph
+	 */
 	private ObjectGraphBuilder graphBuilder;
+	/**
+	 * used to maintain flush stack
+	 */
 	private FlushManager flushManager;
+	/**
+	 * if a transaction is not in progress, no operation should be executed
+	 */
 	private boolean isTransactionInProgress;
+	/**
+	 * first level cache
+	 */
 	private PersistenceCache persistenceCache;
 
 	public PersistenceDelegator(EntityManagerSession session,
@@ -61,8 +98,19 @@ public class PersistenceDelegator {
 		this.persistenceCache = pc;
 	}
 
+	/**
+	 * save a new Domino Entity to persistence cache and synchronise the
+	 * persistence cache with database <br>
+	 * 1. build object graph<br>
+	 * 2. add head node from graph to cache head node map<br>
+	 * 3. invoke persist() on the headnode, recursively propagate PERSIST to
+	 * other nodes with the PERSIST/ALL CascadeType <br>
+	 * 4. flush(), synchronise persistence cache with database<br>
+	 * 5. clear the graph
+	 * 
+	 * @param e
+	 */
 	public void persist(Object e) {
-		EntityMetadata metadata = getMetadata(e.getClass());
 		System.out
 				.println("-----------------------------------PERSISTE STARTS-------------------------------------");
 		// pre events might be needed later
@@ -90,9 +138,25 @@ public class PersistenceDelegator {
 		log.debug("Data persisted successfully for entity : " + e.getClass());
 	}
 
+	/**
+	 * find an object with Key<br>
+	 * 1a. find node from cache <br>
+	 * 1b. get the entity from node in ManagedState, clone and return the cloned
+	 * detached entity
+	 * <p>
+	 * 2a. can't be found from cache, create new node in TrasientState, find it
+	 * from database <br>
+	 * 2b. build object graph , synchronise the object graph with persistence
+	 * cache using addGraphToCache<br>
+	 * 2c. clone and return the cloned detached entity
+	 * 
+	 * @param <E>
+	 * @param entityClass
+	 * @param primaryKey
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public <E> E find(Class<E> entityClass, Object primaryKey) {
-
 		boolean isCached = true;
 		EntityMetadata entityMetadata = getMetadata(entityClass);
 		String nodeId = ObjectGraphBuilder.getNodeId(primaryKey, entityClass);
@@ -134,21 +198,32 @@ public class PersistenceDelegator {
 
 		}
 		// return (E) nodeData;
-		System.out
-				.println("METHOD SIGNATURE: "
-						+ CommonUtil.getMethodName(this.getClass().toString())
-						+ " /METHOD DESCRIPTION: deepclone an managed entity and return a detached one -- target: "
-						+ nodeData);
+		// System.out
+		// .println("METHOD SIGNATURE: "
+		// + CommonUtil.getMethodName(this.getClass().toString())
+		// +
+		// " /METHOD DESCRIPTION: deepclone an managed entity and return a detached one -- target: "
+		// + nodeData);
 		E clone = (E) CloneUtil.cloneDominoEntity(nodeData);
-		System.out
-				.println("METHOD SIGNATURE: "
-						+ CommonUtil.getMethodName(this.getClass().toString())
-						+ " /METHOD DESCRIPTION: deepclone an managed entity and return a detached one -- clone: "
-						+ clone);
+		// System.out
+		// .println("METHOD SIGNATURE: "
+		// + CommonUtil.getMethodName(this.getClass().toString())
+		// +
+		// " /METHOD DESCRIPTION: deepclone an managed entity and return a detached one -- clone: "
+		// + clone);
 		// return (E) nodeData;
 		return clone;
 	}
 
+	/**
+	 * not used
+	 * 
+	 * @param <E>
+	 * @param entityClass
+	 * @param primaryKeys
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public <E> List<E> find(Class<E> entityClass, Object[] primaryKeys) {
 		List entities = new ArrayList();
 		Set pKeys = new HashSet(Arrays.asList(primaryKeys));
@@ -159,8 +234,16 @@ public class PersistenceDelegator {
 		return entities;
 	}
 
+	/**
+	 * remove an entity from persistence cache + database<br>
+	 * 1. build object graph<br>
+	 * 2. change the headnode's state to REMOVE, recursively propagate REMOVE
+	 * operation to other nodes with the REMOVE/ALL CascadeType<br>
+	 * 3. synchronise persistence cache with database by invoking flush
+	 * 
+	 * @param e
+	 */
 	public void remove(Object e) {
-		EntityMetadata metadata = getMetadata(e.getClass());
 		// getEventDispatcher().fireEventListeners(metadata, e,
 		// PreRemove.class);
 		ObjectGraph graph = this.graphBuilder.getObjectGraph(e,
@@ -182,11 +265,13 @@ public class PersistenceDelegator {
 	}
 
 	/**
-	 * FlutModeType in this project is bydefault AUTO, there are a couple of
+	 * FlutModeType in this project is by default AUTO, there are a couple of
 	 * steps in the flush process
 	 * <p>
-	 * 1. build stack using the persistence cache
+	 * 1. build stack <br>
+	 * 2. go through the nodes from stack, call flush
 	 */
+	@SuppressWarnings("unchecked")
 	public void flush() {
 		if (FlushModeType.COMMIT.equals(getFlushMode())) {
 			return;
@@ -197,7 +282,8 @@ public class PersistenceDelegator {
 		this.flushManager.buildFlushStack(getPersistenceCache());
 
 		FlushStack fs = getPersistenceCache().getFlushStack();
-		System.out.println(fs);
+		System.out.println(CommonUtil.getMethodName(this.getClass().toString())
+				+ ": " + fs);
 		// .debug("Flushing following flush stack to database(s) (showing stack objects from top to bottom):\n"
 		// + fs);
 		Node node;
@@ -212,6 +298,7 @@ public class PersistenceDelegator {
 				node.flush();
 				Map parents = node.getParents();
 				Map children = node.getChildren();
+				// relation links need to be updated as well
 				if ((parents != null) && (!(parents.isEmpty()))) {
 					for (Object obj : parents.keySet()) {
 						NodeLink parentNodeLink = (NodeLink) obj;
@@ -233,39 +320,51 @@ public class PersistenceDelegator {
 			}
 		}
 
-		Map joinTableDataMap = getPersistenceCache().getJoinTableDataMap();
-		for (Iterator i$ = joinTableDataMap.values().iterator(); i$.hasNext();) {
-			System.out.println("joinTableDataMap");
-			JoinTableData jtData = (JoinTableData) i$.next();
-			// EntityMetadata m =
-			// KunderaMetadataManager.getEntityMetadata(jtData
-			// .getEntityClass());
-			EntityMetadata m = null;
-			Client client = getClient(m);
-			// if (JoinTableData.OPERATION.INSERT.equals(jtData.getOperation()))
-			// {
-			// client.persistJoinTable(jtData);
-			// } else if (JoinTableData.OPERATION.DELETE.equals(jtData
-			// .getOperation())) {
-			// for (i$ = jtData.getJoinTableRecords().keySet().iterator(); i$
-			// .hasNext();) {
-			// Object pk = i$.next();
-			// client.deleteByColumn(jtData.getJoinTableName(), m
-			// .getIdColumn().getName(), pk);
-			// }
-			// }
-		}
+		// Map joinTableDataMap = getPersistenceCache().getJoinTableDataMap();
+		// for (Iterator i$ = joinTableDataMap.values().iterator();
+		// i$.hasNext();) {
+		// System.out.println("joinTableDataMap");
+		// JoinTableData jtData = (JoinTableData) i$.next();
+		// EntityMetadata m =
+		// KunderaMetadataManager.getEntityMetadata(jtData
+		// .getEntityClass());
+		// EntityMetadata m = null;
+		// Client client = getClient(m);
+		// if (JoinTableData.OPERATION.INSERT.equals(jtData.getOperation()))
+		// {
+		// client.persistJoinTable(jtData);
+		// } else if (JoinTableData.OPERATION.DELETE.equals(jtData
+		// .getOperation())) {
+		// for (i$ = jtData.getJoinTableRecords().keySet().iterator(); i$
+		// .hasNext();) {
+		// Object pk = i$.next();
+		// client.deleteByColumn(jtData.getJoinTableName(), m
+		// .getIdColumn().getName(), pk);
+		// }
+		// }
+		// }
 
-		JoinTableData jtData;
-		EntityMetadata m;
-		Client client;
-		Iterator i$;
-		joinTableDataMap.clear();
+		// JoinTableData jtData;
+		// EntityMetadata m;
+		// Client client;
+		// Iterator i$;
+		// joinTableDataMap.clear();
 	}
 
+	/**
+	 * merge detached entities into persistence cache, synchronise with database<br>
+	 * 1. build object graph<br>
+	 * 2. call merge from the head node, recursively propagate merge to other
+	 * nodes with the MERGE/ALL CascadeType <br>
+	 * 3. flush
+	 * 
+	 * @param <E>
+	 * @param e
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public <E> E merge(E e) {
 		log.debug("Merging Entity : " + e);
-		EntityMetadata m = getMetadata(e.getClass());
 		// getEventDispatcher().fireEventListeners(m, e, PreUpdate.class);
 		ObjectGraph graph = this.graphBuilder.getObjectGraph(e,
 				new ManagedState(), getPersistenceCache());
@@ -286,6 +385,14 @@ public class PersistenceDelegator {
 		return (E) headNode.getData();
 	}
 
+	/**
+	 * it's supposed to support multiple DBClient types, but in this API, only
+	 * DominoDBClient is in use
+	 * 
+	 * @param m
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public Client getClient(EntityMetadata m) {
 		// IndexManager indexManager = null;
 		DominoEntityReader entityReader = new DominoEntityReader();
@@ -295,7 +402,7 @@ public class PersistenceDelegator {
 		return dbClient;
 
 		/**
-		 * choose dbclient based on entityMetadata, origianl code form Kundera
+		 * choose dbclient based on entityMetadata, origianl code
 		 */
 		/*
 		 * Client client = null; String persistenceUnit =
@@ -310,14 +417,25 @@ public class PersistenceDelegator {
 		 */
 	}
 
+	@SuppressWarnings("unused")
 	private EntityManagerSession getSession() {
 		return this.session;
 	}
 
+	@SuppressWarnings("unused")
 	private EntityEventDispatcher getEventDispatcher() {
 		return this.eventDispatcher;
 	}
 
+	/**
+	 * not used
+	 * 
+	 * @param <E>
+	 * @param entityClass
+	 * @param embeddedColumnMap
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public <E> List<E> find(Class<E> entityClass,
 			Map<String, String> embeddedColumnMap) {
 		EntityMetadata entityMetadata = getMetadata(entityClass);
@@ -334,10 +452,18 @@ public class PersistenceDelegator {
 	// return query;
 	// }
 
+	/**
+	 * check if entityManager/transaction is still opened
+	 */
 	public final boolean isOpen() {
 		return (!(this.closed));
 	}
 
+	/**
+	 * clear references so allocated memory will be GC, close
+	 * entityManager/transaction
+	 */
+	@SuppressWarnings("unchecked")
 	public final void close() {
 		this.eventDispatcher = null;
 		if ((this.clientMap != null) && (!(this.clientMap.isEmpty()))) {
@@ -363,21 +489,38 @@ public class PersistenceDelegator {
 	// try {
 	// return PropertyAccessorHelper.getId(entity, metadata);
 	// } catch (PropertyAccessException e) {
-	// throw new KunderaException(e);
 	// }
 	// }
 
+	/**
+	 * not used
+	 */
 	public void store(Object id, Object entity) {
 		this.session.store(id, entity);
 	}
 
+	/**
+	 * not used
+	 * 
+	 * @param entities
+	 * @param entityMetadata
+	 */
+	@SuppressWarnings("unchecked")
 	public void store(List entities, EntityMetadata entityMetadata) {
 		for (Iterator i$ = entities.iterator(); i$.hasNext();) {
+			@SuppressWarnings("unused")
 			Object o = i$.next();
 			// this.session.store(getId(o, entityMetadata), o);
 		}
 	}
 
+	/**
+	 * get the Reader object to deal with the database transaction
+	 * 
+	 * @param client
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public EntityReader getReader(Client client) {
 		return client.getReader();
 	}
@@ -398,10 +541,16 @@ public class PersistenceDelegator {
 		return this.persistenceCache;
 	}
 
+	/**
+	 * start a transaction
+	 */
 	public void begin() {
 		this.isTransactionInProgress = true;
 	}
 
+	/**
+	 * synchronise persistence cache state with database, close transaction
+	 */
 	public void commit() {
 		flush();
 		this.isTransactionInProgress = false;

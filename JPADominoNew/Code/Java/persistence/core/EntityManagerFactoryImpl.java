@@ -3,10 +3,7 @@ package persistence.core;
 import persistence.cache.CacheProvider;
 import persistence.cache.NonOperationalCacheProvider;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,9 +18,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ibm.commons.util.NotImplementedException;
-import com.ibm.commons.util.StringUtil;
 
-//create instance of entitymanagerfactory in application listern do not know how to refer to this single instance in Xpages, use singleton instead
+/**
+ * used to create EntityManager instances
+ * 
+ * @author weihang chen
+ * 
+ */
 public class EntityManagerFactoryImpl implements EntityManagerFactory {
 	private static Log logger = LogFactory
 			.getLog(EntityManagerFactoryImpl.class);
@@ -42,6 +43,7 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 		return entityManagerFactory;
 	}
 
+	@SuppressWarnings("unchecked")
 	private EntityManagerFactoryImpl(PersistenceUnitInfo persistenceUnitInfo,
 			Map props) {
 		this((persistenceUnitInfo != null) ? persistenceUnitInfo
@@ -51,6 +53,14 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 	private EntityManagerFactoryImpl() {
 	}
 
+	/**
+	 * no need to read the detail in this constructor, no properties or
+	 * persistenceunits are in used
+	 * 
+	 * @param persistenceUnit
+	 * @param properties
+	 */
+	@SuppressWarnings("unchecked")
 	private EntityManagerFactoryImpl(String persistenceUnit,
 			Map<String, Object> properties) {
 		this.closed = false;
@@ -63,13 +73,13 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 		this.persistenceUnits = persistenceUnit.split(",");
 
 		this.cacheProvider = initSecondLevelCache();
-		this.cacheProvider.createCache("Kundera");
+		this.cacheProvider.createCache("Domino");
 
 		logger.info("Loading Client(s) For Persistence Unit(s) "
 				+ persistenceUnit);
 		// Set txTypes = new HashSet();
 		// for (String pu : this.persistenceUnits) {
-		// PersistenceUnitTransactionType txType = KunderaMetadataManager
+		// PersistenceUnitTransactionType txType = DominoMetadataManager
 		// .getPersistenceUnitMetadata(pu).getTransactionType();
 		// txTypes.add(txType);
 		// ClientResolver.getClientFactory(pu).load(pu);
@@ -100,11 +110,15 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 		// }
 	}
 
+	/**
+	 * method to create a new EntityManager
+	 */
 	public final EntityManager createEntityManager() {
 		return new EntityManagerImpl(this, this.transactionType,
 				PersistenceContextType.EXTENDED);
 	}
 
+	@SuppressWarnings("unchecked")
 	public final EntityManager createEntityManager(Map map) {
 		return new EntityManagerImpl(this, map, this.transactionType,
 				PersistenceContextType.EXTENDED);
@@ -119,7 +133,7 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 	}
 
 	public Metamodel getMetamodel() {
-		// return KunderaMetadataManager.getMetamodel(getPersistenceUnits());
+		// return DominoMetadataManager.getMetamodel(getPersistenceUnits());
 		return null;
 	}
 
@@ -128,7 +142,7 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 	}
 
 	public Cache getCache() {
-		return this.cacheProvider.getCache("Kundera");
+		return this.cacheProvider.getCache("Domino");
 	}
 
 	public PersistenceUnitUtil getPersistenceUnitUtil() {
@@ -144,11 +158,16 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 		this.transactionType = transactionType;
 	}
 
+	/**
+	 * no second level cache is implemented
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
 	private CacheProvider initSecondLevelCache() {
 		String classResourceName = (String) getProperties().get(
-				"kundera.cache.config.resource");
+				"domino.cache.config.resource");
 		String cacheProviderClassName = (String) getProperties().get(
-				"kundera.cache.provider.class");
+				"domino.cache.provider.class");
 
 		CacheProvider cacheProvider = null;
 		if (cacheProviderClassName != null) {
@@ -177,14 +196,8 @@ public class EntityManagerFactoryImpl implements EntityManagerFactory {
 		return cacheProvider;
 	}
 
+	@SuppressWarnings("unused")
 	private String[] getPersistenceUnits() {
 		return this.persistenceUnits;
 	}
 }
-
-/*
- * Location: C:\Users\SWECWI\Desktop\SECRET
- * WEAPON\Kundera\kundera-mongo\kundera-mongo-2.0.6-jar-with-dependencies.jar
- * Qualified Name: com.impetus.kundera.persistence.EntityManagerFactoryImpl Java
- * Class Version: 6 (50.0) JD-Core Version: 0.5.3
- */

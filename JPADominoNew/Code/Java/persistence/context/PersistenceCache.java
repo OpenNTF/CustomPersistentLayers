@@ -1,12 +1,18 @@
 package persistence.context;
 
 import persistence.context.jointable.JoinTableData;
-import persistence.context.jointable.JoinTableData.OPERATION;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.PersistenceContextType;
 
+/**
+ * wrapper class holding some important objects such as
+ * CacheBase/FlushManager/FlushStack
+ * 
+ * @author weihang chen
+ * 
+ */
 public class PersistenceCache {
 	private CacheBase mainCache;
 
@@ -19,12 +25,11 @@ public class PersistenceCache {
 		initialize();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initialize() {
 		this.mainCache = new MainCache();
-
 		this.flushStack = new FlushStack();
 		this.joinTableDataMap = new HashMap();
-
 		this.flushManager = new FlushManager();
 	}
 
@@ -70,6 +75,7 @@ public class PersistenceCache {
 		this.persistenceContextType = persistenceContextType;
 	}
 
+	// not used
 	public void addJoinTableDataIntoMap(JoinTableData.OPERATION operation,
 			String joinTableName, String joinColumnName,
 			String invJoinColumnName, Class<?> entityClass,

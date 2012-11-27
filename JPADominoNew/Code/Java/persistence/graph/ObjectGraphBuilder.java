@@ -23,7 +23,6 @@ import util.CloneUtil;
 import util.JSFUtil;
 import util.ReflectionUtils;
 
-import model.Dog;
 import model.Location;
 import model.ToolBox;
 import model.notes.ModelBase;
@@ -58,7 +57,7 @@ public class ObjectGraphBuilder {
 			Node n = nodeEntry.getValue();
 			if (!StringUtil.equals(n.getData().toString(), headNode.getData()
 					.toString()))
-				System.out.print("subgraph node: " + n.getData() + "/");
+				System.out.print("subgraph node: " + n + "/");
 		}
 		// PUSH THIS HEAD NODE TO XPAGES REQUESTMAP, TO VIASUALIZE THE GRAPH
 		JSFUtil.pushData(objectGraph, headNode.getNodeId());
@@ -94,9 +93,9 @@ public class ObjectGraphBuilder {
 		Node node = null;
 		Node nodeInPersistenceCache = this.persistenceCache.getMainCache()
 				.getNodeFromCache(nodeId);
-//delete1123
-		//Object nodeDataCopy = CloneUtil.cloneDominoEntity(entity);
-//delete1123 end
+		// delete1123
+		// Object nodeDataCopy = CloneUtil.cloneDominoEntity(entity);
+		// delete1123 end
 		Node nodeInGraph = graph.getNode(nodeId);
 
 		// if it already exists in the graph return null
@@ -109,44 +108,35 @@ public class ObjectGraphBuilder {
 			Object nodeDataCopy = CloneUtil.cloneDominoEntity(entity);
 			node = new Node(nodeId, nodeDataCopy, initialNodeState,
 					this.persistenceCache);
-			// 1108 change code from Kundera, a new node should always be dirty
+			// 1108 added code, a new node should always be dirty
 			node.setDirty(true);
 			// 1108
 		} else {
 			node = nodeInPersistenceCache;
-//			try {
-//				
-//				Object o1=node.getData();
-//				if (o1 instanceof Location){
-//					if (entity instanceof Location){
-//						System.out.println("+++++++++++++++++++++++++++++++++++++++ deep starts");
-//						boolean b2 = DeepEquals.deepEquals(entity, o1);
-//						System.out.println("EEEEEEEEEEEEEEEEEE "+b2);
-//						System.out.println("+++++++++++++++++++++++++++++++++++++++ deep ends");
-//
-//					}
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-			//1123 deep equal is implemented
-			if (!(DeepEquals.deepEquals(node.getData(), entity))) {
+
+			boolean isDeepEqual = DeepEquals.deepEquals(node.getData(), entity);
+			// 1126 delete end
+			// 1123 deep equal is implemented
+			// IMPORTANT THE NEW NODE DOES NOT GET CLONED THE FIRST TIME WHEN IT
+			// IS SAVED TO DATABASE, IF
+			// THERE IS ANY DETACHED ENTITY THAT IS NOT NEW BUT POINT TO THE
+			// SAME MEMEORY LOCATION AS THE REFERENCE FROM PERSISTENCE CACHE
+			// DOES, THEN A COPY NEEDS TO MADE AS WELL
+			if (node.getData() == entity || !isDeepEqual) {
 				Object nodeDataCopy = CloneUtil.cloneDominoEntity(entity);
 				node.setData(nodeDataCopy);
 				node.setDirty(true);
 			} else {
 				node.setDirty(false);
-				//node.setDirty(false);
+				// node.setDirty(false);
 			}
-			System.out.println("is the node dirty "+node.isDirty());
-			System.out.println("is the node dirty "+node.isDirty());
-			System.out.println("is the node dirty "+node.isDirty());
-			System.out.println("is the node dirty "+node.isDirty());
-			
-			//delete 1123 since deep equal is finished
-//			node.setData(nodeDataCopy);
-//			node.setDirty(true);
-			//delete 1123 since deep equal is finished
+			System.out.println("is the node dirty " + node.isDirty());
+			System.out.println("is the node dirty " + node.isDirty());
+
+			// delete 1123 since deep equal is finished
+			// node.setData(nodeDataCopy);
+			// node.setDirty(true);
+			// delete 1123 since deep equal is finished
 		}
 
 		graph.addNode(nodeId, node);

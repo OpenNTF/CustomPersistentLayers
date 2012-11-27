@@ -35,7 +35,6 @@ import lotus.domino.Document;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 import model.Location;
-import model.Tool;
 import model.notes.Key;
 import model.notes.ModelBase;
 

@@ -1,85 +1,83 @@
 package persistence.core;
 
-import persistence.annotation.DocumentReferences;
 import persistence.annotation.support.CollectionLazyLoader;
 import persistence.annotation.support.ConstructibleAnnotatedCollection;
 import persistence.client.Client;
 import persistence.client.EnhanceEntity;
-import persistence.metadata.MetadataManager; //import persistence.metadata.MetadataUtils;
+import persistence.metadata.MetadataManager;
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.Relation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet; /*      */
-import java.util.Iterator; /*      */
-import java.util.List; /*      */
-import java.util.Map; /*      */
-import java.util.Set; /*      */
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn; /*      */
 import javax.persistence.PersistenceException;
-import persistence.utils.PropertyAccessorHelper;/*      */
-import util.Assert;
+import persistence.utils.PropertyAccessorHelper;
 import util.CommonUtil;
-import util.JSFUtil;
-import util.Predicate;
+
 import util.ReflectionUtils;
 
-import lotus.domino.NotesException;
 import model.notes.Key;
 import model.notes.ModelBase;
 import net.sf.cglib.proxy.Enhancer;
 
-import org.apache.commons.logging.Log; /*      */
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ibm.commons.util.StringUtil;
-
-
+/**
+ * main class being used to hook up with Client class dealing with database
+ * transactions
+ * 
+ * @author weihang chen
+ * 
+ */
 public class AbstractEntityReader {
 	private static Log log = LogFactory.getLog(AbstractEntityReader.class);
 
+	/**
+	 * giving an enhanceEntity, recursively find and IOC the wrapped entity's
+	 * Field values, set up Lazy Loading mechanism, return the wrapped entity
+	 * after data population
+	 * 
+	 * @param enhanceEntity
+	 * @param client
+	 * @param m
+	 * @param persistenceDelegator
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public Object recursivelyFindEntities(EnhanceEntity enhanceEntity,
 			Client client, EntityMetadata m,
 			PersistenceDelegator persistenceDelegator) {
-		// this variable is used to check if duplicated relations is already
-		// defined within the same class
-		// for example @DocumentReferences(fetch = FetchType.LAZY, foreignKey =
-		// "unid", viewName = "CSS")
-		// @DocumentReferences(fetch = FetchType.EAGER, foreignKey = "unid",
-		// viewName = "CSS", cascade = { CascadeType.SAVE_UPDATE })
-		// shares the same collection, so maybe its good not to retrieve it from
-		// database twice
-		// not implemented yet, which is good, can test lazy/eager fetch first,
-		// see if they lazy fetch get node from cache
 		Map<String, Collection> relationValuesMap = new HashMap<String, Collection>();
-
 		Client childClient = null;
 		Class childClass = null;
 		Object parentObj = enhanceEntity.getEntity();
 		EntityMetadata childMetadata = null;
+		// EntityMetadata instance holds all the relations data for an entity
+		// class, go through all relations, populate Field values
 		for (Relation relation : m.getRelations()) {
+			// get info from relation object
 			Relation.ForeignKey multiplicity = relation.getType();
 			Field collectionField = relation.getProperty();
 			childClass = relation.getTargetEntity();
 			String relationSignature = relation.getDominoRelationSignature();
 			FetchType fetchType = relation.getFetchType();
-			// lets assume one_to_many is documentsreferences
+			// relation one_to_many == documentsreferences
 			// if foreignkey + viewname is the same, children collections is the
 			// same
 			if (multiplicity.equals(Relation.ForeignKey.ONE_TO_MANY)) {
 
-				childMetadata = MetadataManager
-						.getEntityMetadata(childClass);
+				childMetadata = MetadataManager.getEntityMetadata(childClass);
 
 				childClient = persistenceDelegator.getClient(childMetadata);
 				// relationValue ex. document uniqueid is the relationalValue
@@ -103,7 +101,7 @@ public class AbstractEntityReader {
 					// returnType
 					Class<?> returnType = ReflectionUtils
 							.resolveReturnType(collectionGetterMethod);
-
+					// constructor for the Collection Field
 					Constructor<Collection<Object>> constructor = null;
 					Collection concreteCollection = null;
 					try {
@@ -113,10 +111,14 @@ public class AbstractEntityReader {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					}
-
+					// EAGER
 					if (fetchType == FetchType.EAGER) {
 						System.out.println("EAGER COLLECTION FETCH INIT");
 						List childs = null;
+						// ex. foreignKey = "unid" then use the keyword unid to
+						// get the getter method name getUnid(), invoke the
+						// method to get the document unid as foreignkey for the
+						// child collection
 						String foreignKey = relation.getDominoForeignKey();
 						Method foreignKeyGetter = ReflectionUtils
 								.findMethod(
@@ -133,14 +135,13 @@ public class AbstractEntityReader {
 						key.appendEntry(foreignKeyFieldValue.toString());
 
 						try {
+							// use DBClient to find all
 							childs = childClient.findAll(childClass, key);
-
 							System.out
 									.println("RETURN CHILDREN COLLECTION FROM DATABASE "
 											+ childs);
-
+							// recursive find using the found children
 							if ((childs != null) && (!(childs.isEmpty()))) {
-
 								for (Iterator i = childs.iterator(); i
 										.hasNext();) {
 									Object child = i.next();
@@ -177,6 +178,11 @@ public class AbstractEntityReader {
 						ConstructibleAnnotatedCollection constructibleField = new ConstructibleAnnotatedCollection(
 								collectionField, constructor, returnType);
 						try {
+							// create a CollectionLazyLoader instance with all
+							// necessary info, create a CGLib object with the
+							// CollectionLazyLoader, assign it to the Field,
+							// once collection getter is invoked, database
+							// transaction will happen to populate the Field
 							CollectionLazyLoader collectionLazyLoader = new CollectionLazyLoader(
 									(ModelBase) parentObj, relation,
 									constructibleField, persistenceDelegator,
@@ -209,6 +215,16 @@ public class AbstractEntityReader {
 
 	}
 
+	/**
+	 * use DBClient to find one entity by id
+	 * 
+	 * @param key
+	 * @param entityMetadata
+	 * @param relationNames
+	 * @param client
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	protected EnhanceEntity findById(Key key, EntityMetadata entityMetadata,
 			List<String> relationNames, Client client) {
 		try {
@@ -226,6 +242,7 @@ public class AbstractEntityReader {
 		}
 	}
 
+	@SuppressWarnings( { "unused", "unchecked" })
 	private Set<?> onReflect(Object entity, Field ownerField, List<?> childs)
 			throws RuntimeException {
 		Set chids = new HashSet();
@@ -241,6 +258,7 @@ public class AbstractEntityReader {
 		return chids;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object getFieldInstance(List chids, Field f) {
 		if (Set.class.isAssignableFrom(f.getType())) {
 			Set col = new HashSet(chids);
@@ -249,6 +267,13 @@ public class AbstractEntityReader {
 		return chids;
 	}
 
+	/**
+	 * get node id from entity meta data
+	 * 
+	 * @param entity
+	 * @param metadata
+	 * @return node id
+	 */
 	protected String getId(Object entity, EntityMetadata metadata) {
 		if (entity instanceof ModelBase) {
 			return ((ModelBase) entity).getUnid();
@@ -257,8 +282,8 @@ public class AbstractEntityReader {
 			return PropertyAccessorHelper.getId(entity, metadata);
 		} catch (RuntimeException e) {
 			log.error("Error while Getting ID. Details:" + e.getMessage());
-			throw new PersistenceException(
-					"Error while Getting ID for entity " + entity, e);
+			throw new PersistenceException("Error while Getting ID for entity "
+					+ entity, e);
 		}
 	}
 

@@ -24,6 +24,13 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ibm.commons.util.NotImplementedException;
 
+/**
+ * implement interface EntityManager/EntityTransaction, main interface class
+ * exposed to API user
+ * 
+ * @author weihang chen
+ * 
+ */
 public class EntityManagerImpl implements EntityManager, EntityTransaction {
 	private static Log logger = LogFactory.getLog(EntityManagerImpl.class);
 	private EntityManagerFactory factory;
@@ -41,13 +48,23 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 			PersistenceUnitTransactionType transactionType,
 			PersistenceContextType persistenceContextType) {
 		this.closed = false;
+		// default flush mode is auto in this API, which means that no manual
+		// flush is needed, by invoking remove/persist/merge then flush is
+		// invoked afterward
 		this.flushMode = FlushModeType.AUTO;
 		this.factory = factory;
 		logger.debug("Creating EntityManager for persistence unit : "
 				+ getPersistenceUnit());
+		// sessio object not used
 		this.session = new EntityManagerSession((Cache) factory.getCache());
+		// persistence cache holds different kinds of cache, the only one being
+		// implemented holds all nodes
 		this.persistenceCache = new PersistenceCache();
 		this.persistenceCache.setPersistenceContextType(persistenceContextType);
+		// most important class in the whole API, all detail operation
+		// implementation is initialised by this class
+		// instance of persistenceDelegator is IOC everywhere including
+		// lazyloader
 		this.persistenceDelegator = new PersistenceDelegator(this.session,
 				this.persistenceCache);
 		this.persistenceContextType = persistenceContextType;
@@ -57,6 +74,7 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 				+ getPersistenceUnit());
 	}
 
+	@SuppressWarnings("unchecked")
 	public EntityManagerImpl(EntityManagerFactory factory, Map properties,
 			PersistenceUnitTransactionType transactionType,
 			PersistenceContextType persistenceContextType) {
@@ -64,6 +82,9 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		this.properties = properties;
 	}
 
+	/**
+	 * find one entity using Key instance
+	 */
 	public final <E> E find(Class<E> entityClass, Object primaryKey) {
 		checkClosed();
 		Assert
@@ -72,6 +93,9 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		return getPersistenceDelegator().find(entityClass, primaryKey);
 	}
 
+	/**
+	 * remove an entity and flush to database
+	 */
 	public final void remove(Object e) {
 		checkClosed();
 		checkTransactionNeeded();
@@ -79,6 +103,10 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		getPersistenceDelegator().remove(e);
 	}
 
+	/**
+	 * merge detached objects into persistence cache and synchronise the updated
+	 * cache with database
+	 */
 	public final <E> E merge(E e) {
 		checkClosed();
 		checkTransactionNeeded();
@@ -86,6 +114,10 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		return getPersistenceDelegator().merge(e);
 	}
 
+	/**
+	 * persist a new object into persistence cache and synchronise the update
+	 * cache with database
+	 */
 	public final void persist(Object e) {
 		checkClosed();
 		checkTransactionNeeded();
@@ -93,6 +125,9 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		getPersistenceDelegator().persist(e);
 	}
 
+	/**
+	 * not used
+	 */
 	public final void clear() {
 		checkClosed();
 		this.session.clear();
@@ -101,6 +136,9 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		this.persistenceDelegator.clear();
 	}
 
+	/**
+	 * kill the pointers, so the unreferenced objects can be GC
+	 */
 	public final void close() {
 		checkClosed();
 		this.session.clear();
@@ -117,11 +155,17 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		return false;
 	}
 
+	/**
+	 * not implemented
+	 */
 	public final Query createQuery(String query) {
-		//return this.persistenceDelegator.createQuery(query);
+		// return this.persistenceDelegator.createQuery(query);
 		return null;
 	}
 
+	/**
+	 * synchronise persistence cache state with database
+	 */
 	public final void flush() {
 		checkClosed();
 		this.persistenceDelegator.flush();
@@ -133,7 +177,7 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 
 	public final Query createNamedQuery(String name) {
 		return null;
-		//return this.persistenceDelegator.createQuery(name);
+		// return this.persistenceDelegator.createQuery(name);
 	}
 
 	public final Query createNativeQuery(String sqlString) {
@@ -141,14 +185,18 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 				"Please use createNativeQuery(String sqlString, Class resultClass) instead. ");
 	}
 
+	/**
+	 * not implemented
+	 */
+	@SuppressWarnings("unchecked")
 	public final Query createNativeQuery(String sqlString, Class resultClass) {
-//		ApplicationMetadata appMetadata = KunderaMetadata.INSTANCE
-//				.getApplicationMetadata();
-//		if (appMetadata.getQuery(sqlString) == null) {
-//			appMetadata.addQueryToCollection(sqlString, sqlString, true,
-//					resultClass);
-//		}
-//		return this.persistenceDelegator.createQuery(sqlString);
+		// ApplicationMetadata appMetadata = DominoMetadata.INSTANCE
+		// .getApplicationMetadata();
+		// if (appMetadata.getQuery(sqlString) == null) {
+		// appMetadata.addQueryToCollection(sqlString, sqlString, true,
+		// resultClass);
+		// }
+		// return this.persistenceDelegator.createQuery(sqlString);
 		return null;
 	}
 
@@ -294,6 +342,7 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 				.get("persistenceUnitName"));
 	}
 
+	@SuppressWarnings("unused")
 	private EntityManagerSession getSession() {
 		return this.session;
 	}
@@ -306,10 +355,16 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		return this.persistenceContextType;
 	}
 
+	/**
+	 * start a transaction
+	 */
 	public void begin() {
 		this.persistenceDelegator.begin();
 	}
 
+	/**
+	 * almost same as flush()
+	 */
 	public void commit() {
 		checkClosed();
 		this.persistenceDelegator.commit();
@@ -330,15 +385,17 @@ public class EntityManagerImpl implements EntityManager, EntityTransaction {
 		return ((isOpen()) && (this.persistenceDelegator.isActive()));
 	}
 
+	/**
+	 * not implemented
+	 */
 	public void rollback() {
 		checkClosed();
 		this.persistenceDelegator.rollback();
 	}
 
-	//to display the cache
+	// used to display the cache
 	public PersistenceCache getPersistenceCache() {
 		return persistenceCache;
 	}
-	
-	
+
 }
