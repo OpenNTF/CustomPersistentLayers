@@ -50,11 +50,12 @@ public abstract class NodeState {
 	}
 
 	/**
-	 * the cascadetype is empty at the moment, can only hard code through it
+	 * by giving a Node, recursively propagate the OPERATION to its children
 	 * 
 	 * @param nodeStateContext
 	 * @param operation
 	 */
+	@SuppressWarnings("unchecked")
 	protected void recursivelyPerformOperation(
 			NodeStateContext nodeStateContext, OPERATION operation) {
 		// System.out.println("NodeState as super class for all states "+CommonUtil.getMethodName(this.getClass().toString()));
@@ -79,7 +80,7 @@ public abstract class NodeState {
 				if ((cascadeTypes.contains(CascadeType.MERGE))
 						|| (cascadeTypes.contains(CascadeType.ALL))) {
 					Node childNode = (Node) children.get(nodeLink);
-					System.out.println("!!!!!!!!!!!!!!!!! "+childNode);
+					System.out.println("!!!!!!!!!!!!!!!!! " + childNode);
 					childNode.merge();
 				}
 				break;

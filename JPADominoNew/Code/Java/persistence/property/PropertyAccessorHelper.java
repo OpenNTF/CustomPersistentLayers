@@ -7,6 +7,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
+import persistence.metadata.model.EntityMetadata;
+import persistence.proxy.EnhancedEntity;
+
+/**
+ * some reflection methods.this class should be merged with ReflectionUtils.java
+ * 
+ * @author weihang chen
+ * 
+ */
 public class PropertyAccessorHelper {
 
 	public static void set(Object target, Field field, Object value) {
@@ -20,6 +29,7 @@ public class PropertyAccessorHelper {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Class<?> getGenericClass(Field collectionField) {
 		Class genericClass = null;
 		if (collectionField == null) {
@@ -37,7 +47,6 @@ public class PropertyAccessorHelper {
 				}
 			}
 		}
-
 		return ((genericClass != null) ? genericClass : collectionField
 				.getType());
 	}
@@ -55,4 +64,12 @@ public class PropertyAccessorHelper {
 	public static final boolean isCollection(Class<?> clazz) {
 		return Collection.class.isAssignableFrom(clazz);
 	}
+
+	public static String getId(Object entity, EntityMetadata metadata) {
+		if (entity instanceof EnhancedEntity) {
+			return ((EnhancedEntity) entity).getId();
+		}
+		return "id can not be found";
+	}
+
 }

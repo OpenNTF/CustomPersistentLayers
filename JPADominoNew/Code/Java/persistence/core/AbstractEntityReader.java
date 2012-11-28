@@ -21,7 +21,7 @@ import java.util.Set;
 
 import javax.persistence.FetchType;
 import javax.persistence.PersistenceException;
-import persistence.utils.PropertyAccessorHelper;
+import persistence.property.PropertyAccessorHelper;
 import util.CommonUtil;
 
 import util.ReflectionUtils;

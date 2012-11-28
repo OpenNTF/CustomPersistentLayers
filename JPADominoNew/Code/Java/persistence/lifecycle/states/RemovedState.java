@@ -1,68 +1,58 @@
 package persistence.lifecycle.states;
 
-/*     */import persistence.client.Client; /*     */
-import persistence.graph.Node; /*     */
-import persistence.graph.ObjectGraphBuilder; /*     */
-import persistence.lifecycle.NodeStateContext; /*     */
+import persistence.client.Client;
+import persistence.graph.Node;
+import persistence.graph.ObjectGraphBuilder;
+import persistence.lifecycle.NodeStateContext;
 
 import javax.persistence.PersistenceContextType;
 import javax.persistence.PersistenceException;
 
 import lotus.domino.NotesException;
 
-/*     */
-/*     */public class RemovedState extends NodeState
-/*     */{
-	/*     */public void initialize(NodeStateContext nodeStateContext)
-	/*     */{
-		/*     */}
+/**
+ * one of the four State class which the operations from entityManager is
+ * delegate to, follow the guideline from JPA, define the actions <br>
+ * 
+ * @author weihang chen
+ * 
+ */
+public class RemovedState extends NodeState {
+	public void initialize(NodeStateContext nodeStateContext) {
+	}
 
-	/*     */
-	/*     */public void handlePersist(NodeStateContext nodeStateContext)
-	/*     */{
-		/* 40 */moveNodeToNextState(nodeStateContext, new ManagedState());
-		/*     */
-		/* 44 */recursivelyPerformOperation(nodeStateContext,
+	public void handlePersist(NodeStateContext nodeStateContext) {
+		moveNodeToNextState(nodeStateContext, new ManagedState());
+
+		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.PERSIST);
-		/*     */}
+	}
 
-	/*     */
-	/*     */public void handleRemove(NodeStateContext nodeStateContext)
-	/*     */{
-		/* 54 */recursivelyPerformOperation(nodeStateContext,
+	public void handleRemove(NodeStateContext nodeStateContext) {
+		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.REMOVE);
-		/*     */}
+	}
 
-	/*     */
-	/*     */public void handleRefresh(NodeStateContext nodeStateContext)
-	/*     */{
-		/* 64 */recursivelyPerformOperation(nodeStateContext,
+	public void handleRefresh(NodeStateContext nodeStateContext) {
+		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.REFRESH);
-		/*     */}
+	}
 
-	/*     */
-	/*     */public void handleMerge(NodeStateContext nodeStateContext)
-	/*     */{
-		/* 70 */throw new IllegalArgumentException(
+	public void handleMerge(NodeStateContext nodeStateContext) {
+		throw new IllegalArgumentException(
 				"Merge operation not allowed in Removed state");
-		/*     */}
+	}
 
-	/*     */
-	/*     */public void handleFind(NodeStateContext nodeStateContext)
-	/*     */{
-		/*     */}
+	public void handleFind(NodeStateContext nodeStateContext) {
+	}
 
-	/*     */
-	/*     */public void handleClose(NodeStateContext nodeStateContext)
-	/*     */{
-		/*     */}
+	public void handleClose(NodeStateContext nodeStateContext) {
+	}
 
-	/*     */
-	/*     */public void handleClear(NodeStateContext nodeStateContext)
-	/*     */{
-		/*     */}
+	public void handleClear(NodeStateContext nodeStateContext) {
+	}
 
-	/*     */
+	@SuppressWarnings("unchecked")
 	public void handleFlush(NodeStateContext nodeStateContext) {
 		Client client = nodeStateContext.getClient();
 
@@ -79,9 +69,10 @@ import lotus.domino.NotesException;
 			e.printStackTrace();
 		}
 		nodeStateContext.setDirty(false);
-		// 1111 different from Kunderar
+		// 1111 different from old code
 		// corresponding document is already removed from database,remove it
-		// from the main cache - headNodes/allNodes
+		// from the main cache - headNodes/allNodes. since the scope of
+		// entityManger might be larger than method/request
 
 		nodeStateContext.getPersistenceCache().getMainCache()
 				.removeNodeFromCache(node);
@@ -91,59 +82,36 @@ import lotus.domino.NotesException;
 		// 1111
 	}
 
-	/*     */
-	/*     */public void handleLock(NodeStateContext nodeStateContext)
-	/*     */{
-		/*     */}
+	public void handleLock(NodeStateContext nodeStateContext) {
+	}
 
-	/*     */
-	/*     */public void handleDetach(NodeStateContext nodeStateContext)
-	/*     */{
-		/* 121 */moveNodeToNextState(nodeStateContext, new DetachedState());
-		/*     */
-		/* 125 */recursivelyPerformOperation(nodeStateContext,
+	public void handleDetach(NodeStateContext nodeStateContext) {
+		moveNodeToNextState(nodeStateContext, new DetachedState());
+		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.DETACH);
-		/*     */}
+	}
 
-	/*     */
-	/*     */public void handleCommit(NodeStateContext nodeStateContext)
-	/*     */{
-		/* 131 */nodeStateContext.setCurrentNodeState(new TransientState());
-		/*     */}
+	public void handleCommit(NodeStateContext nodeStateContext) {
+		nodeStateContext.setCurrentNodeState(new TransientState());
+	}
 
-	/*     */
-	/*     */public void handleRollback(NodeStateContext nodeStateContext)
-	/*     */{
-		/* 140 */if (PersistenceContextType.EXTENDED.equals(nodeStateContext
-				.getPersistenceCache().getPersistenceContextType()))
-		/*     */{
-			/* 142 */moveNodeToNextState(nodeStateContext, new ManagedState());
-			/*     */}
-		/*     */else {
-			/* 145 */if (!(PersistenceContextType.TRANSACTION
-					.equals(nodeStateContext.getPersistenceCache()
-							.getPersistenceContextType()))) {
-				/*     */return;
-				/*     */}
-			/* 148 */nodeStateContext.detach();
-			/*     */}
-		/*     */}
+	public void handleRollback(NodeStateContext nodeStateContext) {
+		if (PersistenceContextType.EXTENDED.equals(nodeStateContext
+				.getPersistenceCache().getPersistenceContextType())) {
+			moveNodeToNextState(nodeStateContext, new ManagedState());
+		} else {
+			if (!(PersistenceContextType.TRANSACTION.equals(nodeStateContext
+					.getPersistenceCache().getPersistenceContextType()))) {
+				return;
+			}
+			nodeStateContext.detach();
+		}
+	}
 
-	/*     */
-	/*     */public void handleGetReference(NodeStateContext nodeStateContext)
-	/*     */{
-		/*     */}
+	public void handleGetReference(NodeStateContext nodeStateContext) {
+	}
 
-	/*     */
-	/*     */public void handleContains(NodeStateContext nodeStateContext)
-	/*     */{
-		/*     */}
-	/*     */
+	public void handleContains(NodeStateContext nodeStateContext) {
+	}
+
 }
-
-/*
- * Location: C:\Users\SWECWI\Desktop\SECRET
- * WEAPON\Kundera\kundera-mongo\kundera-mongo-2.0.6-jar-with-dependencies.jar
- * Qualified Name: com.impetus.kundera.lifecycle.states.RemovedState Java Class
- * Version: 6 (50.0) JD-Core Version: 0.5.3
- */

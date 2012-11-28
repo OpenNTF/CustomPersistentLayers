@@ -62,18 +62,20 @@ public class ManagedState extends NodeState {
 		recursivelyPerformOperation(nodeStateContext, NodeState.OPERATION.MERGE);
 	}
 
+	/**
+	 * find from database
+	 */
+	@SuppressWarnings("unchecked")
 	public void handleFind(NodeStateContext nodeStateContext) {
 		Client client = nodeStateContext.getClient();
 		Class nodeDataClass = nodeStateContext.getDataClass();
 		EntityMetadata entityMetadata = MetadataManager
 				.getEntityMetadata(nodeDataClass);
 
-		String nodeId = nodeStateContext.getNodeId();
 		String entityId = ObjectGraphBuilder.getEntityId(nodeStateContext
 				.getNodeId());
 		Object nodeData = null;
 		EntityReader reader = client.getReader();
-		// just put entityId in Key as temporary solution
 		Key key = new Key();
 		key.appendEntry(entityId);
 		EnhanceEntity enhanceEntity = reader.findById(key, entityMetadata,
@@ -104,6 +106,7 @@ public class ManagedState extends NodeState {
 		handleDetach(nodeStateContext);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void handleFlush(NodeStateContext nodeStateContext) {
 		Client client = nodeStateContext.getClient();
 		client.persist((Node) nodeStateContext);

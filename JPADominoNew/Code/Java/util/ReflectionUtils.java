@@ -9,6 +9,7 @@ import javax.persistence.PersistenceException;
 import net.sf.cglib.proxy.Enhancer;
 
 /**
+ * reflection utility methods
  * 
  * @author weihang chen
  * 
@@ -165,6 +166,7 @@ public class ReflectionUtils {
 
 	// the assignedvalue might be incompatable collection type, need to specify
 	// concrete collection object to be assigned to the field
+	@SuppressWarnings("unchecked")
 	public static void setFieldObject(Object parentObj, Field assignedField,
 			Object assignedValue) {
 		if (parentObj == null || assignedField == null || assignedValue == null)
@@ -187,6 +189,7 @@ public class ReflectionUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	final static Map<String, Class<? extends Collection>> _collectionFallbacks = new HashMap<String, Class<? extends Collection>>();
 	static {
 		_collectionFallbacks.put(Collection.class.getName(), ArrayList.class);
@@ -199,12 +202,12 @@ public class ReflectionUtils {
 		_collectionFallbacks.put("java.util.NavigableSet", TreeSet.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Constructor<Collection<Object>> findCtor(Field field)
 			throws SecurityException, NoSuchMethodException {
 		Class<?> collectionClass = field.getType();
 		Constructor<Collection<Object>> ctor = null;
 		if (collectionClass.isInterface()) {
-			@SuppressWarnings("rawtypes")
 			Class<? extends Collection> fallback = _collectionFallbacks
 					.get(collectionClass.getName());
 			if (fallback == null) {
@@ -224,12 +227,14 @@ public class ReflectionUtils {
 		return Collection.class.isAssignableFrom(clazz);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Class getRealClass(Class clazz) {
 		if (Enhancer.isEnhanced(clazz))
 			clazz = clazz.getSuperclass();
 		return clazz;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static boolean hasInterface(Class<?> has, Class<?> in) {
 		if (has.equals(in)) {
 			return true;
@@ -270,6 +275,7 @@ public class ReflectionUtils {
 		return match;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Class<?> classForName(String className,
 			ClassLoader classLoader) {
 		try {
