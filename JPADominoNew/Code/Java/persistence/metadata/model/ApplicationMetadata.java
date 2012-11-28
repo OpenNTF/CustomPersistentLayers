@@ -13,6 +13,17 @@ import javax.persistence.metamodel.Metamodel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * this class is supposed to store entity meta data and queries at application
+ * scope, at this moment only stores entity meta data, within entries
+ * of metamodelMap
+ * 
+ * <br>
+ * everything about query can be skipped for now
+ * 
+ * @author weihang chen
+ * 
+ */
 public class ApplicationMetadata {
 	private Map<String, Metamodel> metamodelMap;
 	// private Map<String, PersistenceUnitMetadata> persistenceUnitMetadataMap;
@@ -22,6 +33,7 @@ public class ApplicationMetadata {
 	private Map<String, List<String>> clazzToPuMap;
 	private Map<String, QueryWrapper> namedNativeQueries;
 
+	@SuppressWarnings("unchecked")
 	public ApplicationMetadata() {
 		this.metamodelMap = new ConcurrentHashMap();
 
@@ -30,6 +42,7 @@ public class ApplicationMetadata {
 		// this.schemaMetadata = new SchemaMetadata();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addEntityMetadata(String persistenceUnit, Class<?> clazz,
 			EntityMetadata entityMetadata) {
 		Metamodel metamodel = (Metamodel) getMetamodelMap()
@@ -54,6 +67,7 @@ public class ApplicationMetadata {
 	// getPersistenceUnitMetadataMap().putAll(metadata);
 	// }
 
+	@SuppressWarnings("unchecked")
 	public Map<String, Metamodel> getMetamodelMap() {
 		if (this.metamodelMap == null) {
 			this.metamodelMap = new HashMap();
@@ -67,6 +81,7 @@ public class ApplicationMetadata {
 	// persistenceUnit));
 	// }
 
+	@SuppressWarnings("unchecked")
 	public Metamodel getMetamodel(String persistenceUnit) {
 		Map model = getMetamodelMap();
 		return (((persistenceUnit != null) && (model
@@ -87,15 +102,17 @@ public class ApplicationMetadata {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getMappedPersistenceUnit(Class<?> clazz) {
 		return ((this.clazzToPuMap != null) ? (List) this.clazzToPuMap
 				.get(clazz.getName()) : null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public String getMappedPersistenceUnit(String clazzName) {
 		List pus = (List) this.clazzToPuMap.get(clazzName);
 
-		int _first = 0;
+		// int _first = 0;
 		String pu = null;
 
 		if ((pus != null) && (!(pus.isEmpty()))) {
@@ -121,6 +138,7 @@ public class ApplicationMetadata {
 		return pu;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addQueryToCollection(String queryName, String query,
 			boolean isNativeQuery, Class clazz) {
 		if (this.namedNativeQueries == null) {
@@ -157,6 +175,7 @@ public class ApplicationMetadata {
 		return ((wrapper != null) ? wrapper.isNativeQuery() : false);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Class getMappedClass(String name) {
 		QueryWrapper wrapper = (this.namedNativeQueries != null) ? (QueryWrapper) this.namedNativeQueries
 				.get(name)
@@ -179,13 +198,15 @@ public class ApplicationMetadata {
 		String queryName;
 		String query;
 		boolean isNativeQuery;
+		@SuppressWarnings("unchecked")
 		Class entityClazz;
 
+		@SuppressWarnings("unchecked")
 		public QueryWrapper(String paramString1, String paramString2,
 				boolean paramBoolean, Class paramClass) {
 			this.queryName = paramString1;
 			this.query = paramString2;
-			this.isNativeQuery = isNativeQuery;
+			// this.isNativeQuery = isNativeQuery;
 			this.entityClazz = paramClass;
 		}
 
@@ -197,6 +218,7 @@ public class ApplicationMetadata {
 			return this.isNativeQuery;
 		}
 
+		@SuppressWarnings("unchecked")
 		Class getMappedClazz() {
 			return this.entityClazz;
 		}

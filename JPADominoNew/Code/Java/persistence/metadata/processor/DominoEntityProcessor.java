@@ -4,6 +4,12 @@ import persistence.annotation.DominoEntity;
 import persistence.metadata.MetadataProcessor;
 import persistence.metadata.model.EntityMetadata;
 
+/**
+ * assign value from annotated DominoEntity to EntityMetadata
+ * 
+ * @author SWECWI
+ * 
+ */
 public class DominoEntityProcessor implements MetadataProcessor {
 
 	public final void process(Class<?> clazz, EntityMetadata metadata) {

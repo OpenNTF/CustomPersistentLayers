@@ -2,8 +2,7 @@ package persistence.metadata.processor;
 
 import persistence.annotation.Index;
 import persistence.metadata.MetadataProcessor;
-import persistence.metadata.model.EntityMetadata;
-//import persistence.metadata.model.PropertyIndex;
+import persistence.metadata.model.EntityMetadata; //import persistence.metadata.model.PropertyIndex;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,14 +11,17 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 /**
  * no implemented
+ * 
  * @author weihang chen
- *
+ * 
  */
 public class IndexProcessor implements MetadataProcessor {
 	private static Log log = LogFactory.getLog(IndexProcessor.class);
 
+	@SuppressWarnings("unchecked")
 	public final void process(Class<?> clazz, EntityMetadata metadata) {
 		metadata.setIndexName(clazz.getSimpleName());
 		Index idx = (Index) clazz.getAnnotation(Index.class);
@@ -58,7 +60,7 @@ public class IndexProcessor implements MetadataProcessor {
 			if (f.isAnnotationPresent(Id.class)) {
 				String alias = f.getName();
 				alias = getIndexName(f, alias);
-				//metadata.addIndexProperty(new PropertyIndex(f, alias));
+				// metadata.addIndexProperty(new PropertyIndex(f, alias));
 			} else {
 				if (!(f.isAnnotationPresent(Column.class)))
 					continue;
@@ -68,7 +70,7 @@ public class IndexProcessor implements MetadataProcessor {
 				if ((!(columnsToBeIndexed.isEmpty()))
 						&& (!(columnsToBeIndexed.contains(alias))))
 					continue;
-				//metadata.addIndexProperty(new PropertyIndex(f, alias));
+				// metadata.addIndexProperty(new PropertyIndex(f, alias));
 			}
 		}
 	}

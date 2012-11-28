@@ -14,6 +14,12 @@ import javax.persistence.Temporal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * methods from this abstract class are not used
+ * 
+ * @author weihang chen
+ * 
+ */
 public abstract class AbstractEntityFieldProcessor implements MetadataProcessor {
 	private static final Log log = LogFactory
 			.getLog(AbstractEntityFieldProcessor.class);

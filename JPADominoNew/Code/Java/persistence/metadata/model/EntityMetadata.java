@@ -1,38 +1,50 @@
 package persistence.metadata.model;
 
+import persistence.event.CallbackMethod;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import persistence.event.CallbackMethod; /*     */
-import java.lang.reflect.Field; /*     */
-import java.lang.reflect.Method; /*     */
-import java.util.ArrayList; /*     */
-import java.util.HashMap; /*     */
-import java.util.List; /*     */
-import java.util.Map; /*     */
-import java.util.Map.Entry;
-
-import javax.persistence.Column; /*     */
+import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-/*     */
-/*     */public final class EntityMetadata
-/*     */{
-	/*     */Class<?> entityClazz;
-	/*     */private String tableName;
-	/*     */private String schema;
-	/*     */private String persistenceUnit;
-	/*     */private String indexName;
-	/* 60 */private boolean isIndexable = true;
-	/*     */
-	/* 63 */private boolean cacheable = false;
-	/*     */private Method readIdentifierMethod;
-	/*     */private Method writeIdentifierMethod;
-	/* 79 */private Map<String, Column> columnsMap = new HashMap();
+/**
+ * 
+ * IMPORTANT: only DOMINO SPECIFIC variables and relationsMap are in use in current
+ * version of API
+ * 
+ * @DominoEntity annotation values are saved to dbName/formName/viewName;
+ * @DominoProperty annotation Field values are saved to relationsMap and fetched
+ *                 via getRelations() <br>
+ * 
+ * @author weihang chen
+ * 
+ */
+@SuppressWarnings("unchecked")
+public final class EntityMetadata {
+	Class<?> entityClazz;
+	private String tableName;
+	private String schema;
+	private String persistenceUnit;
+	private String indexName;
+	private boolean isIndexable = true;
 
-	/* 91 */private Map<Class, List> callbackMethodsMap = new HashMap();
-	/* 98 */private Map<String, Relation> relationsMap = new HashMap();
-	/*     */private List<String> relationNames;
-	/*     */private boolean isParent;
+	private boolean cacheable = false;
+	private Method readIdentifierMethod;
+	private Method writeIdentifierMethod;
+	private Map<String, Column> columnsMap = new HashMap();
+
+	private Map<Class, List> callbackMethodsMap = new HashMap();
+	/**
+	 * 
+	 */
+	private Map<String, Relation> relationsMap = new HashMap();
+	private List<String> relationNames;
+	private boolean isParent;
 
 	// DOMINO SPECIFIC
 	private String dbName;
@@ -63,195 +75,123 @@ import javax.persistence.PrimaryKeyJoinColumn;
 		this.viewName = viewName;
 	}
 
-	/*     */
-	/*     */public EntityMetadata(Class<?> entityClazz)
-	/*     */{
-		/* 213 */this.entityClazz = entityClazz;
-		/*     */}
+	public EntityMetadata(Class<?> entityClazz) {
+		this.entityClazz = entityClazz;
+	}
 
-	/*     */
-	/*     */public Class<?> getEntityClazz()
-	/*     */{
-		/* 224 */return this.entityClazz;
-		/*     */}
+	public Class<?> getEntityClazz() {
+		return this.entityClazz;
+	}
 
-	/*     */
-	/*     */public String getTableName()
-	/*     */{
-		/* 234 */return this.tableName;
-		/*     */}
+	public String getTableName() {
+		return this.tableName;
+	}
 
-	/*     */
-	/*     */public void setTableName(String tableName)
-	/*     */{
-		/* 245 */this.tableName = tableName;
-		/*     */}
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
 
-	/*     */
-	/*     */public String getSchema()
-	/*     */{
-		/* 255 */return this.schema;
-		/*     */}
+	public String getSchema() {
+		return this.schema;
+	}
 
-	/*     */
-	/*     */public void setSchema(String schema)
-	/*     */{
-		/* 266 */this.schema = schema;
-		/*     */}
+	public void setSchema(String schema) {
+		this.schema = schema;
+	}
 
-	/*     */
-	/*     */public String getPersistenceUnit()
-	/*     */{
-		/* 276 */return this.persistenceUnit;
-		/*     */}
+	public String getPersistenceUnit() {
+		return this.persistenceUnit;
+	}
 
-	/*     */
-	/*     */public void setPersistenceUnit(String persistenceUnit)
-	/*     */{
-		/* 287 */this.persistenceUnit = persistenceUnit;
-		/*     */}
+	public void setPersistenceUnit(String persistenceUnit) {
+		this.persistenceUnit = persistenceUnit;
+	}
 
-	/*     */
-	/*     */public Method getReadIdentifierMethod()
-	/*     */{
-		/* 318 */return this.readIdentifierMethod;
-		/*     */}
+	public Method getReadIdentifierMethod() {
+		return this.readIdentifierMethod;
+	}
 
-	/*     */
-	/*     */public void setReadIdentifierMethod(Method readIdentifierMethod)
-	/*     */{
-		/* 329 */this.readIdentifierMethod = readIdentifierMethod;
-		/*     */}
+	public void setReadIdentifierMethod(Method readIdentifierMethod) {
+		this.readIdentifierMethod = readIdentifierMethod;
+	}
 
-	/*     */
-	/*     */public Method getWriteIdentifierMethod()
-	/*     */{
-		/* 339 */return this.writeIdentifierMethod;
-		/*     */}
+	public Method getWriteIdentifierMethod() {
+		return this.writeIdentifierMethod;
+	}
 
-	/*     */
-	/*     */public void setWriteIdentifierMethod(Method writeIdentifierMethod)
-	/*     */{
-		/* 350 */this.writeIdentifierMethod = writeIdentifierMethod;
-		/*     */}
+	public void setWriteIdentifierMethod(Method writeIdentifierMethod) {
+		this.writeIdentifierMethod = writeIdentifierMethod;
+	}
 
-	/*     */
-	/*     */public Map<String, Column> getColumnsMap()
-	/*     */{
-		/* 360 */return this.columnsMap;
-		/*     */}
+	public Map<String, Column> getColumnsMap() {
+		return this.columnsMap;
+	}
 
-	/*     */
+	public Column getColumn(String key) {
+		return ((Column) this.columnsMap.get(key));
+	}
 
-	/*     */
-	/*     */public Column getColumn(String key)
-	/*     */{
-		/* 383 */return ((Column) this.columnsMap.get(key));
-		/*     */}
+	public List<Column> getColumnsAsList() {
+		return new ArrayList(this.columnsMap.values());
+	}
 
-	/*     */
+	public List<String> getColumnFieldNames() {
+		return new ArrayList(this.columnsMap.keySet());
+	}
 
-	/*     */
-	/*     */public List<Column> getColumnsAsList()
-	/*     */{
-		/* 406 */return new ArrayList(this.columnsMap.values());
-		/*     */}
+	public void addColumn(String key, Column column) {
+		this.columnsMap.put(key, column);
+	}
 
-	/*     */
+	public void addRelation(String property, Relation relation) {
+		this.relationsMap.put(property, relation);
+		addRelationName(relation);
+	}
 
-	/*     */
-	/*     */public List<String> getColumnFieldNames()
-	/*     */{
-		/* 426 */return new ArrayList(this.columnsMap.keySet());
-		/*     */}
+	public Relation getRelation(String property) {
+		return ((Relation) this.relationsMap.get(property));
+	}
 
-	/*     */
+	public List<Relation> getRelations() {
+		return new ArrayList(this.relationsMap.values());
+	}
 
-	/*     */public void addColumn(String key, Column column)
-	/*     */{
-		/* 449 */this.columnsMap.put(key, column);
-		/*     */}
+	public String getIndexName() {
+		return this.indexName;
+	}
 
-	/*     */
+	public void setIndexName(String indexName) {
+		this.indexName = indexName;
+	}
 
-	/*     */
-	/*     */public void addRelation(String property, Relation relation)
-	/*     */{
-		/* 486 */this.relationsMap.put(property, relation);
-		/* 487 */addRelationName(relation);
-		/*     */}
+	public boolean isIndexable() {
+		return this.isIndexable;
+	}
 
-	/*     */
-	/*     */public Relation getRelation(String property)
-	/*     */{
-		/* 499 */return ((Relation) this.relationsMap.get(property));
-		/*     */}
+	public void setIndexable(boolean isIndexable) {
+		this.isIndexable = isIndexable;
+	}
 
-	/*     */
-	/*     */public List<Relation> getRelations()
-	/*     */{
-		/* 509 */return new ArrayList(this.relationsMap.values());
-		/*     */}
-
-	/*     */
-
-	/*     */
-	/*     */public String getIndexName()
-	/*     */{
-		/* 529 */return this.indexName;
-		/*     */}
-
-	/*     */
-	/*     */public void setIndexName(String indexName)
-	/*     */{
-		/* 540 */this.indexName = indexName;
-		/*     */}
-
-	/*     */
-	/*     */public boolean isIndexable()
-	/*     */{
-		/* 550 */return this.isIndexable;
-		/*     */}
-
-	/*     */
-	/*     */public void setIndexable(boolean isIndexable)
-	/*     */{
-		/* 561 */this.isIndexable = isIndexable;
-		/*     */}
-
-	/*     */
-
-	/*     */
-	/*     */public Map<Class, List> getCallbackMethodsMap()
-	/*     */{
-		/* 582 */return this.callbackMethodsMap;
-		/*     */}
+	public Map<Class, List> getCallbackMethodsMap() {
+		return this.callbackMethodsMap;
+	}
 
 	public void setCallbackMethodsMap(Map<Class, List> callbackMethodsMap) {
 		this.callbackMethodsMap = callbackMethodsMap;
 	}
 
-	/*     */
-	/*     */public List<? extends CallbackMethod> getCallbackMethods(Class<?> event)
-	/*     */{
-		/* 595 */return ((List) this.callbackMethodsMap.get(event));
-		/*     */}
+	public List<? extends CallbackMethod> getCallbackMethods(Class<?> event) {
+		return ((List) this.callbackMethodsMap.get(event));
+	}
 
-	/*     */
+	public boolean isCacheable() {
+		return this.cacheable;
+	}
 
-	/*     */
-	/*     */public boolean isCacheable()
-	/*     */{
-		/* 631 */return this.cacheable;
-		/*     */}
+	public void setCacheable(boolean cacheable) {
+		this.cacheable = cacheable;
+	}
 
-	/*     */
-	/*     */public void setCacheable(boolean cacheable)
-	/*     */{
-		/* 642 */this.cacheable = cacheable;
-		/*     */}
-
-	/*     */
 	// /* */ public String toString()
 	// /* */ {
 	// /* 653 */ int start = 0;
@@ -326,73 +266,53 @@ import javax.persistence.PrimaryKeyJoinColumn;
 	// /* 745 */ builder.append(")");
 	// /* 746 */ return builder.toString();
 	// /* */ }
-	/*     */
 
-	/*     */
-	/*     */public boolean isParent()
-	/*     */{
-		/* 785 */return this.isParent;
-		/*     */}
+	public boolean isParent() {
+		return this.isParent;
+	}
 
-	/*     */
-	/*     */public void setParent(boolean isParent)
-	/*     */{
-		/* 794 */this.isParent = isParent;
-		/*     */}
+	public void setParent(boolean isParent) {
+		this.isParent = isParent;
+	}
 
-	/*     */
+	public List<String> getRelationNames() {
+		return this.relationNames;
+	}
 
-	/*     */
-	/*     */public List<String> getRelationNames()
-	/*     */{
-		/* 810 */return this.relationNames;
-		/*     */}
+	private void addRelationName(Relation rField) {
+		if (rField.isRelatedViaJoinTable())
+			return;
+		String relationName = getJoinColumnName(rField.getProperty());
+		if (rField.getProperty()
+				.isAnnotationPresent(PrimaryKeyJoinColumn.class)) {
+			// relationName = getIdColumn().getName();
+		}
 
-	/*     */
-	/*     */private void addRelationName(Relation rField)
-	/*     */{
-		/* 821 */if (rField.isRelatedViaJoinTable())
-			/*     */return;
-		/* 823 */String relationName = getJoinColumnName(rField.getProperty());
-		/* 824 */if (rField.getProperty().isAnnotationPresent(
-				PrimaryKeyJoinColumn.class))
-		/*     */{
-			/* 826 */// relationName = getIdColumn().getName();
-			/*     */}
-		/*     */
-		/* 829 */addToRelationNameCollection(relationName);
-		/*     */}
+		addToRelationNameCollection(relationName);
+	}
 
-	/*     */
-	/*     */private void addToRelationNameCollection(String relationName)
-	/*     */{
-		/* 841 */if (this.relationNames == null)
-		/*     */{
-			/* 843 */this.relationNames = new ArrayList();
-			/*     */}
-		/* 845 */if (relationName == null)
-			/*     */return;
-		/* 847 */this.relationNames.add(relationName);
-		/*     */}
+	private void addToRelationNameCollection(String relationName) {
+		if (this.relationNames == null) {
+			this.relationNames = new ArrayList();
+		}
+		if (relationName == null)
+			return;
+		this.relationNames.add(relationName);
+	}
 
-	/*     */
-	/*     */private String getJoinColumnName(Field relation)
-	/*     */{
-		/* 860 */String columnName = null;
-		/* 861 */JoinColumn ann = (JoinColumn) relation
-				.getAnnotation(JoinColumn.class);
-		/* 862 */if (ann != null)
-		/*     */{
-			/* 864 */columnName = ann.name();
-			/*     */}
-		/*     */
-		/* 867 */return ((columnName != null) ? columnName : relation.getName());
-		/*     */}
+	private String getJoinColumnName(Field relation) {
+		String columnName = null;
+		JoinColumn ann = (JoinColumn) relation.getAnnotation(JoinColumn.class);
+		if (ann != null) {
+			columnName = ann.name();
+		}
 
-	/*     */
-	/*     */public static enum Type
-	/*     */{
-		/* 117 */COLUMN_FAMILY {
+		return ((columnName != null) ? columnName : relation.getName());
+	}
+
+	@SuppressWarnings("unused")
+	public static enum Type {
+		COLUMN_FAMILY {
 			public boolean isColumnFamilyMetadata() {
 				// TODO Auto-generated method stub
 				return false;

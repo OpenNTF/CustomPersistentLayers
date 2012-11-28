@@ -24,14 +24,22 @@ import javax.persistence.PreUpdate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * not implemented
+ * 
+ * @author weihang chen
+ * 
+ */
 public class EntityListenersProcessor implements MetadataProcessor {
 	private static Log log = LogFactory.getLog(EntityListenersProcessor.class);
 
+	@SuppressWarnings("unchecked")
 	private static final List<Class> JPAListenersAnnotations = Arrays
 			.asList(new Class[] { PrePersist.class, PostPersist.class,
 					PreUpdate.class, PostUpdate.class, PreRemove.class,
 					PostRemove.class, PostLoad.class });
 
+	@SuppressWarnings("unchecked")
 	public final void process(Class<?> entityClass, EntityMetadata metadata) {
 		EntityListeners entityListeners = entityClass
 				.getAnnotation(EntityListeners.class);
@@ -74,6 +82,7 @@ public class EntityListenersProcessor implements MetadataProcessor {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addCallBackMethod(EntityMetadata metadata,
 			Class<?> jpaAnnotation, CallbackMethod callbackMethod) {
 		Map<Class, List> callBackMethodsMap = metadata.getCallbackMethodsMap();
@@ -85,6 +94,7 @@ public class EntityListenersProcessor implements MetadataProcessor {
 		list.add(callbackMethod);
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Class> getValidJPAAnnotationsFromMethod(Class<?> clazz,
 			Method method, int numberOfParams) {
 		List<Class> annotations = new ArrayList<Class>();

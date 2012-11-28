@@ -110,7 +110,7 @@ public class Node implements NodeStateContext {
 				this.currentNodeState = new DetachedState();
 			else if (initialNodeState.getClass() == TransientState.class)
 				this.currentNodeState = new TransientState();
-			
+
 			// without initialise a new state instance, will lead to that all
 			// nodes
 			// sharing same state instance
@@ -274,6 +274,10 @@ public class Node implements NodeStateContext {
 		return super.equals(otherNode);
 	}
 
+	/**
+	 * all operations issued by entityManager are eventually delegated to
+	 * different NodeState (REMOVE, MANAGED, TRANSIENT)
+	 */
 	public void persist() {
 		getCurrentNodeState().handlePersist(this);
 	}

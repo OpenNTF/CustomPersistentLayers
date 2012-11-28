@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * INTERFACE FOR persistence.graph.Node
  * 
- * @author SWECWI
+ * @author weihang chen
  * 
  */
 public abstract interface NodeStateContext {

@@ -11,6 +11,12 @@ import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Metamodel;
 
+/**
+ * the class holding the entityMetadata
+ * 
+ * @author SWECWI
+ * 
+ */
 public class MetamodelImpl implements Metamodel {
 	Map<Class<?>, EntityMetadata> entityMetadataMap;
 	Map<String, Class<?>> entityNameToClassMap;
@@ -39,10 +45,12 @@ public class MetamodelImpl implements Metamodel {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public MetamodelImpl() {
 		setEntityMetadataMap(new HashMap());
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<Class<?>, EntityMetadata> getEntityMetadataMap() {
 		if (this.entityMetadataMap == null) {
 			this.entityMetadataMap = new HashMap();
@@ -59,12 +67,15 @@ public class MetamodelImpl implements Metamodel {
 		getEntityMetadataMap().put(clazz, entityMetadata);
 	}
 
+	@SuppressWarnings("unchecked")
 	public EntityMetadata getEntityMetadata(Class<?> entityClass) {
 		Iterator iter = getEntityMetadataMap().entrySet().iterator();
+		@SuppressWarnings("unused")
 		Entry o = (Entry) iter.next();
 		return ((EntityMetadata) getEntityMetadataMap().get(entityClass));
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<String, Class<?>> getEntityNameToClassMap() {
 		if (this.entityNameToClassMap == null) {
 			this.entityNameToClassMap = new HashMap();
@@ -82,6 +93,7 @@ public class MetamodelImpl implements Metamodel {
 		getEntityNameToClassMap().put(className, entityClass);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Class<?> getEntityClass(String className) {
 		return ((Class) getEntityNameToClassMap().get(className));
 	}

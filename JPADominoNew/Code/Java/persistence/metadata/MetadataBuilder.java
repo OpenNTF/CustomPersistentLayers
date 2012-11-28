@@ -1,26 +1,29 @@
 package persistence.metadata;
 
-/**
- * 
- * @author weihang chen 
- */
 import persistence.metadata.model.EntityMetadata;
-import persistence.metadata.processor.CacheableAnnotationProcessor;
 import persistence.metadata.processor.DominoEntityProcessor;
-import persistence.metadata.processor.EntityListenersProcessor;
-import persistence.metadata.processor.IndexProcessor; //import persistence.metadata.processor.TableProcessor; // import persistence.metadata.validator.EntityValidator;
 import persistence.metadata.processor.TableProcessor;
-//import persistence.metadata.validator.EntityValidatorImpl;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.PersistenceException;
+
+/**
+ * main class being used from MetamodelConfigurationTemp to build up entity meta
+ * data for a class. Two MetadataProcessors are in use <br>
+ * 1.DominoEntityProcessor - process entity annotated with @DominoEntity<br>
+ * 2.TableProcessor - process Fields annotated with @DominoProperty
+ * 
+ * @author weihang chen
+ */
 
 public class MetadataBuilder {
 
 	private List<MetadataProcessor> metadataProcessors;
 	// private EntityValidator validator;
 	// private boolean instantiated = false;
+	@SuppressWarnings("unused")
 	private String persistenceUnit;
+	@SuppressWarnings("unused")
 	private String client;
 
 	/**
@@ -44,7 +47,7 @@ public class MetadataBuilder {
 	}
 
 	/**
-	 * add entity validator back when persistence.xml is in use
+	 * add entity validator back when persistence.xml is in use, not implemented
 	 */
 	public final void validate(Class<?> clazz) throws PersistenceException {
 
@@ -52,7 +55,7 @@ public class MetadataBuilder {
 	}
 
 	/**
-	 * set value in EntityMetadata instance via MetadataProcessors
+	 * go through MetadataProcessors and set them up
 	 * 
 	 * @param clazz
 	 * @return

@@ -1,13 +1,19 @@
 package persistence.metadata.model;
 
-/**
- * @author weihang chen
- */
 import persistence.annotation.support.JavaBeanFactory;
 import persistence.proxy.EntityEnhancerFactory;
 
+/**
+ * @author weihang chen
+ */
 public class CoreMetadata {
+	/**
+	 * not used
+	 */
 	private EntityEnhancerFactory enhancedProxyFactory;
+	/**
+	 * main class to create instance of Domino entity
+	 */
 	private JavaBeanFactory javaBeanFactory;
 
 	public EntityEnhancerFactory getEnhancedProxyFactory() {

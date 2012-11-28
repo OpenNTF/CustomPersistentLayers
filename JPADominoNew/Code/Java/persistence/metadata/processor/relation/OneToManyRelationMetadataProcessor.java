@@ -4,18 +4,20 @@ import persistence.annotation.DocumentReferences;
 
 import persistence.metadata.model.EntityMetadata;
 import persistence.metadata.model.Relation;
-import persistence.metadata.model.Relation.ForeignKey;
-import persistence.metadata.processor.AbstractEntityFieldProcessor; //import persistence.metadata.validator.EntityValidatorImpl;
+import persistence.metadata.processor.AbstractEntityFieldProcessor;
 import persistence.property.PropertyAccessorHelper;
 import util.CommonUtil;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
+/**
+ * DocumentReferences annotation stands for OneToMany relation, annotation value is
+ * used to build Relation objects, which are added to EntityMetadata object
+ * 
+ * @author weihang chen
+ * 
+ */
 public class OneToManyRelationMetadataProcessor extends
 		AbstractEntityFieldProcessor implements RelationMetadataProcessor {
 	public OneToManyRelationMetadataProcessor() {
@@ -47,7 +49,8 @@ public class OneToManyRelationMetadataProcessor extends
 				Relation.ForeignKey.ONE_TO_MANY);
 		relation.setDominoForeignKey(ann.foreignKey());
 		relation.setDominoView(ann.viewName());
-		relation.setDominoRelationSignature(ann.foreignKey() + ann.viewName()+ann.fetch().name().toString());
+		relation.setDominoRelationSignature(ann.foreignKey() + ann.viewName()
+				+ ann.fetch().name().toString());
 
 		metadata.addRelation(relationField.getName(), relation);
 		System.out.println("METHOD SIGNATURE: "

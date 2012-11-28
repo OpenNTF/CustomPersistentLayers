@@ -6,6 +6,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 
+/**
+ * relation between persistent objects is saved in this class, for an example of
+ * how to create a new Relation object, check
+ * OneToManyRelationMetadataProcessor.java <br>
+ * for example of how to read Relation object, check AbstractEntityReader.java
+ * 
+ * @author SWECWI
+ * 
+ */
 
 public final class Relation {
 	private Field property;

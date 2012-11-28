@@ -13,6 +13,8 @@ import javax.persistence.PersistenceContextType;
 import model.notes.Key;
 
 /**
+ * one of the four State class which the operations from entityManager is
+ * delegate to, follow the guideline from JPA, define the actions <br>
  * 
  * @author weihang chen
  * 
@@ -21,29 +23,39 @@ public class ManagedState extends NodeState {
 	public void initialize(NodeStateContext nodeStateContext) {
 	}
 
+	/**
+	 * do nothing actually, just invoke the recursive method from NodeState.java
+	 */
 	public void handlePersist(NodeStateContext nodeStateContext) {
 		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.PERSIST);
 	}
 
+	/**
+	 * change current Node to REMOVE state, propagate the same mechanism to
+	 * children Nodes by invoking recursivelyPerformOperation from
+	 * NodeState.java
+	 */
 	public void handleRemove(NodeStateContext nodeStateContext) {
 		moveNodeToNextState(nodeStateContext, new RemovedState());
-
 		nodeStateContext.setDirty(true);
-		// 1111 ADD THE SHOULD BE REMOVED NODE to the cache head nodes, so the
-		// flush will proccess it change Kundera code
-		// nodeStateContext.getPersistenceCache().getMainCache().addHeadNode(
-		// (Node) nodeStateContext);
-		// 1111
 		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.REMOVE);
 	}
 
+	/**
+	 * do nothing actually, invoke the recursive method from NodeState.java
+	 */
 	public void handleRefresh(NodeStateContext nodeStateContext) {
 		recursivelyPerformOperation(nodeStateContext,
 				NodeState.OPERATION.REFRESH);
 	}
 
+	/**
+	 * merge current Node to persistence cache , propagate the same mechanism to
+	 * children Nodes by invoking recursivelyPerformOperation from
+	 * NodeState.java
+	 */
 	public void handleMerge(NodeStateContext nodeStateContext) {
 		nodeStateContext.getPersistenceCache().getMainCache().addNodeToCache(
 				(Node) nodeStateContext);
@@ -99,9 +111,16 @@ public class ManagedState extends NodeState {
 		nodeStateContext.setDirty(false);
 	}
 
+	/**
+	 * not implemented
+	 */
 	public void handleLock(NodeStateContext nodeStateContext) {
 	}
 
+	/**
+	 * change Node state , propagate the same mechanism to children Nodes by
+	 * invoking recursivelyPerformOperation from NodeState.java
+	 */
 	public void handleDetach(NodeStateContext nodeStateContext) {
 		moveNodeToNextState(nodeStateContext, new DetachedState());
 
@@ -113,6 +132,9 @@ public class ManagedState extends NodeState {
 		nodeStateContext.setCurrentNodeState(new DetachedState());
 	}
 
+	/**
+	 * not used
+	 */
 	public void handleRollback(NodeStateContext nodeStateContext) {
 		if (PersistenceContextType.EXTENDED.equals(nodeStateContext
 				.getPersistenceCache().getPersistenceContextType())) {

@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * assign value from annotated DominoProperty to EntityMetadata
  * 
  * @author Weihang Chen this processor populate metadata for relations and query
  */
@@ -23,6 +24,7 @@ public class TableProcessor extends AbstractEntityFieldProcessor {
 		// this.validator = new EntityValidatorImpl();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void process(Class clazz, EntityMetadata metadata) {
 		LOG.debug("Processing @Entity(" + clazz.getName()
 				+ ") for Persistence Object.");
@@ -43,28 +45,14 @@ public class TableProcessor extends AbstractEntityFieldProcessor {
 
 	private void updateView(HashMap<String, Class<?>> fieldTypeMap) {
 
-		// DominoImplicitObjectFactory
-		// DesignerImplicitObjectFactory
-		// Agent myagent = DxlFactory.eINSTANCE
-		// .createAgent();
-		// org.openntf.model.dxl.Trigger mytrigger =
-		// org.openntf.model.dxl.impl.DxlFactoryImpl.eINSTANCE
-		// .createTrigger();
-		// org.openntf.model.dxl.Schedule myschedule =
-		// org.openntf.model.dxl.impl.DxlFactoryImpl.eINSTANCE
-		// .createSchedule();
-		// myschedule.setType(ScheduleTypes.BYMINUTES);
-		// myschedule.setHours(BigInteger.valueOf(0));
-		// myschedule.setMinutes(BigInteger.valueOf(5));
-		// mytrigger.setType(AgentTriggerTypes.SCHEDULED);
-		// myagent.setTrigger(mytrigger);
-
 	}
 
 	private void addRelationIntoMetadata(Class<?> entityClass,
 			Field relationField, EntityMetadata metadata) {
 		RelationMetadataProcessor relProcessor = null;
 		try {
+			// RelationMetadataProcessorFactory can only create processor for
+			// DocumentReferences annotated Relations
 			relProcessor = RelationMetadataProcessorFactory
 					.getRelationMetadataProcessor(relationField);
 
