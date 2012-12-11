@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="C1257A91005D3475" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="4d6" sequence="3" unid="BABDC8411A88B260C1257A9C006606A3">
+<created><datetime dst="true">20121019T203423,71+02</datetime></created>
+<modified><datetime dst="true">20121019T203423,88+02</datetime></modified>
+<revised><datetime dst="true">20121019T203423,87+02</datetime></revised>
+<lastaccessed><datetime dst="true">20121019T203423,88+02</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20121019T203423,72+02</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>model/ToolBox.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>model/ToolBox.java</text></item></note>

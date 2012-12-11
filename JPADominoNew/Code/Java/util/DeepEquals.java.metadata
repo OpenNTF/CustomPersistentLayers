@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="C1257A91005D3475" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="5ea" sequence="3" unid="73B6779B0155777FC1257ABF003529BA">
+<created><datetime>20121123T104040,90+01</datetime></created>
+<modified><datetime>20121123T104040,96+01</datetime></modified>
+<revised><datetime>20121123T104040,95+01</datetime></revised>
+<lastaccessed><datetime>20121123T104040,96+01</datetime></lastaccessed>
+<addedtofile><datetime>20121123T104040,91+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>util/DeepEquals.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>util/DeepEquals.java</text></item></note>

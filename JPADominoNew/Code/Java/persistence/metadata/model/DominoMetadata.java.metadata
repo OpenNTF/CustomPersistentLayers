@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="3.0" replicaid="C1257A91005D3475" version="8.5" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="5de" sequence="3" unid="AE66779BA82E6CD2C1257ABE002FE8FD">
+<created><datetime>20121122T094318,37+01</datetime></created>
+<modified><datetime>20121122T094318,52+01</datetime></modified>
+<revised><datetime>20121122T094318,51+01</datetime></revised>
+<lastaccessed><datetime>20121122T094318,52+01</datetime></lastaccessed>
+<addedtofile><datetime>20121122T094318,41+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=weihang chen/O=nordic</name></updatedby>
+<wassignedby><name>CN=weihang chen/O=nordic</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>persistence/metadata/model/DominoMetadata.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>persistence/metadata/model/DominoMetadata.java</text></item></note>

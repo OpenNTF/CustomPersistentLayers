@@ -9,6 +9,7 @@ package dao;
  */
 public class DaoFactory {
 
+	
 	public static PersonDao getPersonDao() {
 		return new PersonDaoImpl();
 	}
