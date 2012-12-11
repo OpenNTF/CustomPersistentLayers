@@ -47,7 +47,7 @@ public @interface DocumentReferences {
 	public CascadeType[] cascade() default { CascadeType.ALL };
 
 	/**
-	 * unid from owner class as foreignkey - not implemented
+	 * unid as default
 	 */
 	public String foreignKey();
 

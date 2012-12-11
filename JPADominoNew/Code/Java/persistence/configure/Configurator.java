@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * this is the main entry point going through all kinds of initial setting
  * 
- * @author SWECWI
+ * @author weihang chen
  * 
  */
 public final class Configurator {

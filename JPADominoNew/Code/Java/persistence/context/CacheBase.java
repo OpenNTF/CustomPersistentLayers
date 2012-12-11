@@ -88,6 +88,7 @@ public class CacheBase {
 			logCacheEvent("ADDED TO ", node.getNodeId());
 		} else {
 			// node does not exist from persistence cache
+			// add it to cache
 			logCacheEvent("ADDED TO ", node.getNodeId());
 			this.nodeMappings.put(node.getNodeId(), node);
 		}
@@ -118,7 +119,7 @@ public class CacheBase {
 	}
 
 	/**
-	 * when an object graph is built, it is merged with the existing persistence
+	 * merge object graph with the existing persistence
 	 * cache<br>
 	 * 1.go through all nodes from the graph, invoke addNodeToCache()<br>
 	 * 2. since flush manager only checks the head nodes for flush, if current

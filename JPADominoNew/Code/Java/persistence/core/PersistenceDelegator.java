@@ -140,15 +140,17 @@ public class PersistenceDelegator {
 
 	/**
 	 * find an object with Key<br>
-	 * 1a. find node from cache <br>
-	 * 1b. get the entity from node in ManagedState, clone and return the cloned
-	 * detached entity
-	 * <p>
-	 * 2a. can't be found from cache, create new node in TrasientState, find it
-	 * from database <br>
-	 * 2b. build object graph , synchronise the object graph with persistence
-	 * cache using addGraphToCache<br>
-	 * 2c. clone and return the cloned detached entity
+	 * When find() is issued, it will try to find from persistence cache, if a
+	 * Node with that specific id is found, clone the entity within the Node and
+	 * return the clone. If a Node with that specific id can’t be found from
+	 * cache. Create a new Node in ManagedState, find the document from
+	 * database, convert it to Domino Entity and assign it to the Node. Build
+	 * object graph using the new Node as the head Node, synchronize the object
+	 * graph with the persistence cache using addGraphToCache(), clone the
+	 * entity and return the detached entity. Operation Find does not only
+	 * initialize one single Java object, but recursively propagate the same
+	 * find mechanism to all the children objects as well.
+	 * 
 	 * 
 	 * @param <E>
 	 * @param entityClass
